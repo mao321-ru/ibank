@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.example</groupId>
+    <groupId>com.example.ibank</groupId>
     <artifactId>ibank-project</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
@@ -19,6 +19,7 @@
 
     <modules>
         <module>confsrv</module>
+        <module>eureka</module>
     </modules>
 
     <properties>
