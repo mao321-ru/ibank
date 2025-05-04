@@ -1,8 +1,2 @@
 spring.application.name: eureka
-
-server.port: 8761
-
-eureka:
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
+spring.config.import: configserver:http://127.0.0.1:8888
