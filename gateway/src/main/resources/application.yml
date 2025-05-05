@@ -1,2 +1,2 @@
-spring.application.name: eureka
+spring.application.name: gateway
 spring.config.import: configserver:http://localhost:8888

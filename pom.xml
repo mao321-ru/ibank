@@ -20,6 +20,7 @@
     <modules>
         <module>confsrv</module>
         <module>eureka</module>
+        <module>gateway</module>
     </modules>
 
     <properties>
