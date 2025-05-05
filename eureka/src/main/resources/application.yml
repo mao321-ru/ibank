@@ -1,2 +1,4 @@
-spring.application.name: eureka
-spring.config.import: configserver:http://localhost:8888
+spring:
+  application:
+    name: eureka
+  profiles.active: dev
