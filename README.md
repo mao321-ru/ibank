@@ -1,21 +1,21 @@
 # ibank: Демонстрационное приложение «Банк» с использованием Spring Boot и паттернов микросервисной архитектуры
 
 Общие сервисы:
-- Externalized/Distributed Config: Spring Cloud Config (конфиги в локальном каталоге) (confsrv)
-- Service Discovery: Eureka (eureka)
-- Gateway API: Spring Cloud Gateway (gateway)
-- Сервер авторизации микросервисов по OAuth 2.0: Keycloak
-- БД: PostgreSQL (одна БД, отдельные независимые схемы на каждый сервис)
+1. Externalized/Distributed Config: Spring Cloud Config (конфиги в локальном каталоге) (confsrv)
+2. Service Discovery: Eureka (eureka)
+3. Gateway API: Spring Cloud Gateway (gateway)
+4. Сервер авторизации микросервисов по OAuth 2.0: Keycloak
+5. БД: PostgreSQL (одна БД, отдельные независимые схемы на каждый сервис)
 
 Прикладные микросервисы:
-- фронта (Front UI);
-- сервиса аккаунтов (Accounts);
-- сервиса обналичивания денег (Cash);
-- сервиса перевода денег между счетами одного или двух аккаунтов (Transfer);
-- сервиса конвертации валют (Exchange);
-- сервиса генерации курсов валют (Exchange Generator);
-- сервиса блокировки подозрительных операций (Blocker);
-- сервиса уведомлений (Notifications).
+1. фронта (Front UI);
+2. сервиса аккаунтов (Accounts);
+3. сервиса обналичивания денег (Cash);
+4. сервиса перевода денег между счетами одного или двух аккаунтов (Transfer);
+5. сервиса конвертации валют (Exchange);
+6. сервиса генерации курсов валют (Exchange Generator);
+7. сервиса блокировки подозрительных операций (Blocker);
+8. сервиса уведомлений (Notifications).
 
 TODO:
 - Микросервисы должны уметь выполнять ретраи запросов, а также иметь фоллбэки на эндпоинты заглушки (это могут быть

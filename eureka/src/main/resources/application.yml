@@ -1,4 +1,2 @@
-spring:
-  application:
-    name: eureka
-  profiles.active: dev
+spring.application.name: eureka
+spring.profiles.active: dev
