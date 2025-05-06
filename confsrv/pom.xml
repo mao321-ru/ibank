@@ -12,6 +12,10 @@
     <name>confsrv</name>
     <description>Spring Cloud Config Server</description>
 
+    <properties>
+        <docker-test-image>local/${project.parent.artifactId}-${project.artifactId}:test</docker-test-image>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -31,15 +35,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- JIB для сборки Docker-образа -->
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <configuration>
-                    <to>
-                        <image>local/${project.parent.artifactId}-${project.artifactId}:test</image>
-                    </to>
-                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

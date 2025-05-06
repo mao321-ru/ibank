@@ -56,7 +56,7 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                 </plugin>
-                <!-- JIB Plugin -->
+                <!-- JIB для сборки Docker-образа -->
                 <plugin>
                     <groupId>com.google.cloud.tools</groupId>
                     <artifactId>jib-maven-plugin</artifactId>
@@ -66,7 +66,7 @@
                             <id>build-docker-image</id>
                             <phase>pre-integration-test</phase>
                             <goals>
-                                <goal>dockerBuild</goal> <!-- Локальная сборка -->
+                                <goal>dockerBuild</goal> <!-- Локальная сборка, можно выполнить: jib:dockerBuild -->
                             </goals>
                         </execution>
                     </executions>
@@ -78,11 +78,38 @@
                             -->
                             <image>eclipse-temurin@sha256:ee09bfd4218b1296231588981fd1e4f74843ca585d5fd6a37bf6078e34c847c7</image>
                         </from>
-                        <allowInsecureRegistries>true</allowInsecureRegistries> <!-- Игнорировать ошибки аутентификации -->
+                        <to>
+                            <image>${docker-test-image}</image>
+                        </to>
+                        <allowInsecureRegistries>true</allowInsecureRegistries> <!-- Игнорировать отсутствие аутентификации -->
                         <container>
                             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                         </container>
                     </configuration>
+                </plugin>
+                <!-- для удаления Docker-образа -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>remove-docker-images</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>docker</executable>
+                                <arguments>
+                                    <argument>rmi</argument>
+                                    <argument>-f</argument>
+                                    <argument>${docker-test-image}</argument>
+                                </arguments>
+                                <skip>${skipDockerClean}</skip> <!-- Опционально: отключение через -DskipDockerClean -->
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
