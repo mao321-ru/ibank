@@ -13,7 +13,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @TestPropertySource( properties = "spring.config.import=configserver:http://localhost:8912")
 public abstract class IntegrationTest {
 
-    static GenericContainer<?> confsrv = new FixedHostPortGenericContainer<>( "ibank-confsrv:latest")
+    static GenericContainer<?> confsrv = new FixedHostPortGenericContainer<>( "local/ibank-confsrv:test")
             .withExposedPorts(8888)
             // открываемый порт должен совпадать с портом из spring.config.import в @TestPropertySource (выше)
             .withFixedExposedPort(8912, 8888)
