@@ -66,6 +66,31 @@ services:
       timeout: 5s
       retries: 10
 
+  front:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        MODULE_NAME: front
+    ports:
+      - "8961:8080"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+    depends_on:
+      confsrv:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    networks:
+      - ibank-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
 networks:
   ibank-net:
     driver: bridge

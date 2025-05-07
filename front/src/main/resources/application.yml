@@ -1,0 +1,2 @@
+spring.application.name: front
+spring.profiles.active: dev
