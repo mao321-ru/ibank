@@ -18,6 +18,7 @@
     <description>Bank Demo</description>
 
     <modules>
+        <module>common-test</module>
         <module>confsrv</module>
         <module>eureka</module>
         <module>gateway</module>
@@ -110,6 +111,11 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>

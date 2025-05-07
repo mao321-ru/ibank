@@ -1,5 +1,8 @@
 package com.example.ibank.gateway;
 
+
+import com.example.ibank.common.IntegrationTestBase;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -14,9 +17,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @TestPropertySource( properties = "spring.config.import=configserver:http://localhost:8913")
-public abstract class IntegrationTest {
-
-    private static final Network network = Network.newNetwork();
+public abstract class IntegrationTest extends IntegrationTestBase {
 
     static GenericContainer<?> confsrv = new FixedHostPortGenericContainer<>( "local/ibank-confsrv:test")
         .withExposedPorts(8888)
@@ -24,14 +25,6 @@ public abstract class IntegrationTest {
         .withFixedExposedPort(8913, 8888)
         .withNetwork(network)
         .withNetworkAliases( "confsrv")
-        .waitingFor( Wait.forHttp("/actuator/health"));
-
-    static GenericContainer<?> eureka = new GenericContainer<>( "local/ibank-eureka:test")
-        .withExposedPorts(8761)
-        .withNetwork(network)
-        .withNetworkAliases( "eureka")
-        .withEnv("SPRING_PROFILES_ACTIVE", "intg-test")
-        .withEnv("SPRING_CONFIG_IMPORT", "optional:configserver:http://confsrv:8888")
         .waitingFor( Wait.forHttp("/actuator/health"));
 
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
