@@ -22,6 +22,24 @@ TODO:
   Ribbon и Hystrix, Resilence4j и т. д. на ваш выбор)
 
 
+## Установка приложения в Docker
+
+В случае доступности Docker Compose можно установить и запустить приложение командой:
+
+```cmd
+  docker compose up --build --detach
+```
+Интрефейс будет доступен по URL:
+
+[http://localhost:8880](http://localhost:8880)
+
+Команда для остановки и удаления приложения:
+
+```cmd
+  docker compose down
+```
+
+
 ## Запуск тестов
 
 Предварительные требования:

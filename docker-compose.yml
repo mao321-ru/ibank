@@ -1,0 +1,71 @@
+name: ibank
+services:
+  confsrv:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        MODULE_NAME: confsrv
+        EXPOSE_PORT: 8888
+    ports:
+      - "8888:8888"
+    networks:
+      - ibank-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  eureka:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        MODULE_NAME: eureka
+        EXPOSE_PORT: 8761
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - ibank-net
+    depends_on:
+      confsrv:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  gateway:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        MODULE_NAME: gateway
+        EXPOSE_PORT: 8880
+    ports:
+      - "8880:8880"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+    depends_on:
+      confsrv:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    networks:
+      - ibank-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8880/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  ibank-net:
+    driver: bridge
