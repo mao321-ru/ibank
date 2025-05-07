@@ -2,7 +2,7 @@
 #
 # Параметры:
 # MODULE_NAME - имя модуля
-# EXPOSE_PORT - порт для открытия командой EXPOSE
+# EXPOSE_PORT - порт для открытия командой EXPOSE (по умолчанию 8080)
 FROM eclipse-temurin:21-jdk-jammy AS builder
 
 ARG MODULE_NAME
@@ -18,7 +18,7 @@ RUN /app/mvnw package -am -Dmaven.test.skip=true
 FROM eclipse-temurin:21-jre-jammy
 
 ARG MODULE_NAME
-ARG EXPOSE_PORT
+ARG EXPOSE_PORT=8080
 WORKDIR /app
 COPY --from=builder /app/${MODULE_NAME}/target/${MODULE_NAME}-*.jar app.jar
 

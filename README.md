@@ -40,6 +40,19 @@ TODO:
 ```
 
 
+## Запуск отдельных сервисов в Docker
+
+Команда для сборки образа в выполняется в корневом каталоге проекта, в MODULE_NAME указывается имя модуля, в EXPOSE_PORT открытый порт (можно не указывать если 8080).
+
+Пример сборки и запуска сервиса Spring Cloud Config (модуль confsrv):
+
+```cmd
+  docker build --build-arg MODULE_NAME=confsrv --build-arg EXPOSE_PORT=8888 -t ibank-confsrv:manual . && docker run -p 8888:8888 ibank-confsrv:manual
+```
+
+Настраиваемые параметры для сборки и запуска сервисов можно посмотреть в docker-compose.yml.
+
+
 ## Запуск тестов
 
 Предварительные требования:
