@@ -1,27 +1,17 @@
 package com.example.ibank.eureka;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import com.example.ibank.common.IntegrationTestBase;
+
 import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.FixedHostPortGenericContainer;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
 
-// Общие настройки для всех интеграционных тестов
-@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+import java.util.List;
+
+// Общие настройки для всех интеграционных тестов модуля
 @TestPropertySource( properties = "spring.config.import=configserver:http://localhost:8912")
-public abstract class IntegrationTest {
+public abstract class IntegrationTest extends IntegrationTestBase {
 
-    static GenericContainer<?> confsrv = new FixedHostPortGenericContainer<>( "local/ibank-confsrv:test")
-            .withExposedPorts(8888)
-            // открываемый порт должен совпадать с портом из spring.config.import в @TestPropertySource (выше)
-            .withFixedExposedPort(8912, 8888)
-            .waitingFor( Wait.forHttp("/actuator/health"));
-
-    // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
     static {
-        confsrv.start();
+        startContainers( 8912, List.of());
     }
 
 }
