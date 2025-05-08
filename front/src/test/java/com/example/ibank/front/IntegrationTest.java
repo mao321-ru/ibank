@@ -7,11 +7,11 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 
 // Общие настройки для всех интеграционных тестов модуля
-@TestPropertySource( properties = "spring.config.import=configserver:http://localhost:8913")
+@TestPropertySource( properties = "spring.config.import=configserver:http://localhost:8921")
 public abstract class IntegrationTest extends IntegrationTestBase {
 
     static {
-        startContainers( 8913, List.of( Container.EUREKA));
+        startContainers( 8921, List.of( Container.EUREKA));
     }
 
 }
