@@ -34,11 +34,17 @@ public class SecurityConfig {
         csrfHandler.setTokenFromMultipartDataEnabled( true);
         return http
             .authorizeExchange( exchanges -> exchanges
-                .pathMatchers( "/signup").permitAll()
+                .pathMatchers(
+                    "/favicon.ico",
+                    "/login",
+                    "/signup"
+                ).permitAll()
                 .anyExchange().authenticated()
             )
             .csrf( csrf -> csrf.csrfTokenRequestHandler( csrfHandler))
-            .formLogin( Customizer.withDefaults())
+            .formLogin( form -> form
+                .loginPage( "/login")
+            )
             .logout( logout -> logout
                 .logoutUrl( "/logout")
                 .logoutSuccessHandler((exchange, authentication) ->

@@ -15,6 +15,17 @@ import reactor.core.publisher.Mono;
 @Validated
 public class LoginController {
 
+    @GetMapping( "/login")
+    Mono<String> login(
+            ServerWebExchange exchange,
+            Model model
+    ) {
+        boolean isError = exchange.getRequest().getQueryParams().containsKey("error");
+        log.debug( "login: isError: {}", isError);
+        model.addAttribute( "errorInfo", isError ? "Ошибка при проверке пользователя" : "");
+        return Mono.just( "login");
+    }
+
     @GetMapping( "/signup")
     Mono<String> signup(
         ServerWebExchange exchange,
