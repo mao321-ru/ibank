@@ -1,3 +1,4 @@
+# Дефолтная настройка для большинства сервисов (кроме confsrv и eureka)
 eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
 
 logging:

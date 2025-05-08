@@ -1,5 +1,6 @@
 package com.example.ibank.common;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -7,6 +8,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.EnumMap;
@@ -19,7 +21,8 @@ public abstract class IntegrationTestBase {
 
     protected enum Container {
         CONFSRV,
-        EUREKA
+        EUREKA,
+        GATEWAY
     };
 
     protected static EnumMap<Container,GenericContainer<?>> containers = new EnumMap<>( Container.class);
@@ -50,7 +53,22 @@ public abstract class IntegrationTestBase {
                     .withNetwork(network)
                     .withNetworkAliases( "eureka")
                     .withEnv("SPRING_PROFILES_ACTIVE", "intg-test")
-                    .withEnv("SPRING_CONFIG_IMPORT", "optional:configserver:http://confsrv:8888")
+                    .withEnv("SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
+                    //.withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("TC-LOGS")))
+                    .waitingFor( Wait.forHttp("/actuator/health"));
+            container.start();
+            containers.put( Container.EUREKA, container);
+        }
+
+        if( addonContainers.contains( Container.GATEWAY)) {
+            container = new GenericContainer<>( "local/ibank-gateway:test")
+                    .withExposedPorts(8880)
+                    .withNetwork(network)
+                    .withNetworkAliases( "gateway")
+                    .withEnv("SPRING_PROFILES_ACTIVE", "intg-test")
+                    .withEnv("SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
+                    .withEnv("EUREKA_CLIENT_SERVICEURL_DEFAULTZONE", "http://eureka:8761/eureka/")
+                    .withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("TC-LOGS")))
                     .waitingFor( Wait.forHttp("/actuator/health"));
             container.start();
             containers.put( Container.EUREKA, container);

@@ -11,7 +11,10 @@ import java.util.List;
 public abstract class IntegrationTest extends IntegrationTestBase {
 
     static {
-        startContainers( 8921, List.of( Container.EUREKA));
+        startContainers( 8921, List.of(
+            Container.EUREKA,
+            Container.GATEWAY
+        ));
     }
 
 }
