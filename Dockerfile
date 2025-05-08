@@ -3,18 +3,35 @@
 # Параметры:
 # MODULE_NAME - имя модуля
 # EXPOSE_PORT - порт для открытия командой EXPOSE (по умолчанию 8080)
-FROM eclipse-temurin:21-jdk-jammy AS builder
+
+# Этап 1 - Кэширование зависимостей
+FROM eclipse-temurin:21-jdk-jammy AS cache
 
 ARG MODULE_NAME
 WORKDIR /app
 COPY .mvn .mvn
 COPY mvnw .
 COPY pom.xml .
+COPY ${MODULE_NAME}/pom.xml ${MODULE_NAME}/pom.xml
+WORKDIR /app/${MODULE_NAME}
+RUN mkdir -p /root/.m2
+RUN /app/mvnw dependency:go-offline -B
+
+# Этап 2 - Сборка
+FROM eclipse-temurin:21-jdk-jammy AS builder
+
+ARG MODULE_NAME
+COPY --from=cache /root/.m2 /root/.m2
+WORKDIR /app
+COPY .mvn .mvn
+COPY mvnw .
+COPY pom.xml .
+COPY ${MODULE_NAME}/pom.xml ${MODULE_NAME}/pom.xml
 COPY ${MODULE_NAME}/src ${MODULE_NAME}/src
-COPY ${MODULE_NAME}/pom.xml ${MODULE_NAME}
 WORKDIR /app/${MODULE_NAME}
 RUN /app/mvnw package -am -Dmaven.test.skip=true
 
+# Этап 3 - Образ для запуска приложения
 FROM eclipse-temurin:21-jre-jammy
 
 ARG MODULE_NAME
@@ -24,5 +41,3 @@ COPY --from=builder /app/${MODULE_NAME}/target/${MODULE_NAME}-*.jar app.jar
 
 EXPOSE ${EXPOSE_PORT}
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
