@@ -1,1 +1,24 @@
 server.port: 8880
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # запрос по неизвестному API (возвращает HTTP 404)
+        - id: api-not-found
+          uri: no://op  # Специальный URI для "ничего не делать"
+          predicates:
+            - Path=/api/**
+          filters:
+            - SetStatus=404
+          order: 10
+        # остальное на фронт
+        - id: front-external
+          uri: lb://front
+          predicates:
+            - Path=/**
+          order: 20
