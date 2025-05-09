@@ -10,9 +10,11 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.C;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 // Общие настройки интеграционных тестов во всех модулях
 @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,44 +37,41 @@ public abstract class IntegrationTestBase {
         int confsrvExposedPort,
         List<Container> addonContainers
     ) {
-        GenericContainer<?> container = null;
-        // всегда создаем, не нежно указывать в addonContainers
-        container = new FixedHostPortGenericContainer<>( "local/ibank-confsrv:test")
+        // всегда создаем, не нужно указывать в addonContainers
+        var confsrv = new FixedHostPortGenericContainer<>( "local/ibank-confsrv:test")
                 .withExposedPorts(8888)
                 // открываемый порт должен совпадать с портом из spring.config.import в @TestPropertySource модуля
                 .withFixedExposedPort( confsrvExposedPort, 8888)
                 .withNetwork(network)
                 .withNetworkAliases( "confsrv")
+                //.withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("TC-LOGS")))
                 .waitingFor( Wait.forHttp("/actuator/health"));
-        container.start();
-        containers.put( Container.CONFSRV, container);
+        confsrv.start();
+        containers.put( Container.CONFSRV, confsrv);
 
-        if( addonContainers.contains( Container.EUREKA)) {
-            container = new GenericContainer<>( "local/ibank-eureka:test")
-                    .withExposedPorts(8761)
-                    .withNetwork(network)
-                    .withNetworkAliases( "eureka")
-                    .withEnv("SPRING_PROFILES_ACTIVE", "intg-test")
-                    .withEnv("SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
-                    //.withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("TC-LOGS")))
-                    .waitingFor( Wait.forHttp("/actuator/health"));
-            container.start();
-            containers.put( Container.EUREKA, container);
-        }
+        // создание и запуск дополнительного контейнера если он указан в списке addonContainers
+        BiConsumer<Container,Integer> startIfUsed = ( cntType, port) -> {
+            if( addonContainers.contains( cntType)) {
+                String cntName = cntType.toString().toLowerCase();
+                containers.put(
+                    cntType,
+                    new GenericContainer<>(
+                            "local/ibank-%s:test".formatted( cntName)
+                        )
+                        .withExposedPorts( port)
+                        .withNetwork(network)
+                        .withNetworkAliases( cntName)
+                        .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
+                        .withEnv( "SPRING_PROFILES_ACTIVE", "docker")
+                        //.withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("TC-LOGS")))
+                        .waitingFor( Wait.forHttp("/actuator/health"))
+                );
+                containers.get( cntType).start();
+            }
+        };
 
-        if( addonContainers.contains( Container.GATEWAY)) {
-            container = new GenericContainer<>( "local/ibank-gateway:test")
-                    .withExposedPorts(8880)
-                    .withNetwork(network)
-                    .withNetworkAliases( "gateway")
-                    .withEnv("SPRING_PROFILES_ACTIVE", "intg-test")
-                    .withEnv("SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
-                    .withEnv("EUREKA_CLIENT_SERVICEURL_DEFAULTZONE", "http://eureka:8761/eureka/")
-                    .withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("TC-LOGS")))
-                    .waitingFor( Wait.forHttp("/actuator/health"));
-            container.start();
-            containers.put( Container.EUREKA, container);
-        }
+        startIfUsed.accept( Container.EUREKA, 8761);
+        startIfUsed.accept( Container.GATEWAY, 8880);
     }
 
     @DynamicPropertySource
