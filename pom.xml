@@ -21,6 +21,7 @@
         <module>confsrv</module>
         <module>eureka</module>
         <module>gateway</module>
+        <module>accounts-service</module>
         <module>front-service</module>
     </modules>
 

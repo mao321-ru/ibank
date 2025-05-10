@@ -26,7 +26,8 @@ public abstract class IntegrationTestBase implements TestData {
     protected enum Container {
         CONFSRV,
         EUREKA,
-        GATEWAY
+        GATEWAY,
+        ACCOUNTS_SERVICE
     };
 
     protected static EnumMap<Container,GenericContainer<?>> containers = new EnumMap<>( Container.class);
@@ -54,7 +55,7 @@ public abstract class IntegrationTestBase implements TestData {
         // создание и запуск дополнительного контейнера если он указан в списке addonContainers
         BiConsumer<Container,Integer> startIfUsed = ( cntType, port) -> {
             if( addonContainers.contains( cntType)) {
-                String cntName = cntType.toString().toLowerCase();
+                String cntName = cntType.toString().toLowerCase().replace( "_", "-");
                 containers.put(
                     cntType,
                     new GenericContainer<>(
@@ -74,6 +75,7 @@ public abstract class IntegrationTestBase implements TestData {
 
         startIfUsed.accept( Container.EUREKA, 8761);
         startIfUsed.accept( Container.GATEWAY, 8880);
+        startIfUsed.accept( Container.ACCOUNTS_SERVICE, 8080);
     }
 
     @DynamicPropertySource

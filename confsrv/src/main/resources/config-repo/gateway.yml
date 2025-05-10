@@ -8,6 +8,13 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        # запросы по API конкретных сервисов
+        - id: accounts-route
+          uri: lb://accounts-service
+          predicates:
+            - Path=/api/accounts/**
+          filters:
+            - StripPrefix=2  # Удаляет /api/accounts
         # запрос по неизвестному API (возвращает HTTP 404)
         - id: api-not-found
           uri: no://op  # Специальный URI для "ничего не делать"

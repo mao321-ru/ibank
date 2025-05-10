@@ -17,7 +17,7 @@ public class AuthService {
     private final WebClient accountsWebClient;
 
     public Mono<AuthResponse> authenticate(String login, String password) {
-        log.debug( "authenticate: login: {}, password: {}", login, password);
+        log.debug( "authenticate: login: {}", login);
         return accountsWebClient
             .post()
             .uri("/api/auth/validate")
@@ -25,9 +25,11 @@ public class AuthService {
             .retrieve()
             .bodyToMono( AuthResponse.class)
             .timeout( Duration.ofSeconds(3))
-            .onErrorResume(e -> Mono.just(
-                new AuthResponse(false, null, List.of())
-            ))
+            .onErrorResume(e -> {
+                log.debug( "Error on validate for [{}]: {}", login, e.getMessage());
+                return Mono.just( new AuthResponse(false, null, List.of()));
+            })
+
         ;
     }
 }

@@ -9,10 +9,12 @@ services:
         EXPOSE_PORT: 8888
     ports:
       - "8888:8888"
-    networks:
-      - ibank-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      test: >
+        sh -c '
+          curl -sf http://localhost:8888/actuator/health |
+          grep -q '"'"'"status":"UP"'"'"' || exit 1
+        '
       interval: 5s
       timeout: 5s
       retries: 10
@@ -29,13 +31,15 @@ services:
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
-    networks:
-      - ibank-net
     depends_on:
       confsrv:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      test: >
+        sh -c '
+          curl -sf http://localhost:8761/actuator/health |
+          grep -q '"'"'"status":"UP"'"'"' || exit 1
+        '
       interval: 5s
       timeout: 5s
       retries: 10
@@ -57,10 +61,12 @@ services:
         condition: service_healthy
       eureka:
         condition: service_healthy
-    networks:
-      - ibank-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8880/actuator/health"]
+      test: >
+        sh -c '
+          curl -sf http://localhost:8880/actuator/health |
+          grep -q '"'"'"status":"UP"'"'"' || exit 1
+        '
       interval: 5s
       timeout: 5s
       retries: 10
@@ -81,10 +87,38 @@ services:
         condition: service_healthy
       eureka:
         condition: service_healthy
-    networks:
-      - ibank-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: >
+        sh -c '
+          curl -sf http://localhost:8080/actuator/health |
+          grep -q '"'"'"status":"UP"'"'"' || exit 1
+        '
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  accounts-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        MODULE_NAME: accounts-service
+    ports:
+      - "8962:8080"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      confsrv:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    healthcheck:
+      test: >
+        sh -c '
+          curl -sf http://localhost:8080/actuator/health |
+          grep -q '"'"'"status":"UP"'"'"' || exit 1
+        '
       interval: 5s
       timeout: 5s
       retries: 10
@@ -98,7 +132,5 @@ services:
         condition: service_healthy
       front-service:
         condition: service_healthy
-
-networks:
-  ibank-net:
-    driver: bridge
+      accounts-service:
+        condition: service_healthy
