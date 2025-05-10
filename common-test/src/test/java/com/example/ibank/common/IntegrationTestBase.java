@@ -1,6 +1,7 @@
 package com.example.ibank.common;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -18,8 +19,9 @@ import java.util.function.BiConsumer;
 
 // Общие настройки интеграционных тестов во всех модулях
 @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
 @ActiveProfiles("test")
-public abstract class IntegrationTestBase {
+public abstract class IntegrationTestBase implements TestData {
 
     protected enum Container {
         CONFSRV,

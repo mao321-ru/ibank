@@ -1,5 +1,6 @@
 package com.example.ibank.front.config;
 
+import com.example.ibank.front.security.RestAuthManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,12 +24,10 @@ import java.net.URI;
 public class SecurityConfig {
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityWebFilterChain securityWebFilterChain( ServerHttpSecurity http) {
+    public SecurityWebFilterChain securityWebFilterChain(
+        ServerHttpSecurity http,
+        RestAuthManager restAuthManager
+    ) {
         var csrfHandler = new XorServerCsrfTokenRequestAttributeHandler();
         // should try to resolve the actual CSRF token from the body of multipart data requests
         csrfHandler.setTokenFromMultipartDataEnabled( true);
@@ -44,6 +43,7 @@ public class SecurityConfig {
             .csrf( csrf -> csrf.csrfTokenRequestHandler( csrfHandler))
             .formLogin( form -> form
                 .loginPage( "/login")
+                .authenticationManager( restAuthManager)
             )
             .logout( logout -> logout
                 .logoutUrl( "/logout")
@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .flatMap( WebSession::invalidate) // удаляем сессию
                         .then( Mono.fromRunnable(() -> {
                             var resp = exchange.getExchange().getResponse();
-                            // переход на витрину после выхода
+                            // переход на главную страницу после выхода
                             resp.setStatusCode( HttpStatus.FOUND);
                             resp.getHeaders().setLocation( URI.create( "/"));
                         }))
