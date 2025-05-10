@@ -18,7 +18,7 @@ spring:
           order: 10
         # остальное на фронт
         - id: front-external
-          uri: lb://front
+          uri: lb://front-service
           predicates:
             - Path=/**
           order: 20
