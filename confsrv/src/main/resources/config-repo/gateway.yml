@@ -1,5 +1,11 @@
 server.port: 8880
 
+# уменьшено время кэширования данных по сервисам из Eureka Server
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+
 spring:
   cloud:
     gateway:
