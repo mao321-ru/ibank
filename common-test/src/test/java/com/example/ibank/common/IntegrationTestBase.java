@@ -74,8 +74,11 @@ public abstract class IntegrationTestBase implements TestData {
         };
 
         startIfUsed.accept( Container.EUREKA, 8761);
-        startIfUsed.accept( Container.GATEWAY, 8880);
+
         startIfUsed.accept( Container.ACCOUNTS_SERVICE, 8080);
+
+        // старт после запуска всех сервисов
+        startIfUsed.accept( Container.GATEWAY, 8880);
     }
 
     @DynamicPropertySource
@@ -84,6 +87,13 @@ public abstract class IntegrationTestBase implements TestData {
             registry.add("eureka.client.serviceUrl.defaultZone", () ->
                 "http://localhost:%d/eureka/".formatted(
                         containers.get( Container.EUREKA).getMappedPort(8761)
+                )
+            );
+        }
+        if( containers.containsKey( Container.GATEWAY)) {
+            registry.add("gateway.url", () ->
+                "http://localhost:%d".formatted(
+                    containers.get( Container.GATEWAY).getMappedPort(8880)
                 )
             );
         }
