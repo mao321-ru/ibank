@@ -1,5 +1,11 @@
 server.port: 8761
 
+# Период обновления кэша на сервере
+# Минимальное значение обеспечивает ожидаемое поведение: сервисы могут использоваться сразу после успешной регистрации
+# в Eureka Server (критично для тестов)
+# источник решения: https://stackoverflow.com/questions/46344005/how-does-eureka-lease-renewal-work
+eureka.server.responseCacheUpdateIntervalMs: 1
+
 # Server in Standalone Mode
 eureka:
   instance:
