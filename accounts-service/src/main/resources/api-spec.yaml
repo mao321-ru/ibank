@@ -1,0 +1,69 @@
+openapi: 3.0.3
+info:
+  title: Accounts service API
+  description: API сервиса аккаунтов
+  version: 1.0.0
+tags:
+  - name: Auth
+    description: Проверка пользователя
+paths:
+  /auth/validate:
+    post:
+      tags:
+        - Auth
+      operationId: validate
+      summary: Проверяет пользователя и возвращает права доступа
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateRequest'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+        '401':
+          description: Неверные логин или пароль
+components:
+  schemas:
+    ValidateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+          example: "user123"
+          description: Логин пользователя
+        password:
+          type: string
+          minLength: 3
+          maxLength: 100
+          format: password
+          example: "qwerty123"
+          description: Пароль (минимум 3 символов)
+      required:
+        - username
+        - password
+    AuthResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          example: "user123"
+          description: Имя пользователя
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["ROLE_USER"]
+          description: Список ролей пользователя
+      required:
+        - userId
+        - roles
