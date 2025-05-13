@@ -4,38 +4,28 @@
 # MODULE_NAME - имя модуля
 # EXPOSE_PORT - порт для открытия командой EXPOSE (по умолчанию 8080)
 
-# Этап 1 - Кэширование зависимостей
-FROM eclipse-temurin:21-jdk-jammy AS cache
-
-ARG MODULE_NAME
-ARG USAGE_MODULE=${MODULE_NAME}
-WORKDIR /app
-COPY .mvn .mvn
-COPY mvnw .
-COPY pom.xml .
-COPY ${MODULE_NAME}/pom.xml ${MODULE_NAME}/pom.xml
-COPY ${USAGE_MODULE}/src/main/resources/*.yaml ${USAGE_MODULE}/src/main/resources/
-WORKDIR /app/${MODULE_NAME}
-RUN mkdir -p /root/.m2
-RUN /app/mvnw dependency:go-offline -B
-
-# Этап 2 - Сборка
+# Этап 1 - Сборка
 FROM eclipse-temurin:21-jdk-jammy AS builder
 
 ARG MODULE_NAME
 ARG USAGE_MODULE=${MODULE_NAME}
-COPY --from=cache /root/.m2 /root/.m2
+
 WORKDIR /app
 COPY .mvn .mvn
 COPY mvnw .
 COPY pom.xml .
 COPY ${MODULE_NAME}/pom.xml ${MODULE_NAME}/pom.xml
-COPY ${MODULE_NAME}/src ${MODULE_NAME}/src
 COPY ${USAGE_MODULE}/src/main/resources/*.yaml ${USAGE_MODULE}/src/main/resources/
+
+# кэширование зависимостей
 WORKDIR /app/${MODULE_NAME}
+RUN /app/mvnw dependency:go-offline -B
+
+# сборка
+COPY ${MODULE_NAME}/src src
 RUN /app/mvnw package -am -Dmaven.test.skip=true
 
-# Этап 3 - Образ для запуска приложения
+# Этап 2 - Образ для запуска приложения
 FROM eclipse-temurin:21-jre-jammy
 
 ARG MODULE_NAME
