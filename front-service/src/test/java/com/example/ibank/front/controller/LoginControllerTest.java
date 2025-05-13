@@ -9,6 +9,8 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 
 public class LoginControllerTest extends ControllerTest {
 
+    // URL для перехода в случае ошибки при логине
+    final String LOGIN_ERROR_URL = "/login?error";
     final String ERROR_INFO_XPATH = "//span[@class='errorInfo']";
 
     @Test
@@ -25,7 +27,7 @@ public class LoginControllerTest extends ControllerTest {
 
     @Test
     void login_afterError() throws Exception {
-        wtc.get().uri( "/login?error")
+        wtc.get().uri( LOGIN_ERROR_URL)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType( "text/html;charset=UTF-8")
@@ -53,7 +55,7 @@ public class LoginControllerTest extends ControllerTest {
     }
 
     @Test
-    void login_authUser() throws Exception {
+    void login_ok() throws Exception {
         wtc.mutateWith( csrf())
             .post().uri( "/login")
             .contentType( MediaType.APPLICATION_FORM_URLENCODED)
@@ -64,6 +66,21 @@ public class LoginControllerTest extends ControllerTest {
             .exchange()
             .expectStatus().isFound()
             .expectHeader().valueEquals( "Location", "/")
+        ;
+    }
+
+    @Test
+    void login_badPassword() throws Exception {
+        wtc.mutateWith( csrf())
+                .post().uri( "/login")
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "username", EXISTS_USER_NAME)
+                        .with( "password", EXISTS_USER_PASSWORD + "_bad")
+                )
+                .exchange()
+                .expectStatus().isFound()
+                .expectHeader().location( LOGIN_ERROR_URL)
         ;
     }
 

@@ -8,11 +8,13 @@
 FROM eclipse-temurin:21-jdk-jammy AS cache
 
 ARG MODULE_NAME
+ARG USAGE_MODULE=${MODULE_NAME}
 WORKDIR /app
 COPY .mvn .mvn
 COPY mvnw .
 COPY pom.xml .
 COPY ${MODULE_NAME}/pom.xml ${MODULE_NAME}/pom.xml
+COPY ${USAGE_MODULE}/src/main/resources/*.yaml ${USAGE_MODULE}/src/main/resources/
 WORKDIR /app/${MODULE_NAME}
 RUN mkdir -p /root/.m2
 RUN /app/mvnw dependency:go-offline -B
@@ -21,6 +23,7 @@ RUN /app/mvnw dependency:go-offline -B
 FROM eclipse-temurin:21-jdk-jammy AS builder
 
 ARG MODULE_NAME
+ARG USAGE_MODULE=${MODULE_NAME}
 COPY --from=cache /root/.m2 /root/.m2
 WORKDIR /app
 COPY .mvn .mvn
@@ -28,6 +31,7 @@ COPY mvnw .
 COPY pom.xml .
 COPY ${MODULE_NAME}/pom.xml ${MODULE_NAME}/pom.xml
 COPY ${MODULE_NAME}/src ${MODULE_NAME}/src
+COPY ${USAGE_MODULE}/src/main/resources/*.yaml ${USAGE_MODULE}/src/main/resources/
 WORKDIR /app/${MODULE_NAME}
 RUN /app/mvnw package -am -Dmaven.test.skip=true
 
