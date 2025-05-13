@@ -30,8 +30,13 @@
         <jib.version>3.4.0</jib.version>
         <lombok.version>1.18.36</lombok.version>
         <openapi-generator.version>7.5.0</openapi-generator.version>
+        <openapi.generator.version>7.5.0</openapi.generator.version>
         <spring-cloud.version>2024.0.1</spring-cloud.version>
         <testcontainers.version>1.20.6</testcontainers.version>
+
+        <module.base.package>${project.parent.groupId}.${module.base.name}</module.base.package>
+        <module.test.image>local/${project.parent.artifactId}-${project.artifactId}:test</module.test.image>
+        <openapi.spec.path>src/main/resources/api-spec.yaml</openapi.spec.path>
     </properties>
 
     <dependencyManagement>
@@ -86,7 +91,7 @@
                             <image>eclipse-temurin@sha256:ee09bfd4218b1296231588981fd1e4f74843ca585d5fd6a37bf6078e34c847c7</image>
                         </from>
                         <to>
-                            <image>${docker-test-image}</image>
+                            <image>${module.test.image}</image>
                         </to>
                         <allowInsecureRegistries>true</allowInsecureRegistries> <!-- Игнорировать отсутствие аутентификации -->
                         <container>
@@ -111,7 +116,7 @@
                                 <arguments>
                                     <argument>rmi</argument>
                                     <argument>-f</argument>
-                                    <argument>${docker-test-image}</argument>
+                                    <argument>${module.test.image}</argument>
                                 </arguments>
                                 <skip>${skipDockerClean}</skip> <!-- Опционально: отключение через -DskipDockerClean -->
                             </configuration>
@@ -134,6 +139,60 @@
                                 <sources>
                                     <source>${project.basedir}/../common-test/src/test/java</source>
                                 </sources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- генерация по OpenAPI спецификации -->
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi.generator.version}</version>
+                    <configuration>
+                        <!-- Общие настройки -->
+                        <typeMappings>
+                            <typeMapping>double=java.math.BigDecimal</typeMapping>
+                        </typeMappings>
+                        <configOptions>
+                            <reactive>true</reactive>
+                            <useSpringBoot3>true</useSpringBoot3>
+                            <useJakartaEe>true</useJakartaEe>
+                            <dateLibrary>java8</dateLibrary>
+                            <openApiNullable>false</openApiNullable>
+                        </configOptions>
+                    </configuration>
+                    <!-- Конфигурации для разных генераторов -->
+                    <executions>
+                        <execution>
+                            <id>spring-server-generator</id>
+                            <configuration>
+                                <generatorName>spring</generatorName>
+                                <inputSpec>${project.basedir}/${openapi.spec.path}</inputSpec>
+                                <output>${project.build.directory}/generated-sources/openapi</output>
+                                <modelPackage>${module.base.package}.model</modelPackage>
+                                <apiPackage>${module.base.package}.api</apiPackage>
+                                <invokerPackage>${module.base.package}</invokerPackage>
+                                <configOptions>
+                                    <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                    <requestMappingMode>controller</requestMappingMode>
+                                    <interfaceOnly>true</interfaceOnly>
+                                    <skipDefaultInterface>true</skipDefaultInterface>
+                                    <library>spring-boot</library>
+                                    <useTags>true</useTags>
+                                    <serializableModel>true</serializableModel>
+                                    <returnSuccessCode>true</returnSuccessCode>
+                                </configOptions>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>java-client-generator</id>
+                            <configuration>
+                                <generatorName>java</generatorName>
+                                <library>webclient</library>
+                                <output>${project.build.directory}/generated-sources</output>
+                                <configOptions>
+                                    <java8>true</java8>
+                                </configOptions>
                             </configuration>
                         </execution>
                     </executions>

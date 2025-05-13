@@ -13,7 +13,7 @@
     <description>Front UI</description>
 
     <properties>
-        <docker-test-image>local/${project.parent.artifactId}-${project.artifactId}:test</docker-test-image>
+        <module.base.name>front</module.base.name>
     </properties>
 
     <dependencies>
@@ -86,36 +86,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi-generator.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/../accounts-service/src/main/resources/api-spec.yaml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>webclient</library>
-                            <output>${project.build.directory}/generated-sources</output>
-                            <apiPackage>com.example.ibank.front.accounts.api</apiPackage>
-                            <modelPackage>com.example.ibank.front.accounts.model</modelPackage>
-                            <invokerPackage>com.example.ibank.front.accounts.invoker</invokerPackage>
-                            <configOptions>
-                                <java8>true</java8>
-                                <reactive>true</reactive>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <useJakartaEe>true</useJakartaEe>
-                                <dateLibrary>java8</dateLibrary>
-                                <openApiNullable>false</openApiNullable>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -148,6 +118,24 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>java-client-generator</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../accounts-service/${openapi.spec.path}</inputSpec>
+                            <apiPackage>${module.base.package}.accounts.api</apiPackage>
+                            <modelPackage>${module.base.package}.accounts.model</modelPackage>
+                            <invokerPackage>${module.base.package}.accounts.invoker</invokerPackage>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

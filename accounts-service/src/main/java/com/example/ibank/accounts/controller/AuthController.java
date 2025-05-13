@@ -1,8 +1,8 @@
 package com.example.ibank.accounts.controller;
 
 import com.example.ibank.accounts.api.AuthApi;
-import com.example.ibank.accounts.domain.ValidateRequest;
-import com.example.ibank.accounts.domain.AuthResponse;
+import com.example.ibank.accounts.model.ValidateRequest;
+import com.example.ibank.accounts.model.AuthResponse;
 
 import com.example.ibank.accounts.service.AuthService;
 

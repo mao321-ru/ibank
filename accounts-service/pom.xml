@@ -13,8 +13,7 @@
     <description>Accounts</description>
 
     <properties>
-        <docker-test-image>local/${project.parent.artifactId}-${project.artifactId}:test</docker-test-image>
-        <base-package>${project.parent.groupId}.accounts</base-package>
+        <module.base.name>accounts</module.base.name>
     </properties>
 
     <dependencies>
@@ -82,46 +81,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi-generator.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-spec.yaml</inputSpec>
-                            <generatorName>spring</generatorName>
-                            <output>${project.build.directory}/generated-sources/openapi</output>
-                            <modelPackage>com.example.ibank.accounts.domain</modelPackage>
-                            <apiPackage>com.example.ibank.accounts.api</apiPackage>
-                            <invokerPackage>com.example.ibank.accounts</invokerPackage>
-                            <ignoreFileOverride>.openapi-generator-java-sources.ignore</ignoreFileOverride>
-                            <typeMappings>
-                                <typeMapping>double=java.math.BigDecimal</typeMapping>
-                            </typeMappings>
-                            <configOptions>
-                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
-                                <requestMappingMode>controller</requestMappingMode>
-                                <interfaceOnly>true</interfaceOnly>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                                <library>spring-boot</library>
-                                <reactive>true</reactive>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <useJakartaEe>true</useJakartaEe>
-                                <useTags>true</useTags>
-                                <dateLibrary>java8</dateLibrary>
-                                <openApiNullable>false</openApiNullable>
-                                <serializableModel>true</serializableModel>
-                                <returnSuccessCode>true</returnSuccessCode>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -154,18 +113,16 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
+                        <id>spring-server-generator</id>
                         <goals>
-                            <goal>add-source</goal>
+                            <goal>generate</goal>
                         </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/openapi</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

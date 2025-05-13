@@ -1,7 +1,7 @@
 package com.example.ibank.accounts.service;
 
-import com.example.ibank.accounts.domain.ValidateRequest;
-import com.example.ibank.accounts.domain.AuthResponse;
+import com.example.ibank.accounts.model.ValidateRequest;
+import com.example.ibank.accounts.model.AuthResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
