@@ -4,7 +4,7 @@
 1. Externalized/Distributed Config: Spring Cloud Config (конфиги в локальном каталоге) (confsrv)
 2. Service Discovery: Eureka (eureka)
 3. Gateway API: Spring Cloud Gateway (gateway)
-4. Сервер авторизации микросервисов по OAuth 2.0: Keycloak
+4. Сервер авторизации микросервисов по OAuth 2.0: Keycloak (keycloak)
 5. БД: PostgreSQL (одна БД, отдельные независимые схемы на каждый сервис)
 
 Прикладные микросервисы:
