@@ -22,8 +22,16 @@ public class LoginController {
     ) {
         boolean isError = exchange.getRequest().getQueryParams().containsKey("error");
         log.debug( "login: isError: {}", isError);
-        model.addAttribute( "errorInfo", isError ? "Ошибка при проверке пользователя" : "");
-        return Mono.just( "login");
+        return exchange.getSession()
+            .doOnNext( ss -> {
+                boolean isErrorInfo = ss.getAttributes().containsKey( "errorInfo");
+                model.addAttribute(
+                    "errorInfo",
+                    isErrorInfo ? ss.getAttributes().get( "errorInfo") : null
+                );
+                if( isErrorInfo) ss.getAttributes().remove( "errorInfo");
+            })
+            .thenReturn( "login");
     }
 
     @GetMapping( "/signup")

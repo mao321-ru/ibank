@@ -1,6 +1,7 @@
 package com.example.ibank.front.config;
 
 import com.example.ibank.front.security.RestAuthManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +13,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler;
 import org.springframework.security.web.server.csrf.XorServerCsrfTokenRequestAttributeHandler;
 import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
@@ -21,6 +23,7 @@ import java.net.URI;
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
+@Slf4j
 public class SecurityConfig {
 
     @Bean
@@ -45,6 +48,18 @@ public class SecurityConfig {
             .formLogin( form -> form
                 .loginPage( "/login")
                 .authenticationManager( restAuthManager)
+                .authenticationFailureHandler( ( exchange, exception) -> {
+                    // стандартная переадресация при ошибке
+                    var resp = exchange.getExchange().getResponse();
+                    resp.getHeaders().setLocation( URI.create( "/login?error"));
+                    resp.setStatusCode( HttpStatus.FOUND);
+                    // передача детальной информации по ошибке для отображения на форме
+                    return exchange.getExchange().getSession()
+                        .doOnNext( ss -> {
+                            ss.getAttributes().put( "errorInfo", exception.getMessage());
+                        })
+                        .then( Mono.empty());
+                })
             )
             .logout( logout -> logout
                 .logoutUrl( "/logout")

@@ -5,6 +5,7 @@ import com.example.ibank.front.accounts.model.AuthResponse;
 import com.example.ibank.front.accounts.model.ValidateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -21,9 +22,6 @@ public class AuthService {
                 .username( username)
                 .password( password)
             )
-            .onErrorResume(e -> {
-                log.debug( "Error on validate for [{}]: {}", username, e.getMessage());
-                return Mono.empty();
-            });
+            .onErrorResume( e -> Mono.error( new BadCredentialsException( e.getMessage())));
     }
 }
