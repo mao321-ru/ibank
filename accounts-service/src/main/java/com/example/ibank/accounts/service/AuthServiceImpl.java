@@ -17,7 +17,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Mono<AuthResponse> validate( ValidateRequest request) {
-        log.error( "validate for: username: {}", request.getUsername());
+        log.debug( "validate for: username: {}", request.getUsername());
         // заглушка для успешной проверки user/user123
         return Mono.just(
                 new AuthResponse()

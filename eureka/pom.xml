@@ -45,6 +45,18 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <!-- подключаем без IntegrationTestBase, в котором используются отсутствующие
+                        в модуле зависимости -->
+                    <execution>
+                        <id>add-test-sources</id>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/../common-test/src/test/java/com/example/ibank/common/confsrv</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
