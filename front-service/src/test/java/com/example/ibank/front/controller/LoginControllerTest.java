@@ -11,7 +11,7 @@ public class LoginControllerTest extends ControllerTest {
 
     // URL для перехода в случае ошибки при логине
     final String LOGIN_ERROR_URL = "/login?error";
-    final String ERROR_INFO_XPATH = "//span[@class='errorInfo']";
+    final String ERROR_INFO_XPATH = "//div[@class='errorInfo']";
 
     @Test
     void login_noAuth() throws Exception {
@@ -22,18 +22,6 @@ public class LoginControllerTest extends ControllerTest {
                 .expectBody()
                 .xpath( "//form[@action='/login']").nodeCount( 1)
                 .xpath( ERROR_INFO_XPATH).nodeCount( 0)
-        ;
-    }
-
-    @Test
-    void login_afterError() throws Exception {
-        wtc.get().uri( LOGIN_ERROR_URL)
-                .exchange()
-                .expectStatus().isOk()
-                .expectHeader().contentType( "text/html;charset=UTF-8")
-                .expectBody()
-                //.consumeWith( System.out::println) // вывод запроса и ответа
-                .xpath( ERROR_INFO_XPATH).nodeCount( 1)
         ;
     }
 

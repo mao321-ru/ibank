@@ -4,6 +4,8 @@ eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
 # URL к Gateway для запросов из сервисов (если не задан, то определяется по регистрации gateway в eureka)
 gateway.url:
 
+keycloak.url: http://localhost:8954
+
 logging:
   level:
     com.example.ibank: DEBUG

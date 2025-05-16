@@ -1,1 +1,4 @@
+# Настройки для запуска сервисов в docker (через docker-compose.yml, а также через testcontainers в тестах)
+
 eureka.client.serviceUrl.defaultZone: http://eureka:8761/eureka/
+keycloak.url: http://keycloak:8080

@@ -1,2 +1,2 @@
-# Gateway по умолчанию при запуске сервиса вне docker
+# Настройки для запуска сервисов вне docker
 gateway.url: http://localhost:8880

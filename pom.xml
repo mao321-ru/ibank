@@ -33,6 +33,7 @@
         <openapi.generator.version>7.5.0</openapi.generator.version>
         <spring-cloud.version>2024.0.1</spring-cloud.version>
         <testcontainers.version>1.20.6</testcontainers.version>
+        <testcontainers-keycloak.version>3.4.0</testcontainers-keycloak.version>
 
         <module.base.package>${project.parent.groupId}.${module.base.name}</module.base.package>
         <module.test.image>local/${project.parent.artifactId}-${project.artifactId}:test</module.test.image>
@@ -123,7 +124,7 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!-- подключение исходников общих тестовых классов в модули -->
+                <!-- подключение исходников общих тестовых классов и ресурсов в модули -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
@@ -139,6 +140,20 @@
                                 <sources>
                                     <source>${project.basedir}/../common-test/src/test/java</source>
                                 </sources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>add-test-resources</id>
+                            <phase>generate-test-resources</phase>
+                            <goals>
+                                <goal>add-test-resource</goal>
+                            </goals>
+                            <configuration>
+                                <resources>
+                                    <resource>
+                                        <directory>${project.basedir}/../common-test/src/test/resources</directory>
+                                    </resource>
+                                </resources>
                             </configuration>
                         </execution>
                     </executions>
@@ -200,5 +215,33 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <!-- автоподключение зависимостей для общих тестовых классов из common-test -->
+        <profile>
+            <id>common-test-deps</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-test</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.testcontainers</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.github.dasniko</groupId>
+                    <artifactId>testcontainers-keycloak</artifactId>
+                    <version>${testcontainers-keycloak.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>

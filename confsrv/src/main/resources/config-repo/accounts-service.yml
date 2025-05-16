@@ -1,0 +1,10 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          paysrv:
+            client-id: paysrv
+      resourceserver:
+        jwt:
+          issuer-uri: ${keycloak.url}/realms/dev-realm

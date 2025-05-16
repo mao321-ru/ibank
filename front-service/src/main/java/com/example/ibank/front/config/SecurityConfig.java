@@ -49,6 +49,7 @@ public class SecurityConfig {
                 .loginPage( "/login")
                 .authenticationManager( restAuthManager)
                 .authenticationFailureHandler( ( exchange, exception) -> {
+                    log.debug( "auth error: {}", exception.getMessage());
                     // стандартная переадресация при ошибке
                     var resp = exchange.getExchange().getResponse();
                     resp.getHeaders().setLocation( URI.create( "/login?error"));
