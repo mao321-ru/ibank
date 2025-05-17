@@ -7,4 +7,6 @@ spring:
             client-id: paysrv
       resourceserver:
         jwt:
-          issuer-uri: ${keycloak.url}/realms/dev-realm
+          issuer-uri: ${keycloak.issuer.url}/realms/${keycloak.realm}
+          # явно задаем URL т.к. host отличается от указанного в токене значения issuer
+          jwk-set-uri: ${keycloak.url}/realms/${keycloak.realm}/protocol/openid-connect/certs

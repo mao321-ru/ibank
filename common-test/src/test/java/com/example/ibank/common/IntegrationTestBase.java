@@ -20,6 +20,8 @@ import java.util.function.BiConsumer;
 // использование @AutoConfigureWebTestClient приводит к ошибке в getAccessToken (см. ниже)
 public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv implements TestData {
 
+    static final String keycloakTestRealm = "dev-realm";
+
     private static final Logger log = LoggerFactory.getLogger( IntegrationTestBase.class);
 
     protected enum Container {
@@ -45,10 +47,11 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
             keycloak = new KeycloakContainer( "quay.io/keycloak/keycloak:26.1.3")
                 .withNetwork(network)
                 .withNetworkAliases( "keycloak")
-                .withRealmImportFile("/keycloak/paysrv-test.realm.json")
+                .withRealmImportFile( "/keycloak/" + keycloakTestRealm + ".realm.json")
             ;
             keycloak.start();
         }
+        final String keycloakIssuerUrl =  keycloak != null ? keycloak.getAuthServerUrl() : "";
 
         // создание и запуск дополнительного контейнера если он указан в списке addonContainers
         BiConsumer<Container,Integer> startIfUsed = ( cntType, port) -> {
@@ -62,6 +65,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                         .withExposedPorts( port)
                         .withNetwork(network)
                         .withNetworkAliases( cntName)
+                        .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
                         .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
                         .withEnv( "SPRING_PROFILES_ACTIVE", "docker")
                         //.withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("TC-LOGS")))
@@ -82,9 +86,9 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     @DynamicPropertySource
     static void registerDynamicProperties(DynamicPropertyRegistry registry) {
         if( keycloak != null) {
-            registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () ->
-                    keycloak.getAuthServerUrl() + "/realms/paysrv-test"
-            );
+            registry.add("keycloak.realm", () -> keycloakTestRealm);
+            registry.add("keycloak.url", () -> keycloak.getAuthServerUrl());
+            registry.add("keycloak.issuer.url", () -> keycloak.getAuthServerUrl());
         }
         if( containers.containsKey( Container.EUREKA)) {
             registry.add("eureka.client.serviceUrl.defaultZone", () ->
@@ -105,10 +109,11 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     protected String getAccessToken( String clientId) {
         // вывод HTTP-запроса и ответа к keycloak
         final boolean isDebug = false;
+        final String clientSecret = "klflKSD2KZQ2VAPMFO2KJFeQdOLRmZoY";
 
         String requestBody = "grant_type=client_credentials" +
             "&client_id=" + clientId +
-            "&client_secret=**********"
+            "&client_secret=" + clientSecret
         ;
         // при одновременном использовании WebTestClient и @AutoConfigureWebTestClient запрос к keycloak завершался
         // ошибкой 401 UNAUTHORIZED, поэтому стал использовать WebClient с "ручным" логированием запроса
@@ -135,7 +140,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
             .build();
 
         String jsonText = webClient.post()
-            .uri(keycloak.getAuthServerUrl() + "/realms/paysrv-test/protocol/openid-connect/token")
+            .uri(keycloak.getAuthServerUrl() + "/realms/" + keycloakTestRealm + "/protocol/openid-connect/token")
             .header("Content-Type", "application/x-www-form-urlencoded")
             .bodyValue( requestBody)
             .exchangeToMono(clientResponse -> {

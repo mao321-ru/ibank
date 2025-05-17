@@ -9,6 +9,7 @@ import com.example.ibank.accounts.service.AuthService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.auth.InvalidCredentialsException;
 
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController implements AuthApi {
 
     private final AuthService authService;
@@ -33,6 +35,7 @@ public class AuthController implements AuthApi {
         Mono<ValidateRequest> validateRequest,
         ServerWebExchange exchange
     ) {
+        log.debug( "validate: ...");
         return validateRequest
             .flatMap( authService::validate)
             .map(ResponseEntity::ok)

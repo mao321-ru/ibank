@@ -76,7 +76,8 @@ services:
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      # при использовании localhost примерно через минуту приходилось повторно авторизоваться в web-интерфейсе
+      # при использовании localhost примерно через минуту приходилось повторно авторизоваться
+      # в web-интерфейсе (указанное значение используется для подписи токена в атрибуте iss)
       KC_HOSTNAME: host.docker.internal
       KC_HTTP_ENABLED: "true"
       # Включаем импорт реалма при старте

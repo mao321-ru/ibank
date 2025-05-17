@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 @Validated
 public class MainController {
 
-    @GetMapping( "/main")
+    @GetMapping( path = { "/", "/main" })
     Mono<String> mainPage(
         ServerWebExchange exchange,
         Model model

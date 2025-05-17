@@ -11,8 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class AccountsApiConfig {
 
     @Bean
-    ApiClient apiClient( WebClient webClient) {
-        ApiClient apiClient = new ApiClient( webClient);
+    ApiClient apiClient( WebClient authWebClient) {
+        ApiClient apiClient = new ApiClient( authWebClient);
         apiClient.setBasePath( "accounts");
         return apiClient;
     }

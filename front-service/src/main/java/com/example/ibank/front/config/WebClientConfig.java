@@ -33,11 +33,6 @@ public class WebClientConfig {
             });
     }
 
-    @Bean
-    public WebClient webClient( WebClient.Builder builder) {
-        return builder.build();
-    }
-
     private String getGatewayUrl( DiscoveryClient discoveryClient) {
         return Optional.ofNullable( gatewayUrl)
             .filter( s -> ! s.isEmpty())
