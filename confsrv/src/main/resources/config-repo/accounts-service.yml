@@ -3,8 +3,8 @@ spring:
     oauth2:
       client:
         registration:
-          paysrv:
-            client-id: paysrv
+          ibank-service:
+            client-id: ${spring.application.name}
       resourceserver:
         jwt:
           issuer-uri: ${keycloak.issuer.url}/realms/${keycloak.realm}

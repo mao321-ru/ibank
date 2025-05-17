@@ -81,7 +81,7 @@ services:
       KC_HOSTNAME: host.docker.internal
       KC_HTTP_ENABLED: "true"
       # Включаем импорт реалма при старте
-      KC_IMPORT: /opt/keycloak/data/import/dev-realm.json
+      KC_IMPORT: /opt/keycloak/data/import/ibank.realm.json
     command: ["start-dev", "--hostname-strict=false", "--import-realm"]
     ports:
       - "8954:8080"

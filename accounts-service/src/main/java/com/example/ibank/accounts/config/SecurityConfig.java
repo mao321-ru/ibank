@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
 
-    @Value( "${spring.security.oauth2.client.registration.paysrv.client-id}")
+    @Value( "${spring.security.oauth2.client.registration.ibank-service.client-id}")
     private String serviceRegistrationId;
 
     // Роль "Любая роль" - добавляется пользователю если у него есть какая-либо роль в сервисе

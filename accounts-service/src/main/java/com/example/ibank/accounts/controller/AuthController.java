@@ -30,7 +30,7 @@ public class AuthController implements AuthApi {
     private final AuthService authService;
 
     @Override
-    @PreAuthorize( "hasRole('GET_BALANCE')")
+    @PreAuthorize( "hasRole('AUTH')")
     public Mono<ResponseEntity<AuthResponse>> validate(
         Mono<ValidateRequest> validateRequest,
         ServerWebExchange exchange

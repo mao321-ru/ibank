@@ -15,8 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class OAuth2ClientConfig {
 
-    @Value( "${spring.security.oauth2.client.registration.intershop.client-id}")
-    private String clientRegistrationId;
+    private final String clientRegistrationId = "ibank-service";
 
     @Bean
     ReactiveOAuth2AuthorizedClientManager auth2AuthorizedClientManager(

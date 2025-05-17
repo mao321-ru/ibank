@@ -20,7 +20,8 @@ import java.util.function.BiConsumer;
 // использование @AutoConfigureWebTestClient приводит к ошибке в getAccessToken (см. ниже)
 public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv implements TestData {
 
-    static final String keycloakTestRealm = "dev-realm";
+    static final String keycloakTestRealm = "ibank";
+    static final String clientTestSecretTail = "-TestSecret";
 
     private static final Logger log = LoggerFactory.getLogger( IntegrationTestBase.class);
 
@@ -109,7 +110,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     protected String getAccessToken( String clientId) {
         // вывод HTTP-запроса и ответа к keycloak
         final boolean isDebug = false;
-        final String clientSecret = "klflKSD2KZQ2VAPMFO2KJFeQdOLRmZoY";
+        final String clientSecret = clientId + clientTestSecretTail;
 
         String requestBody = "grant_type=client_credentials" +
             "&client_id=" + clientId +

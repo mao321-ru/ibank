@@ -8,9 +8,9 @@ spring:
             user-info-uri: ${keycloak.url}/realms/${keycloak.realm}/protocol/openid-connect/userinfo
             jwk-set-uri: ${keycloak.url}/realms/${keycloak.realm}/protocol/openid-connect/certs
         registration:
-          intershop: # Описание клиента OAuth2
+          ibank-service:
             provider: keycloak
             authorizationGrantType: client_credentials
-            client-id: intershop
-            client-secret: klflKSD2KZQ2VAPMFO2KJFeQdOLRmZoY
-            clientAuthenticationMethod: client_secret_post # Способ передачи секрета
+            client-id: ${spring.application.name}
+            client-secret: ${spring.application.name}-Secret
+            clientAuthenticationMethod: client_secret_post

@@ -13,7 +13,7 @@ public class AuthControllerTest extends ControllerTest {
     @Test
     void validate_ok() throws Exception {
         wtc.post().uri( "/auth/validate")
-            .headers( headers -> headers.setBearerAuth( getAccessToken( "intershop")))
+            .headers( headers -> headers.setBearerAuth( getAccessToken( "front-service")))
             .contentType( MediaType.APPLICATION_JSON)
             .bodyValue(
                 """
