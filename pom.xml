@@ -171,6 +171,21 @@
                                 </sources>
                             </configuration>
                         </execution>
+                        <!-- Сервис ресурсов, предоставляющий API для других сервисов -->
+                        <execution>
+                            <id>add-shared-resourceserver</id>
+                            <phase>generate-sources</phase>
+                            <!-- для подключения в модуле нужно указать goal
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            -->
+                            <configuration>
+                                <sources>
+                                    <source>${project.basedir}/../shared/resourceserver/src/main/java</source>
+                                </sources>
+                            </configuration>
+                        </execution>
                     </executions>
                 </plugin>
                 <!-- генерация по OpenAPI спецификации -->
