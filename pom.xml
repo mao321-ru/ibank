@@ -165,6 +165,10 @@
                     <version>${openapi.generator.version}</version>
                     <configuration>
                         <!-- Общие настройки -->
+                        <generateApiTests>false</generateApiTests>
+                        <generateModelTests>false</generateModelTests>
+                        <generateApiDocumentation>false</generateApiDocumentation>
+                        <generateModelDocumentation>false</generateModelDocumentation>
                         <typeMappings>
                             <typeMapping>double=java.math.BigDecimal</typeMapping>
                         </typeMappings>
