@@ -156,6 +156,21 @@
                                 </resources>
                             </configuration>
                         </execution>
+                        <!-- Сервис-клиент, выполняющий запросы к другим сервисам через Gateway -->
+                        <execution>
+                            <id>add-shared-client</id>
+                            <phase>generate-sources</phase>
+                            <!-- для подключения в модуле нужно указать goal
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            -->
+                            <configuration>
+                                <sources>
+                                    <source>${project.basedir}/../shared/client/src/main/java</source>
+                                </sources>
+                            </configuration>
+                        </execution>
                     </executions>
                 </plugin>
                 <!-- генерация по OpenAPI спецификации -->

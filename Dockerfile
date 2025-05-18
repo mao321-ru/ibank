@@ -22,6 +22,7 @@ WORKDIR /app/${MODULE_NAME}
 RUN /app/mvnw dependency:go-offline -B
 
 # сборка
+COPY shared ../shared
 COPY ${MODULE_NAME}/src src
 RUN /app/mvnw package -am -Dmaven.test.skip=true
 
