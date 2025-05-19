@@ -79,12 +79,16 @@ services:
       # при использовании localhost примерно через минуту приходилось повторно авторизоваться
       # в web-интерфейсе (указанное значение используется для подписи токена в атрибуте iss)
       KC_HOSTNAME: host.docker.internal
+      # порт в контейнере должен совпадать с портом, открытым на localhost т.к. порт фактического
+      # подключения попадает в iss токена и в случае разных портов будет разный iss и ошибка
+      # при авторизации по одному из токенов (явно зафиксировать порт для iss не удалось)
+      KC_HTTP_PORT: 8954
       KC_HTTP_ENABLED: "true"
       # Включаем импорт реалма при старте
       KC_IMPORT: /opt/keycloak/data/import/ibank.realm.json
     command: ["start-dev", "--hostname-strict=false", "--import-realm"]
     ports:
-      - "8954:8080"
+      - "8954:8954"
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import
 

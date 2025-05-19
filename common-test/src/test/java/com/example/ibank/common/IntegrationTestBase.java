@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import reactor.core.publisher.Mono;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -33,7 +34,10 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
 
     protected static EnumMap<Container,GenericContainer<?>> containers = new EnumMap<>( Container.class);
 
+    protected static final int keycloakKcHttpPort = 8954;
     protected static KeycloakContainer keycloak;
+    protected static String  keycloakUrl;
+    protected static String  keycloakIssuerUrl;
 
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
     protected static void startContainers(
@@ -47,12 +51,20 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
         if( addonContainers.contains( Container.GATEWAY)) {
             keycloak = new KeycloakContainer( "quay.io/keycloak/keycloak:26.1.3")
                 .withNetwork(network)
+                // явно задаем порт запуска keycloak в контейнере вместо 8080
+                .withEnv( "KC_HTTP_PORT", Integer.toString( keycloakKcHttpPort))
+                // открываем явно заданный порт вместо 8080 + стандартный порт healthcheck
+                .withExposedPorts( keycloakKcHttpPort, 9000)
                 .withNetworkAliases( "keycloak")
                 .withRealmImportFile( "/keycloak/" + keycloakTestRealm + ".realm.json")
             ;
             keycloak.start();
+            // такой вариант не сработает при получении сервисом в контейнере токена для авторизации на другом
+            // сервисе в контейнере (т.к. будет другой iss) - нужно будет добиваться идентичности iss
+            keycloakUrl = "http://localhost:" + keycloak.getMappedPort( keycloakKcHttpPort);
+            keycloakIssuerUrl = "http://localhost:" + keycloak.getMappedPort( keycloakKcHttpPort);
+            log.info( "keycloakIssuerUrl: {}", keycloakIssuerUrl);
         }
-        final String keycloakIssuerUrl =  keycloak != null ? keycloak.getAuthServerUrl() : "";
 
         // создание и запуск дополнительного контейнера если он указан в списке addonContainers
         BiConsumer<Container,Integer> startIfUsed = ( cntType, port) -> {
@@ -69,7 +81,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                         .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
                         .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
                         .withEnv( "SPRING_PROFILES_ACTIVE", "docker")
-                        //.withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("TC-LOGS")))
+                        //.withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("T^C-LOGS")))
                         .waitingFor( Wait.forHttp("/actuator/health"))
                 );
                 containers.get( cntType).start();
@@ -88,8 +100,8 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     static void registerDynamicProperties(DynamicPropertyRegistry registry) {
         if( keycloak != null) {
             registry.add("keycloak.realm", () -> keycloakTestRealm);
-            registry.add("keycloak.url", () -> keycloak.getAuthServerUrl());
-            registry.add("keycloak.issuer.url", () -> keycloak.getAuthServerUrl());
+            registry.add("keycloak.url", () -> keycloakUrl);
+            registry.add("keycloak.issuer.url", () -> keycloakIssuerUrl);
         }
         if( containers.containsKey( Container.EUREKA)) {
             registry.add("eureka.client.serviceUrl.defaultZone", () ->
@@ -141,7 +153,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
             .build();
 
         String jsonText = webClient.post()
-            .uri(keycloak.getAuthServerUrl() + "/realms/" + keycloakTestRealm + "/protocol/openid-connect/token")
+            .uri(keycloakUrl + "/realms/" + keycloakTestRealm + "/protocol/openid-connect/token")
             .header("Content-Type", "application/x-www-form-urlencoded")
             .bodyValue( requestBody)
             .exchangeToMono(clientResponse -> {
