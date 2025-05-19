@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Выход из Интернет-банк</title>
+</head>
+<body>
+<div style="display:flex; justify-content:center;">
+    <div style="display:grid; grid-template-columns: repeat(1, 1fr); gap: 20px;">
+        <div>
+            <form th:action="${'/logout'}" method="post">
+                <h3>Выход из Интернет-банк</h3>
+                <button type="submit">Выйти</button>
+            </form>
+        </div>
+        <div>
+            <a th:href="@{/main}">
+                <b>Вернуться на главную страницу</b>
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

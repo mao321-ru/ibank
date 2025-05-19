@@ -43,4 +43,13 @@ public class LoginController {
         return Mono.just( "signup");
     }
 
+    @GetMapping( "/logout")
+    Mono<String> logout(
+            ServerWebExchange exchange,
+            Model model
+    ) {
+        log.debug( "logout:");
+        return Mono.just( "logout");
+    }
+
 }

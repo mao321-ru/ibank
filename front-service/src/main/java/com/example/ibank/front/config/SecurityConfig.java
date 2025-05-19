@@ -69,9 +69,9 @@ public class SecurityConfig {
                         .flatMap( WebSession::invalidate) // удаляем сессию
                         .then( Mono.fromRunnable(() -> {
                             var resp = exchange.getExchange().getResponse();
-                            // переход на главную страницу после выхода
+                            // переход на страницу ввода логина/пароля после выхода
                             resp.setStatusCode( HttpStatus.FOUND);
-                            resp.getHeaders().setLocation( URI.create( "/"));
+                            resp.getHeaders().setLocation( URI.create( "/login"));
                         }))
                 )
             )
