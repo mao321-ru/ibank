@@ -5,7 +5,7 @@
 2. Service Discovery: Eureka (eureka)
 3. Gateway API: Spring Cloud Gateway (gateway)
 4. Сервер авторизации микросервисов по OAuth 2.0: Keycloak (keycloak)
-5. БД: PostgreSQL (одна БД, отдельные независимые схемы на каждый сервис)
+5. БД: PostgreSQL (одна БД, отдельные независимые схемы на каждый сервис) (postgres)
 
 Прикладные микросервисы:
 1. фронта (Front UI) (front-service);

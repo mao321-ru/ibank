@@ -7,8 +7,6 @@ gateway.url:
 # realm с настройками авторизации сервисов (импортируется через KC_IMPORT в docker-compose.yml)
 keycloak.realm: ibank
 
-keycloak.url: http://localhost:8954
-
 logging:
   level:
     com.example.ibank: DEBUG

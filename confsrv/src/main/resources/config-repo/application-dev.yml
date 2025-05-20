@@ -1,2 +1,12 @@
 # Настройки для запуска сервисов вне docker
+
 gateway.url: http://localhost:8880
+
+keycloak.url: http://localhost:8954
+
+# Значение в поле iss для проверки токена (фиксируется за счет KC_HOSTNAME в docker-compose.yml,
+# предполагается что keycloak запущен из docker)
+keycloak.issuer.url: http://host.docker.internal:8954
+
+# URL по умолчанию для подключения к БД сервиса
+spring.r2dbc.url: r2dbc:postgresql://localhost:8955/${service.basename}_ibd

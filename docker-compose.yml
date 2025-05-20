@@ -92,6 +92,28 @@ services:
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import
 
+  postgres:
+    image: postgres:17.2-alpine3.20
+    restart: always
+    # set shared memory limit (reason: https://hub.docker.com/_/postgres)
+    shm_size: 128mb
+    ports:
+      #- "8932:5432"
+      - "8955:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      # run scripts for create roles and databases
+      - ./postgres/init:/docker-entrypoint-initdb.d
+      #- ibank-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   front-service:
     build:
       context: .
@@ -135,6 +157,8 @@ services:
         condition: service_healthy
       eureka:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
@@ -156,3 +180,5 @@ services:
         condition: service_healthy
       accounts-service:
         condition: service_healthy
+#volumes:
+#  ibank-data:

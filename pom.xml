@@ -34,6 +34,8 @@
         <spring-cloud.version>2024.0.1</spring-cloud.version>
         <testcontainers.version>1.20.6</testcontainers.version>
         <testcontainers-keycloak.version>3.4.0</testcontainers-keycloak.version>
+        <springdoc-openapi-starter-webflux-api.version>2.5.0</springdoc-openapi-starter-webflux-api.version>
+        <r2dbc-postgresql.version>1.0.7.RELEASE</r2dbc-postgresql.version>
 
         <module.base.package>${project.parent.groupId}.${module.base.name}</module.base.package>
         <module.test.image>local/${project.parent.artifactId}-${project.artifactId}:test</module.test.image>
@@ -56,6 +58,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- OpenAPI server generation -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webflux-api</artifactId>
+                <version>${springdoc-openapi-starter-webflux-api.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -69,6 +78,7 @@
                         <executable>true</executable>
                     </configuration>
                 </plugin>
+
                 <!-- JIB для сборки Docker-образа -->
                 <plugin>
                     <groupId>com.google.cloud.tools</groupId>
@@ -100,6 +110,7 @@
                         </container>
                     </configuration>
                 </plugin>
+
                 <!-- для удаления Docker-образа -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -124,6 +135,7 @@
                         </execution>
                     </executions>
                 </plugin>
+
                 <!-- подключение исходников общих тестовых классов и ресурсов в модули -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -188,6 +200,7 @@
                         </execution>
                     </executions>
                 </plugin>
+
                 <!-- генерация по OpenAPI спецификации -->
                 <plugin>
                     <groupId>org.openapitools</groupId>

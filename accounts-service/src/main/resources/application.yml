@@ -5,4 +5,6 @@ spring.profiles.active: dev
 # настраиваемые профили согласно функционалу сервиса (из Spring Cloud Config)
 spring:
   profiles:
-    include: resourceserver
+    include:
+      - resourceserver
+      - postgres
