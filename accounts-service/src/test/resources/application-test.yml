@@ -4,9 +4,6 @@ logging:
     #org.springframework: DEBUG
     #io.r2dbc: DEBUG # и добавим больше деталей (не включать в настоящем приложении)
 
-# временно, нужно будет удалить
-spring.r2dbc.url: r2dbc:postgresql://localhost:8955/${service.basename}_ibd
-
 #spring:
 #  # Run SQL script to load test data
 #  sql.init:

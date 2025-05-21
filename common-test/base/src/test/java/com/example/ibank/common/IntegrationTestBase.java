@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.utility.MountableFile;
 import reactor.core.publisher.Mono;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -29,6 +31,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     protected enum Container {
         EUREKA,
         GATEWAY,
+        POSTGRES,
         ACCOUNTS_SERVICE
     };
 
@@ -38,6 +41,8 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     protected static KeycloakContainer keycloak;
     protected static String  keycloakUrl;
     protected static String  keycloakIssuerUrl;
+
+    protected static PostgreSQLContainer postgres;
 
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
     protected static void startContainers(
@@ -64,6 +69,31 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
             keycloakUrl = "http://localhost:" + keycloak.getMappedPort( keycloakKcHttpPort);
             keycloakIssuerUrl = "http://localhost:" + keycloak.getMappedPort( keycloakKcHttpPort);
             log.info( "keycloakIssuerUrl: {}", keycloakIssuerUrl);
+        }
+
+        // всегда создаем postgres если указан явно либо есть использующие его сервисы
+        if(
+            addonContainers.contains( Container.POSTGRES)
+            || addonContainers.contains( Container.ACCOUNTS_SERVICE)
+        ) {
+            postgres = (PostgreSQLContainer)
+                new PostgreSQLContainer( "postgres:17.2-alpine3.20")
+                        .withUsername( "postgres")
+                        .withPassword( "postgres")
+                        .withNetwork( network)
+                        .withNetworkAliases( "postgres")
+                        .withCopyFileToContainer(
+                                MountableFile.forHostPath( "../postgres/init/"), "/docker-entrypoint-initdb.d/"
+                        )
+                // так тоже можно (найденный файлы будут добавлены)
+                //.withCopyFileToContainer(
+                //    //MountableFile.forClasspathResource( "/db/init/accounts_ibd.sql"), "/docker-entrypoint-initdb.d/"
+                //    MountableFile.forClasspathResource( "/db/init/"), "/docker-entrypoint-initdb.d/"
+                //)
+                // логирование для контейнера
+                //.withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger("T^C-LOGS")))
+            ;
+            postgres.start();
         }
 
         // создание и запуск дополнительного контейнера если он указан в списке addonContainers

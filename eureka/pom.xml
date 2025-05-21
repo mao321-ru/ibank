@@ -52,7 +52,7 @@
                         <id>add-test-sources</id>
                         <configuration>
                             <sources>
-                                <source>${project.basedir}/../common-test/src/test/java/com/example/ibank/common/confsrv</source>
+                                <source>${project.basedir}/../common-test/base/src/test/java/com/example/ibank/common/confsrv</source>
                             </sources>
                         </configuration>
                     </execution>

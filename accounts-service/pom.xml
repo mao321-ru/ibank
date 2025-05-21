@@ -79,6 +79,10 @@
 
         <!-- PostgreSQL with Testcontainers support -->
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>r2dbc-postgresql</artifactId>
             <version>${r2dbc-postgresql.version}</version>
@@ -137,6 +141,18 @@
                         <id>add-shared-resourceserver</id>
                         <goals>
                             <goal>add-source</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>add-test-postgres-sources</id>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>add-test-postgres-resources</id>
+                        <goals>
+                            <goal>add-test-resource</goal>
                         </goals>
                     </execution>
                 </executions>

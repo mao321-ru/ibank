@@ -136,12 +136,13 @@
                     </executions>
                 </plugin>
 
-                <!-- подключение исходников общих тестовых классов и ресурсов в модули -->
+                <!-- подключение исходников общих классов и ресурсов в модули -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>3.3.0</version>
                     <executions>
+                        <!-- общие тестовые классы и ресурсы -->
                         <execution>
                             <id>add-test-sources</id>
                             <phase>generate-test-sources</phase>
@@ -150,7 +151,7 @@
                             </goals>
                             <configuration>
                                 <sources>
-                                    <source>${project.basedir}/../common-test/src/test/java</source>
+                                    <source>${project.basedir}/../common-test/base/src/test/java</source>
                                 </sources>
                             </configuration>
                         </execution>
@@ -163,7 +164,38 @@
                             <configuration>
                                 <resources>
                                     <resource>
-                                        <directory>${project.basedir}/../common-test/src/test/resources</directory>
+                                        <directory>${project.basedir}/../common-test/base/src/test/resources</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                        <!-- для использования контейнера PostgreSQL в тестах -->
+                        <execution>
+                            <id>add-test-postgres-sources</id>
+                            <phase>generate-test-sources</phase>
+                            <!-- для подключения в модуле нужно указать goal
+                            <goals>
+                                <goal>add-test-source</goal>
+                            </goals>
+                            -->
+                            <configuration>
+                                <sources>
+                                    <source>${project.basedir}/../common-test/postgres/src/test/java</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>add-test-postgres-resources</id>
+                            <phase>generate-test-resources</phase>
+                            <!-- для подключения в модуле нужно указать goal
+                            <goals>
+                                <goal>add-test-resource</goal>
+                            </goals>
+                            -->
+                            <configuration>
+                                <resources>
+                                    <resource>
+                                        <directory>${project.basedir}/../common-test/postgres/src/test/resources</directory>
                                     </resource>
                                 </resources>
                             </configuration>
@@ -279,6 +311,11 @@
                 <dependency>
                     <groupId>org.testcontainers</groupId>
                     <artifactId>junit-jupiter</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.testcontainers</groupId>
+                    <artifactId>postgresql</artifactId>
                     <scope>test</scope>
                 </dependency>
                 <dependency>
