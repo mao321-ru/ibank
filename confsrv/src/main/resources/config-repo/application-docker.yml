@@ -8,5 +8,6 @@ keycloak.url: http://keycloak:8954
 # совпадает с заданным KC_HOSTNAME в docker-compose.yml, которое попадает в поле iss токена
 keycloak.issuer.url: http://host.docker.internal:8954
 
-# URL по умолчанию для подключения к БД сервиса
-spring.r2dbc.url: r2dbc:postgresql://postgres:5432/${service.basename}_ibd
+# Хост и порт для подключения к PostgreSQL
+postgres_host: postgres
+postgres_port: 5432

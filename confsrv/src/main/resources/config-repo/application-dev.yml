@@ -8,5 +8,6 @@ keycloak.url: http://localhost:8954
 # предполагается что keycloak запущен из docker)
 keycloak.issuer.url: http://host.docker.internal:8954
 
-# URL по умолчанию для подключения к БД сервиса
-spring.r2dbc.url: r2dbc:postgresql://localhost:8955/${service.basename}_ibd
+# Хост и порт для подключения к PostgreSQL
+postgres_host: localhost
+postgres_port: 8955

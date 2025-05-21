@@ -80,6 +80,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                 new PostgreSQLContainer( "postgres:17.2-alpine3.20")
                         .withUsername( "postgres")
                         .withPassword( "postgres")
+                        .withDatabaseName( "unused_db")
                         .withNetwork( network)
                         .withNetworkAliases( "postgres")
                         .withCopyFileToContainer(

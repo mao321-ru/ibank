@@ -1,6 +1,9 @@
-# в более точном профиле нужно задать spring.r2dbc.url для исключения ошибки
+# Настройки для сервиса, использующего PostgreSQL
+
+# В зависимости от сетевых настроек должены быть заданы postgres_host и postgres_port
 spring:
   r2dbc:
+    url: r2dbc:postgresql://${postgres_host}:${postgres_port}/${service.basename}_ibd
     username: ${service.basename}_srv
     password: ${service.basename}_srv
 
@@ -11,13 +14,13 @@ spring:
     # Вероятно исправлено в Reactor Core 3.4.14 согласно https://github.com/r2dbc/r2dbc-pool/issues/144,
     # но Spring на данный момент не совместим с этой версией (возникает ошибка после запуска)
     #
-#    pool:
-#      enabled: true                               # Включение пула соединений
-#      initial-size: 10                            # Начальное количество соединений в пуле
-#      max-size: 50                                # Максимальное количество соединений
-#      max-idle-time: 30s                          # Время бездействия соединения перед закрытием
-#      max-life-time: 10m                          # Максимальное время жизни соединения
-#      validation-query: SELECT 1                  # SQL-запрос для проверки работоспособности соединения
+    pool:
+      enabled: true                               # Включение пула соединений
+      initial-size: 10                            # Начальное количество соединений в пуле
+      max-size: 50                                # Максимальное количество соединений
+      max-idle-time: 30s                          # Время бездействия соединения перед закрытием
+      max-life-time: 10m                          # Максимальное время жизни соединения
+      validation-query: SELECT 1                  # SQL-запрос для проверки работоспособности соединения
 
   # развертывание схемы
   sql.init:
