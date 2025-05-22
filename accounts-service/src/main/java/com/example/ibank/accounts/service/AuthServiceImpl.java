@@ -23,12 +23,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Mono<AuthResponse> validate( ValidateRequest request) {
-        log.debug( "validate for: username: {}", request.getUsername());
-        return repo.findByLogin( request.getUsername())
+        log.debug( "validate for: login: {}", request.getLogin());
+        return repo.findByLogin( request.getLogin())
             .doOnNext( u -> log.trace( "found userId: {}", u.getId()))
             .filter( u -> passwordEncoder.matches( request.getPassword(), u.getPasswordHash()))
             .map( u -> new AuthResponse()
-                .userId( u.getLogin())
+                .login( u.getLogin())
                 .roles( List.of())
             )
             .switchIfEmpty( Mono.error( new IllegalArgumentException( "Invalid username or password")))

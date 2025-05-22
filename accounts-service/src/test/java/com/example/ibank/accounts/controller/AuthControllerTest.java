@@ -18,16 +18,16 @@ public class AuthControllerTest extends ControllerTest {
             .bodyValue(
                 """
                 {
-                    "username": "%s",
+                    "login": "%s",
                     "password": "%s"
                 }
-                """.formatted( EXISTS_USER_NAME, EXISTS_USER_PASSWORD)
+                """.formatted( EXISTS_USER_LOGIN, EXISTS_USER_PASSWORD)
             )
             .exchange()
             .expectStatus().isOk()
             .expectBody()
             //.consumeWith( System.out::println) // вывод запроса и ответа
-            .jsonPath( "$.userId").isEqualTo( EXISTS_USER_NAME)
+            .jsonPath( "$.login").isEqualTo( EXISTS_USER_LOGIN)
         ;
     }
 

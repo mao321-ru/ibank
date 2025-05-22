@@ -16,10 +16,10 @@ public class AuthService {
 
     private final AuthApi authApi;
 
-    public Mono<AuthResponse> authenticate(String username, String password) {
-        log.debug( "authenticate: username: {}", username);
+    public Mono<AuthResponse> authenticate(String login, String password) {
+        log.debug( "authenticate: login: {}", login);
         return authApi.validate( new ValidateRequest()
-                .username( username)
+                .login( login)
                 .password( password)
             )
             .onErrorResume( e -> Mono.error( new BadCredentialsException( e.getMessage())));

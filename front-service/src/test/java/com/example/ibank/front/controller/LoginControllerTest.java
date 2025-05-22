@@ -30,7 +30,7 @@ public class LoginControllerTest extends ControllerTest {
         wtc.post().uri( "/login")
             .contentType( MediaType.APPLICATION_FORM_URLENCODED)
             .body( BodyInserters
-                .fromFormData( "username", EXISTS_USER_NAME)
+                .fromFormData( "username", EXISTS_USER_LOGIN)
                 .with( "password", EXISTS_USER_PASSWORD)
             )
             .exchange()
@@ -48,7 +48,7 @@ public class LoginControllerTest extends ControllerTest {
             .post().uri( "/login")
             .contentType( MediaType.APPLICATION_FORM_URLENCODED)
             .body( BodyInserters
-                .fromFormData( "username", EXISTS_USER_NAME)
+                .fromFormData( "username", EXISTS_USER_LOGIN)
                 .with( "password", EXISTS_USER_PASSWORD)
             )
             .exchange()
@@ -63,7 +63,7 @@ public class LoginControllerTest extends ControllerTest {
                 .post().uri( "/login")
                 .contentType( MediaType.APPLICATION_FORM_URLENCODED)
                 .body( BodyInserters
-                        .fromFormData( "username", EXISTS_USER_NAME)
+                        .fromFormData( "username", EXISTS_USER_LOGIN)
                         .with( "password", EXISTS_USER_PASSWORD + "_bad")
                 )
                 .exchange()

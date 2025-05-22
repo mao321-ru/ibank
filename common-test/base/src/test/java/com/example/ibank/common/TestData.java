@@ -4,7 +4,7 @@ package com.example.ibank.common;
 interface TestData {
 
     // Логин и пароль существующего пользователя
-    String EXISTS_USER_NAME = "ivan";
+    String EXISTS_USER_LOGIN = "ivan";
     String EXISTS_USER_PASSWORD = "user";
 
 }

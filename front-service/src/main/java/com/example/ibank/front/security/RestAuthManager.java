@@ -21,12 +21,12 @@ public class RestAuthManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
-        String username = authentication.getName();
+        String login = authentication.getName();
         String password = authentication.getCredentials().toString();
-        return authService.authenticate(username, password)
+        return authService.authenticate(login, password)
                 .switchIfEmpty( Mono.error( new BadCredentialsException("Invalid credentials")))
                 .map(authResponse -> new UsernamePasswordAuthenticationToken(
-                        authResponse.getUserId(),
+                        authResponse.getLogin(),
                         null,
                         authResponse.getRoles().stream()
                                 .map( SimpleGrantedAuthority::new)
