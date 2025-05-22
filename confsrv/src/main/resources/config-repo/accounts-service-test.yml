@@ -3,8 +3,3 @@ logging:
     com.example.ibank: TRACE
     #org.springframework: DEBUG
     #io.r2dbc: DEBUG # и добавим больше деталей (не включать в настоящем приложении)
-
-#spring:
-#  # Run SQL script to load test data
-#  sql.init:
-#    data-locations: classpath:test-data.sql

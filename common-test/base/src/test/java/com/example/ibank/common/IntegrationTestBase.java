@@ -111,7 +111,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                         .withNetworkAliases( cntName)
                         .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
                         .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
-                        .withEnv( "SPRING_PROFILES_ACTIVE", "docker")
+                        .withEnv( "SPRING_PROFILES_ACTIVE", "docker,itest")
                         //.withLogConsumer( new Slf4jLogConsumer(LoggerFactory.getLogger("T^C-LOGS")))
                         .waitingFor( Wait.forHttp("/actuator/health"))
                 );

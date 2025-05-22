@@ -98,7 +98,6 @@ services:
     # set shared memory limit (reason: https://hub.docker.com/_/postgres)
     shm_size: 128mb
     ports:
-      #- "8932:5432"
       - "8955:5432"
     environment:
       POSTGRES_USER: postgres
@@ -107,7 +106,7 @@ services:
     volumes:
       # run scripts for create roles and databases
       - ./postgres/init:/docker-entrypoint-initdb.d
-      #- ibank-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 5s
@@ -180,5 +179,5 @@ services:
         condition: service_healthy
       accounts-service:
         condition: service_healthy
-#volumes:
-#  ibank-data:
+volumes:
+  postgres_data:

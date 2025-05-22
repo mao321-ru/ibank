@@ -10,7 +10,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 // Общие настройки интеграционных тестов во всех модулях
 @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@ActiveProfiles( { "itest", "test" })
 @AutoConfigureWebTestClient
 public abstract class IntegrationTestBaseConfsrv {
 
