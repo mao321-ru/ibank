@@ -94,6 +94,28 @@ public class LoginControllerTest extends ControllerTest {
     }
 
     @Test
+    void signup_usedLogin() throws Exception {
+        wtc.mutateWith( csrf())
+                .post().uri( "/signup")
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "login", EXISTS_USER_LOGIN)
+                        .with( "password", "signupOkPwd")
+                        .with( "confirm_password", "signupOkPwd")
+                        .with( "name", "Sugnup UsedLogin")
+                        .with( "birthdate", "1970-03-28")
+                )
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( ERROR_INFO_XPATH).nodeCount( 1)
+                .xpath( ERROR_INFO_XPATH).isEqualTo( "Этот логин уже используется")
+        ;
+    }
+
+    @Test
     void signup_ok() throws Exception {
         final String login = "signupOkUser";
         final String password = "signupOkPwd";
