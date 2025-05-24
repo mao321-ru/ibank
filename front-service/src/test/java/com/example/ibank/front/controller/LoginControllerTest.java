@@ -142,7 +142,7 @@ public class LoginControllerTest extends ControllerTest {
                 )
                 .exchange()
                 .expectStatus().isFound()
-                .expectHeader().valueEquals( "Location", "/")
+                .expectHeader().valueEquals( "Location", "/main")
         ;
     }
 

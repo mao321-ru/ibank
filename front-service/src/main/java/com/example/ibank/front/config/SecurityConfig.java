@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler;
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.csrf.XorServerCsrfTokenRequestAttributeHandler;
 import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
@@ -48,6 +49,7 @@ public class SecurityConfig {
             .formLogin( form -> form
                 .loginPage( "/login")
                 .authenticationManager( restAuthManager)
+                .authenticationSuccessHandler( new RedirectServerAuthenticationSuccessHandler("/main"))
                 .authenticationFailureHandler( ( exchange, exception) -> {
                     log.debug( "auth error: {}", exception.getMessage());
                     // стандартная переадресация при ошибке

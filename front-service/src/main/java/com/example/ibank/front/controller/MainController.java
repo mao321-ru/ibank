@@ -15,7 +15,12 @@ import reactor.core.publisher.Mono;
 @Validated
 public class MainController {
 
-    @GetMapping( path = { "/", "/main" })
+    @GetMapping("/")
+    public Mono<String> redirectRoot() {
+        return Mono.just("redirect:/main");
+    }
+
+    @GetMapping( "/main")
     Mono<String> mainPage(
         ServerWebExchange exchange,
         Model model
