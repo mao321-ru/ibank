@@ -31,11 +31,11 @@
 
 <body>
 <a href="/signup" style="float:right;">
-    <b>РЕГИСТРАЦИЯ &plus;</b>
+    <b>РЕГИСТРАЦИЯ &#43;</b>
 </a>
-<br>
+<br />
 <a href="/logout" style="float:right;">
-    <b>ВЫЙТИ &cudarrr;</b>
+    <b>ВЫЙТИ &#10552;</b>
 </a>
 <table style="width:70%;margin-left:auto;margin-right:auto;">
     <tr><td style="padding:2px;">
@@ -50,10 +50,10 @@
                 <td>
                     <p style="color:red;" th:if="${passwordErrors!=null}" th:each="passwordError : ${passwordErrors}" th:text="${passwordError}"/>
                     <p>
-                        Пароль: <input name="password" type="password" required/>
+                        Пароль: <input name="password" type="password" required=""/>
                     </p>
                     <p>
-                        Повторите пароль: <input name="confirm_password" type="password" required/>
+                        Повторите пароль: <input name="confirm_password" type="password" required=""/>
                     </p>
                 </td>
                 <td style="text-align:right">
@@ -62,7 +62,7 @@
             </tr>
         </table>
         </form>
-    </td>
+    </td></tr>
     <tr><td style="padding:2px;">
         <form method="post" th:action="${'/user/'+login+'/editUserAccounts'}">
         <table style="width:100%;margin-left:auto;margin-right:auto;border-radius:2%;padding:10px;background-color:whitesmoke;">
@@ -113,9 +113,8 @@
                         </select>
                     </td>
                     <td>
-                        <input name="value" type="number" style="width:100%" required/>
+                        <input name="value" type="number" style="width:100%" required=""/>
                     </td>
-                    <td>
                     <td style="text-align:right">
                         <button name="action" value="PUT">Положить</button>
                         <button name="action" value="GET">Снять</button>
@@ -145,10 +144,10 @@
                         </select>
                     </td>
                     <td>
-                        <input name="value" type="number" style="width:100%" required/>
+                        <input name="value" type="number" style="width:100%" required=""/>
                     </td>
                     <td style="text-align:right">
-                        <input hidden name="to_login" th:value="${login}"/>
+                        <input hidden="" name="to_login" th:value="${login}"/>
                         <button>Перевести</button>
                     </td>
                 </tr>
@@ -176,7 +175,7 @@
                         </select>
                     </td>
                     <td>
-                        <input name="value" type="number" required/>
+                        <input name="value" type="number" required=""/>
                     </td>
                     <td>
                         Кому
