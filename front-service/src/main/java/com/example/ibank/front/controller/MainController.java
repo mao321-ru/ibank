@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -25,8 +29,14 @@ public class MainController {
         ServerWebExchange exchange,
         Model model
     ) {
-        log.debug( "main:");
-        return Mono.just( "main");
+        log.debug( "main");
+        return exchange.getPrincipal()
+            .map( Principal::getName)
+            .doOnNext( login -> {
+                log.debug("login: {}", login);
+                model.addAttribute("login", login);
+            })
+            .thenReturn( "main");
     }
 
 }

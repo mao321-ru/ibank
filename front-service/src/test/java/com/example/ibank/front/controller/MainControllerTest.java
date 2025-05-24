@@ -33,4 +33,17 @@ public class MainControllerTest extends ControllerTest {
         ;
     }
 
+    @Test
+    @WithMockUser( username = EXISTS_USER_LOGIN)
+    void main_ok() throws Exception {
+        wtc.get().uri( "/main")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( "//*[@class='login']").isEqualTo( EXISTS_USER_LOGIN)
+        ;
+    }
+
 }
