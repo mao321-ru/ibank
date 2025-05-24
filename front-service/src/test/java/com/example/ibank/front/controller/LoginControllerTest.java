@@ -98,7 +98,7 @@ public class LoginControllerTest extends ControllerTest {
         final String login = "signupOkUser";
         final String password = "signupOkPwd";
 
-        wtc.mutateWith( csrf())
+        var resp = wtc.mutateWith( csrf())
                 .post().uri( "/signup")
                 .contentType( MediaType.APPLICATION_FORM_URLENCODED)
                 .body( BodyInserters
@@ -111,8 +111,23 @@ public class LoginControllerTest extends ControllerTest {
                 .exchange()
                 .expectStatus().isSeeOther()
                 .expectHeader().valueEquals( "Location", "/main")
+                .expectCookie().exists("SESSION") // Проверяем наличие сессионной cookie
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .returnResult()
         ;
 
+        // текущая сессия авторизована под созданным пользователем (доступен защищенный ресурс)
+        wtc.get().uri("/main")
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", resp.getResponseCookies().get( "SESSION").getFirst().getValue())
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        // можно залогиниться под созданным пользователем
         checkLoginOk( login, password);
     }
 

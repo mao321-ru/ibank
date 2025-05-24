@@ -2,9 +2,13 @@ package com.example.ibank.front.controller;
 
 import com.example.ibank.front.dto.SignupDto;
 import com.example.ibank.front.security.AuthService;
+import com.example.ibank.front.security.RestAuthManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +20,8 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Objects;
 
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -23,6 +29,7 @@ import java.util.Objects;
 public class LoginController {
 
     private final AuthService srv;
+    private final RestAuthManager restAuthManager;
 
     @GetMapping( "/login")
     Mono<String> login(
@@ -71,8 +78,22 @@ public class LoginController {
                 ? Mono.error( new IllegalArgumentException( errorMessage))
                 : srv.register( sd)
             )
-            .map( r -> "redirect:/main")
             .switchIfEmpty( Mono.error( new IllegalStateException( "Response not found")))
+            .then(
+                restAuthManager.authenticate(
+                    new UsernamePasswordAuthenticationToken( sd.getLogin(), sd.getPassword())
+                )
+                .flatMap( auth -> {
+                    SecurityContextImpl sc = new SecurityContextImpl();
+                    sc.setAuthentication( auth);
+                    return exchange.getSession()
+                        .doOnNext( webSession ->
+                            webSession.getAttributes().put( SPRING_SECURITY_CONTEXT_KEY, sc)
+                        )
+                        .then();
+                })
+            )
+            .thenReturn( "redirect:/main")
             .onErrorResume( e -> {
                 log.debug( "signupPost: errorMessage: {}", e.getMessage());
                 model.addAttribute("login", sd.getLogin());
