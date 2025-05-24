@@ -1,6 +1,8 @@
 package com.example.ibank.accounts.controller;
 
 import com.example.ibank.accounts.api.AuthApi;
+import com.example.ibank.accounts.model.RegisterRequest;
+import com.example.ibank.accounts.model.RegisterResponse;
 import com.example.ibank.accounts.model.ValidateRequest;
 import com.example.ibank.accounts.model.AuthResponse;
 
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import jakarta.validation.Valid;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,5 +48,21 @@ public class AuthController implements AuthApi {
                 ex -> Mono.just( ResponseEntity.status(HttpStatus.UNAUTHORIZED).build())
             )
             .switchIfEmpty( Mono.just( ResponseEntity.notFound().build()));
+    }
+
+    @Override
+    @PreAuthorize( "hasRole('AUTH')")
+    public Mono<ResponseEntity<RegisterResponse>> register(
+        Mono<RegisterRequest> registerRequest,
+        ServerWebExchange exchange
+    )
+    {
+        log.debug( "register: ...");
+        return registerRequest
+            .flatMap( authService::register)
+            .map( resp -> ResponseEntity.status( HttpStatus.CREATED).body( resp))
+            .switchIfEmpty( Mono.just(
+                ResponseEntity.status( HttpStatus.CONFLICT).build()
+            ));
     }
 }

@@ -14,36 +14,36 @@
         </td>
     </tr>
     <tr th:each="error : ${errors}">
-        <td style="color:red;" th:text="${error}" colspan="2"/>
+        <td class="errorInfo" style="color:red;" th:text="${error}" colspan="2"/>
     </tr>
     <tr>
         <td style="font-weight:bold;">Логин</td>
         <td>
-            <input name="login" type="text" th:value="${login}" style="width:100%" required/>
+            <input name="login" type="text" th:value="${login}" style="width:100%" required=""/>
         </td>
     </tr>
     <tr>
         <td style="font-weight:bold;">Пароль</td>
         <td>
-            <input name="password" type="password" style="width:100%" required/>
+            <input name="password" type="password" style="width:100%" required=""/>
         </td>
     </tr>
     <tr>
         <td style="font-weight:bold;">Повторите пароль</td>
         <td>
-            <input name="confirm_password" type="password" style="width:100%" required/>
+            <input name="confirm_password" type="password" style="width:100%" required=""/>
         </td>
     </tr>
     <tr>
         <td style="font-weight:bold;">Фамилия Имя</td>
         <td>
-            <input name="name" type="text" th:value="${name}" style="width:100%" required/>
+            <input name="name" type="text" th:value="${name}" style="width:100%" required=""/>
         </td>
     </tr>
     <tr>
         <td style="font-weight:bold;">Дата рождения </td>
         <td>
-            <input name="birthdate" type="date" th:value="${birthdate}" style="width:100%" required/>
+            <input name="birthdate" type="date" th:value="${birthdate}" style="width:100%" required=""/>
         </td>
     </tr>
     <tr>

@@ -31,4 +31,28 @@ public class AuthControllerTest extends ControllerTest {
         ;
     }
 
+    @Test
+    void register_ok() throws Exception {
+        final String login = "register_okUser";
+        wtc.post().uri( "/auth/register")
+                .headers( headers -> headers.setBearerAuth( getAccessToken( "front-service")))
+                .contentType( MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        """
+                        {
+                            "login": "%s",
+                            "password": "jjj",
+                            "userName": "Register Ok",
+                            "birthDate": "1990-01-15"                            
+                        }
+                        """.formatted( login)
+                )
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .jsonPath( "$.login").isEqualTo( login)
+        ;
+    }
+
 }
