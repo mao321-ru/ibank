@@ -12,12 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository repo;
     private final R2dbcEntityTemplate etm;
@@ -25,30 +26,11 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional( readOnly = true)
-    public Mono<AuthResponse> validate( ValidateRequest request) {
-        log.debug( "validate for: login: {}", request.getLogin());
-        return repo.findByLogin( request.getLogin())
-            .doOnNext( u -> log.trace( "found userId: {}", u.getId()))
-            .filter( u -> passwordEncoder.matches( request.getPassword(), u.getPasswordHash()))
-            .map( u -> new AuthResponse()
-                .login( u.getLogin())
-                .userName( u.getUserName())
-                .birthDate( u.getBirthDate())
-                .roles( List.of())
-            )
-            .switchIfEmpty( Mono.error( new IllegalArgumentException( "Invalid username or password")))
-        ;
-    }
-
-    @Override
     @Transactional
-    public Mono<RegisterResponse> register( RegisterRequest rq) {
-        log.debug( "register: login: {}", rq.getLogin());
-        final DatabaseClient dc = etm.getDatabaseClient();
-        return
-            // Регистрирует пользователя если такого логина еще нет
-            dc.sql("""
+    public Mono<UserInfo> createUser( UserCreate rq) {
+        log.debug( "createUser: login: {}", rq.getLogin());
+        // Регистрирует пользователя если такого логина еще нет
+        return etm.getDatabaseClient().sql("""
                 insert into
                     users
                 (
@@ -77,22 +59,41 @@ public class AuthServiceImpl implements AuthService {
                         where
                             t.login = s.login
                         )
-                returning user_id, login
+                returning user_id, login, user_name, birth_date
             """)
-                .bind( "login", rq.getLogin())
-                .bind( "password_hash", passwordEncoder.encode( rq.getPassword()))
-                .bind( "user_name", rq.getUserName())
-                .bind( "birth_date", rq.getBirthDate())
-                .map( row -> {
-                    log.debug( "inserted: user_id: {}", row.get("user_id", Long.class));
-                    return new RegisterResponse().login( row.get( "login", String.class));
-                })
-                .one()
-            ;
+                        .bind( "login", rq.getLogin())
+                        .bind( "password_hash", passwordEncoder.encode( rq.getPassword()))
+                        .bind( "user_name", rq.getUserName())
+                        .bind( "birth_date", rq.getBirthDate())
+                        .map( row -> {
+                            log.debug( "inserted: user_id: {}", row.get("user_id", Long.class));
+                            return new UserInfo()
+                                .login( row.get( "login", String.class))
+                                .userName( row.get( "user_name", String.class))
+                                .birthDate( row.get( "birth_date", LocalDate.class))
+                            ;
+                        })
+                        .one()
+                ;
     }
 
     @Override
-    public Mono<Boolean> changePassword( ChangePasswordRequest rq) {
+    @Transactional( readOnly = true)
+    public Mono<UserInfo> validate( String login, String password) {
+        return repo.findByLogin( login)
+            .doOnNext( u -> log.trace( "found userId: {}", u.getId()))
+            .filter( u -> passwordEncoder.matches( password, u.getPasswordHash()))
+            .map( u -> new UserInfo()
+                .login( u.getLogin())
+                .userName( u.getUserName())
+                .birthDate( u.getBirthDate())
+            )
+            .switchIfEmpty( Mono.error( new IllegalArgumentException( "Invalid username or password")))
+        ;
+    }
+
+    @Override
+    public Mono<Boolean> changePassword(  String login, String password) {
         return etm.getDatabaseClient()
             .sql("""
                 update
@@ -102,8 +103,8 @@ public class AuthServiceImpl implements AuthService {
                 where
                     u.login = :login
                 """)
-            .bind( "passwordHash", passwordEncoder.encode( rq.getPassword()))
-            .bind( "login", rq.getLogin())
+            .bind( "passwordHash", passwordEncoder.encode( password))
+            .bind( "login", login)
             .fetch()
             .rowsUpdated()
             .doOnNext( rowCount -> log.debug( "changePassword: updated rows: {}", rowCount))

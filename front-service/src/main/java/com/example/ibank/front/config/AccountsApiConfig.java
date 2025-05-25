@@ -1,7 +1,7 @@
 package com.example.ibank.front.config;
 
 
-import com.example.ibank.front.accounts.api.AuthApi;
+import com.example.ibank.front.accounts.api.UserApi;
 import com.example.ibank.front.accounts.invoker.ApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +33,7 @@ public class AccountsApiConfig {
     }
 
     @Bean
-    AuthApi authApi( ApiClient apiClient) {
-        return new AuthApi( apiClient);
+    UserApi usersApi( ApiClient apiClient) {
+        return new UserApi( apiClient);
     }
 }

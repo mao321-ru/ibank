@@ -1,6 +1,6 @@
 package com.example.ibank.front.security;
 
-import com.example.ibank.front.accounts.api.AuthApi;
+import com.example.ibank.front.accounts.api.UserApi;
 import com.example.ibank.front.accounts.model.*;
 import com.example.ibank.front.dto.SignupDto;
 import lombok.RequiredArgsConstructor;
@@ -16,20 +16,17 @@ import java.time.LocalDate;
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
-    private final AuthApi authApi;
+    private final UserApi usersApi;
 
-    public Mono<AuthResponse> authenticate(String login, String password) {
+    public Mono<UserInfo> authenticate(String login, String password) {
         log.debug( "authenticate: login: {}", login);
-        return authApi.validate( new ValidateRequest()
-                .login( login)
-                .password( password)
-            )
+        return usersApi.validate( login, new ValidateRequest().password( password))
             .onErrorResume( e -> Mono.error( new BadCredentialsException( e.getMessage())));
     }
 
-    public Mono<RegisterResponse> register(SignupDto sd) {
+    public Mono<UserInfo> register(SignupDto sd) {
         log.debug( "register: login: {}", sd.getLogin());
-        return authApi.register( new RegisterRequest()
+        return usersApi.createUser( new UserCreate()
                         .login( sd.getLogin())
                         .password( sd.getPassword())
                         .userName( sd.getName())
@@ -39,10 +36,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Mono<Void> changePassword(String login, String password) {
-        return authApi.changePassword( new ChangePasswordRequest()
-            .login( login)
-            .password( password)
-        );
+        return usersApi.changePassword( login, new ChangePasswordRequest().password( password));
     }
 
     @Override

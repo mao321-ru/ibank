@@ -4,15 +4,45 @@ info:
   description: API сервиса аккаунтов
   version: 1.0.0
 tags:
-  - name: Auth
-    description: Проверка пользователя
+  - name: User
+    description: API для управления пользователями
 paths:
-  /auth/validate:
+  /users:
     post:
       tags:
-        - Auth
+        - User
+      operationId: createUser
+      summary: Регистрирует нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+        '409':
+          description: Такой пользователь уже существует
+  /users/{login}/validate:
+    post:
+      tags:
+        - User
       operationId: validate
-      summary: Проверяет пользователя и возвращает права доступа
+      summary: Проверяет наличие пользователя с указанным логином и паролем
+      parameters:
+        - name: login
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
       requestBody:
         required: true
         content:
@@ -25,40 +55,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse'
+                $ref: '#/components/schemas/UserInfo'
         '400':
           description: Неверный запрос (валидация не пройдена)
         '401':
           description: Неверные логин или пароль
-  /auth/register:
-    post:
+  /users/{login}/password:
+    put:
       tags:
-        - Auth
-      operationId: register
-      summary: Регистрирует нового пользователя
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegisterRequest'
-      responses:
-        '201':
-          description: Пользователь создан
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RegisterResponse'
-        '400':
-          description: Неверный запрос (валидация не пройдена)
-        '409':
-          description: Такой пользователь уже существует
-  /auth/password/change:
-    post:
-      tags:
-        - Auth
+        - User
       operationId: changePassword
       summary: Меняет пароль пользователя
+      parameters:
+        - name: login
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
       requestBody:
         required: true
         content:
@@ -74,44 +88,7 @@ paths:
           description: Пользователь не найден
 components:
   schemas:
-    ValidateRequest:
-      type: object
-      properties:
-        login:
-          type: string
-          description: Логин пользователя
-        password:
-          type: string
-          description: Пароль
-      required:
-        - login
-        - password
-    AuthResponse:
-      type: object
-      properties:
-        login:
-          type: string
-          example: "user123"
-          description: Логин пользователя
-        roles:
-          type: array
-          items:
-            type: string
-          example: ["ROLE_USER"]
-          description: Список ролей пользователя
-        userName:
-          type: string
-          description: Фамилия Имя
-        birthDate:
-          type: string
-          format: date
-          description: Дата рождения
-      required:
-        - login
-        - roles
-        - userName
-        - birthDate
-    RegisterRequest:
+    UserCreate:
       type: object
       properties:
         login:
@@ -141,20 +118,35 @@ components:
         - password
         - userName
         - birthDate
-    RegisterResponse:
+    UserInfo:
       type: object
       properties:
         login:
           type: string
           description: Логин пользователя
+        userName:
+          type: string
+          description: Фамилия Имя
+        birthDate:
+          type: string
+          format: date
+          description: Дата рождения
       required:
         - login
+        - userName
+        - birthDate
+    ValidateRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          minLength: 1
+          description: Пароль
+      required:
+        - password
     ChangePasswordRequest:
       type: object
       properties:
-        login:
-          type: string
-          description: Логин пользователя
         password:
           type: string
           minLength: 1
@@ -163,5 +155,4 @@ components:
           example: "qwerty123"
           description: Пароль (непустой)
       required:
-        - login
         - password
