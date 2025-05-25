@@ -3,9 +3,11 @@ package com.example.ibank.front.controller;
 import com.example.ibank.front.dto.EditPasswordDto;
 import com.example.ibank.front.dto.SignupDto;
 import com.example.ibank.front.security.AuthService;
+import com.example.ibank.front.security.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +19,7 @@ import reactor.core.publisher.Mono;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.security.Principal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -39,10 +42,17 @@ public class MainController {
     ) {
         log.debug( "main");
         return exchange.getPrincipal()
-                .map( Principal::getName)
-                .doOnNext( login -> {
-                    log.debug("login: {}", login);
-                    model.addAttribute("login", login);
+                .cast( UsernamePasswordAuthenticationToken.class)
+                .map( UsernamePasswordAuthenticationToken::getPrincipal)
+                .cast( AuthUser.class)
+                .doOnNext( user -> {
+                    log.debug("user: {}", user);
+                    model.addAttribute("login", user.getLogin());
+                    model.addAttribute("name", user.getUserName());
+                    model.addAttribute(
+                        "birthdate",
+                        user.getBirthDate().format( DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                    );
                 })
             .then( exchange.getSession())
                 .doOnNext( ss -> {

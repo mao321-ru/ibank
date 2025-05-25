@@ -33,6 +33,8 @@ public class AuthServiceImpl implements AuthService {
             .filter( u -> passwordEncoder.matches( request.getPassword(), u.getPasswordHash()))
             .map( u -> new AuthResponse()
                 .login( u.getLogin())
+                .userName( u.getUserName())
+                .birthDate( u.getBirthDate())
                 .roles( List.of())
             )
             .switchIfEmpty( Mono.error( new IllegalArgumentException( "Invalid username or password")))

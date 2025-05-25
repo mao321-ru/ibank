@@ -99,9 +99,18 @@ components:
             type: string
           example: ["ROLE_USER"]
           description: Список ролей пользователя
+        userName:
+          type: string
+          description: Фамилия Имя
+        birthDate:
+          type: string
+          format: date
+          description: Дата рождения
       required:
         - login
         - roles
+        - userName
+        - birthDate
     RegisterRequest:
       type: object
       properties:

@@ -5,6 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.reactive.function.BodyInserters;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.junit.Assert.assertNotNull;
@@ -43,15 +45,23 @@ public class MainControllerTest extends ControllerTest {
     }
 
     @Test
-    @WithMockUser( username = EXISTS_USER_LOGIN)
     void main_ok() throws Exception {
-        wtc.get().uri( "/main")
+        final String login = EXISTS_USER_LOGIN;
+        final String password = EXISTS_USER_PASSWORD;
+
+        String sessionCookie = checkLoginOk( login, password);
+        wtc.get().uri( MAIN_URL)
+                .cookie("SESSION", sessionCookie)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType( "text/html;charset=UTF-8")
                 .expectBody()
                 //.consumeWith( System.out::println) // вывод запроса и ответа
                 .xpath( "//*[@class='login']").isEqualTo( EXISTS_USER_LOGIN)
+                .xpath( "//*[@class='userName']").isEqualTo( EXISTS_USER_NAME)
+                .xpath( "//*[@class='birthDate']").isEqualTo(
+                    LocalDate.parse( EXISTS_USER_BIRTHDATE).format( DateTimeFormatter.ofPattern( "dd.MM.yyyy"))
+                )
         ;
     }
 

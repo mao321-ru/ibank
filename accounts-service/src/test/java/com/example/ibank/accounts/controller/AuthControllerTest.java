@@ -28,6 +28,8 @@ public class AuthControllerTest extends ControllerTest {
             .expectBody()
             //.consumeWith( System.out::println) // вывод запроса и ответа
             .jsonPath( "$.login").isEqualTo( EXISTS_USER_LOGIN)
+            .jsonPath( "$.userName").isEqualTo( EXISTS_USER_NAME)
+            .jsonPath( "$.birthDate").isEqualTo( EXISTS_USER_BIRTHDATE)
         ;
     }
 
