@@ -70,6 +70,7 @@ public class LoginController {
             StringUtils.isEmpty( sd.getPassword()) ? "Не заполнено [Пароль]" :
             StringUtils.isEmpty( sd.getName()) ? "Не заполнено [Фамилия Имя]" :
             sd.getBirthdate() == null ? "Не заполнено [Дата рождения]" :
+            ! srv.isAdult( sd.getBirthdate()) ? "Возраст дожен быть не менее 18 лет" :
             ! sd.getPassword().equals( sd.getConfirmPassword()) ?  "Указаны различные пароли" :
             null
         ;

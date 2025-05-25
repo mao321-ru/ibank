@@ -5,6 +5,7 @@ import com.example.ibank.front.dto.SignupDto;
 import com.example.ibank.front.security.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -65,9 +66,12 @@ public class MainController {
                 .map( Principal::getName)
                 .flatMap( login -> {
                     log.debug("login: {}", login);
-                    if( ! dto.getPassword().equals( dto.getConfirmPassword())) {
-                        throw new IllegalArgumentException( "Указаны различные пароли");
-                    }
+                    String errorMessage =
+                        StringUtils.isEmpty( dto.getPassword()) ? "Не заполнено [Пароль]" :
+                        ! dto.getPassword().equals( dto.getConfirmPassword()) ?  "Указаны различные пароли" :
+                        null
+                    ;
+                    if( errorMessage != null) throw new IllegalArgumentException( errorMessage);
                     return authService.changePassword( login, dto.getPassword());
                 })
                 .onErrorResume( e -> exchange.getSession()

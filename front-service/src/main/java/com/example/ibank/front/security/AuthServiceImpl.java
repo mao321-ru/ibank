@@ -9,6 +9,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -41,5 +43,10 @@ public class AuthServiceImpl implements AuthService {
             .login( login)
             .password( password)
         );
+    }
+
+    @Override
+    public boolean isAdult(LocalDate birthDate) {
+        return !birthDate.plusYears(18).isAfter( LocalDate.now());
     }
 }
