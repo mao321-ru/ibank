@@ -1,10 +1,7 @@
 package com.example.ibank.accounts.controller;
 
 import com.example.ibank.accounts.api.AuthApi;
-import com.example.ibank.accounts.model.RegisterRequest;
-import com.example.ibank.accounts.model.RegisterResponse;
-import com.example.ibank.accounts.model.ValidateRequest;
-import com.example.ibank.accounts.model.AuthResponse;
+import com.example.ibank.accounts.model.*;
 
 import com.example.ibank.accounts.service.AuthService;
 
@@ -65,4 +62,14 @@ public class AuthController implements AuthApi {
                 ResponseEntity.status( HttpStatus.CONFLICT).build()
             ));
     }
+
+    @Override
+    public Mono<ResponseEntity<Void>> changePassword(Mono<ChangePasswordRequest> changePasswordRequest, ServerWebExchange exchange) {
+        log.debug( "changePassword: ...");
+        return changePasswordRequest
+            .flatMap( authService::changePassword)
+            .map( isOk -> ResponseEntity.status( isOk ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND).build())
+        ;
+    }
+
 }

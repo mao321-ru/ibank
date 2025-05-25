@@ -22,6 +22,11 @@ from
         '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2' as password_hash,
         'Петров Иван' as user_name,
         DATE '1979-03-01' as birth_date
+    union all select
+        'user2',
+        '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
+        'Меняй Пароль',
+        DATE '1980-04-21'
     ) s
 ;
 

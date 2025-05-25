@@ -53,6 +53,25 @@ paths:
           description: Неверный запрос (валидация не пройдена)
         '409':
           description: Такой пользователь уже существует
+  /auth/password/change:
+    post:
+      tags:
+        - Auth
+      operationId: changePassword
+      summary: Меняет пароль пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '204':
+          description: Пароль изменен
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+        '404':
+          description: Пользователь не найден
 components:
   schemas:
     ValidateRequest:
@@ -129,3 +148,19 @@ components:
           description: Логин пользователя
       required:
         - login
+    ChangePasswordRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+        password:
+          type: string
+          minLength: 3
+          maxLength: 100
+          format: password
+          example: "qwerty123"
+          description: Пароль (минимум 3 символов)
+      required:
+        - login
+        - password

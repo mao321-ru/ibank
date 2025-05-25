@@ -7,4 +7,6 @@ interface TestData {
     String EXISTS_USER_LOGIN = "ivan";
     String EXISTS_USER_PASSWORD = "user";
 
+    // Существующий пользователь (можно менять пароль)
+    String EXISTS_USER2_LOGIN = "user2";
 }

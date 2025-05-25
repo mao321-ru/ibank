@@ -55,4 +55,23 @@ public class AuthControllerTest extends ControllerTest {
         ;
     }
 
+    @Test
+    void changePassword_ok() throws Exception {
+        wtc.post().uri( "/auth/password/change")
+                .headers( headers -> headers.setBearerAuth( getAccessToken( "front-service")))
+                .contentType( MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        """
+                        {
+                            "login": "%s",
+                            "password": "%s"
+                        }
+                        """.formatted( EXISTS_USER2_LOGIN, "changePassword_ok")
+                )
+                .exchange()
+                .expectStatus().isNoContent()
+                .expectBody()
+                .consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+    }
 }

@@ -1,10 +1,7 @@
 package com.example.ibank.front.security;
 
 import com.example.ibank.front.accounts.api.AuthApi;
-import com.example.ibank.front.accounts.model.AuthResponse;
-import com.example.ibank.front.accounts.model.RegisterRequest;
-import com.example.ibank.front.accounts.model.RegisterResponse;
-import com.example.ibank.front.accounts.model.ValidateRequest;
+import com.example.ibank.front.accounts.model.*;
 import com.example.ibank.front.dto.SignupDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,5 +33,13 @@ public class AuthServiceImpl implements AuthService {
                         .userName( sd.getName())
                         .birthDate( sd.getBirthdate())
                 );
+    }
+
+    @Override
+    public Mono<Void> changePassword(String login, String password) {
+        return authApi.changePassword( new ChangePasswordRequest()
+            .login( login)
+            .password( password)
+        );
     }
 }

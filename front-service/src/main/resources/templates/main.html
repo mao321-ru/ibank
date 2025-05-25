@@ -48,7 +48,7 @@
             <tr>
                 <td style="font-weight:bold;">Изменить пароль</td>
                 <td>
-                    <p style="color:red;" th:if="${passwordErrors!=null}" th:each="passwordError : ${passwordErrors}" th:text="${passwordError}"/>
+                    <p class="passwordError" style="color:red;" th:if="${passwordErrors!=null}" th:each="passwordError : ${passwordErrors}" th:text="${passwordError}"/>
                     <p>
                         Пароль: <input name="password" type="password" required=""/>
                     </p>

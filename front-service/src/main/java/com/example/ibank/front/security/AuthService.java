@@ -11,4 +11,6 @@ public interface AuthService {
 
     Mono<RegisterResponse> register(SignupDto sd);
 
+    Mono<Void> changePassword(String login, String password);
+
 }

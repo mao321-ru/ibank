@@ -40,12 +40,11 @@ public class LoginController {
         log.debug( "login: isError: {}", isError);
         return exchange.getSession()
             .doOnNext( ss -> {
-                boolean isErrorInfo = ss.getAttributes().containsKey( "errorInfo");
                 model.addAttribute(
                     "errorInfo",
-                    isErrorInfo ? ss.getAttributes().get( "errorInfo") : null
+                    ss.getAttributes().getOrDefault( "errorInfo",  null)
                 );
-                if( isErrorInfo) ss.getAttributes().remove( "errorInfo");
+                ss.getAttributes().remove( "errorInfo");
             })
             .thenReturn( "login");
     }

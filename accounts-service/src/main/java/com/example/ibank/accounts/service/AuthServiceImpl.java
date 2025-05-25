@@ -1,9 +1,6 @@
 package com.example.ibank.accounts.service;
 
-import com.example.ibank.accounts.model.RegisterRequest;
-import com.example.ibank.accounts.model.RegisterResponse;
-import com.example.ibank.accounts.model.ValidateRequest;
-import com.example.ibank.accounts.model.AuthResponse;
+import com.example.ibank.accounts.model.*;
 import com.example.ibank.accounts.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -90,6 +87,26 @@ public class AuthServiceImpl implements AuthService {
                 })
                 .one()
             ;
+    }
+
+    @Override
+    public Mono<Boolean> changePassword( ChangePasswordRequest rq) {
+        return etm.getDatabaseClient()
+            .sql("""
+                update
+                    users u
+                set
+                    password_hash = :passwordHash
+                where
+                    u.login = :login
+                """)
+            .bind( "passwordHash", passwordEncoder.encode( rq.getPassword()))
+            .bind( "login", rq.getLogin())
+            .fetch()
+            .rowsUpdated()
+            .doOnNext( rowCount -> log.debug( "changePassword: updated rows: {}", rowCount))
+            .map( rowCount -> rowCount > 0)
+       ;
     }
 
 }
