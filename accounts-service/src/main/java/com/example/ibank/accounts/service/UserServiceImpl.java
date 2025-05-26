@@ -10,6 +10,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -24,6 +25,25 @@ public class UserServiceImpl implements UserService {
     private final R2dbcEntityTemplate etm;
 
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public Flux<UserShort> getAllUsers() {
+        return etm.getDatabaseClient().sql(
+                """
+                select
+                    u.login,
+                    u.user_name
+                from
+                    users u
+                """
+            )
+            .map( row -> new UserShort()
+                .login( row.get( "login", String.class))
+                .name( row.get( "user_name", String.class))
+            )
+            .all()
+        ;
+    }
 
     @Override
     @Transactional
@@ -63,13 +83,13 @@ public class UserServiceImpl implements UserService {
             """)
                         .bind( "login", rq.getLogin())
                         .bind( "password_hash", passwordEncoder.encode( rq.getPassword()))
-                        .bind( "user_name", rq.getUserName())
+                        .bind( "user_name", rq.getName())
                         .bind( "birth_date", rq.getBirthDate())
                         .map( row -> {
                             log.debug( "inserted: user_id: {}", row.get("user_id", Long.class));
                             return new UserInfo()
                                 .login( row.get( "login", String.class))
-                                .userName( row.get( "user_name", String.class))
+                                .name( row.get( "user_name", String.class))
                                 .birthDate( row.get( "birth_date", LocalDate.class))
                             ;
                         })
@@ -85,7 +105,7 @@ public class UserServiceImpl implements UserService {
             .filter( u -> passwordEncoder.matches( password, u.getPasswordHash()))
             .map( u -> new UserInfo()
                 .login( u.getLogin())
-                .userName( u.getUserName())
+                .name( u.getUserName())
                 .birthDate( u.getBirthDate())
             )
             .switchIfEmpty( Mono.error( new IllegalArgumentException( "Invalid username or password")))

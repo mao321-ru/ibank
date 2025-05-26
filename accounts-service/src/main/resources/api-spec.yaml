@@ -8,6 +8,20 @@ tags:
     description: API для управления пользователями
 paths:
   /users:
+    get:
+      tags:
+        - User
+      operationId: listUsers
+      summary: Получить список пользователей
+      responses:
+        200:
+          description: Полный список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserShort'
     post:
       tags:
         - User
@@ -88,6 +102,16 @@ paths:
           description: Пользователь не найден
 components:
   schemas:
+    UserShort:
+      type: object
+      properties:
+        login:
+          type: string
+        name:
+          type: string
+      required:
+        - login
+        - name
     UserCreate:
       type: object
       properties:
@@ -104,7 +128,7 @@ components:
           format: password
           example: "qwerty123"
           description: Пароль (непустой)
-        userName:
+        name:
           type: string
           minLength: 1
           maxLength: 100
@@ -116,7 +140,7 @@ components:
       required:
         - login
         - password
-        - userName
+        - name
         - birthDate
     UserInfo:
       type: object
@@ -124,7 +148,7 @@ components:
         login:
           type: string
           description: Логин пользователя
-        userName:
+        name:
           type: string
           description: Фамилия Имя
         birthDate:
@@ -133,7 +157,7 @@ components:
           description: Дата рождения
       required:
         - login
-        - userName
+        - name
         - birthDate
     ValidateRequest:
       type: object

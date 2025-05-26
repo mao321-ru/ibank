@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -23,6 +24,13 @@ import reactor.core.publisher.Mono;
 public class UserController implements UserApi {
 
     private final UserService userService;
+
+    @Override
+    @PreAuthorize( "hasRole('AUTH')")
+    public Mono<ResponseEntity<Flux<UserShort>>> listUsers(ServerWebExchange exchange) {
+        log.debug( "listUsers: ...");
+        return Mono.just( ResponseEntity.ok( userService.getAllUsers()));
+    }
 
     @Override
     @PreAuthorize( "hasRole('AUTH')")
@@ -59,6 +67,7 @@ public class UserController implements UserApi {
     }
 
     @Override
+    @PreAuthorize( "hasRole('AUTH')")
     public Mono<ResponseEntity<Void>> changePassword(
         String login,
         Mono<ChangePasswordRequest> changePasswordRequest,

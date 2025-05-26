@@ -180,7 +180,7 @@
                     <td>
                         Кому
                         <select name="to_login">
-                            <option th:each="user : ${users}" th:value="${user.getLogin()}" th:text="${user.getName()}"/>
+                            <option class="toUser" th:each="user : ${users}" th:value="${user.getLogin()}" th:text="${user.getName()}"/>
                         </select>
                     </td>
                     <td style="text-align:right">

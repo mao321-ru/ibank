@@ -1,4 +1,4 @@
-package com.example.ibank.front.security;
+package com.example.ibank.front.service;
 
 import com.example.ibank.front.accounts.api.UserApi;
 import com.example.ibank.front.accounts.model.*;
@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthServiceImpl implements AuthService {
+public class UserServiceImpl implements UserService {
 
     private final UserApi usersApi;
 
@@ -29,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
         return usersApi.createUser( new UserCreate()
                         .login( sd.getLogin())
                         .password( sd.getPassword())
-                        .userName( sd.getName())
+                        .name( sd.getName())
                         .birthDate( sd.getBirthdate())
                 );
     }
@@ -37,6 +38,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Mono<Void> changePassword(String login, String password) {
         return usersApi.changePassword( login, new ChangePasswordRequest().password( password));
+    }
+
+    @Override
+    public Mono<List<UserShort>> getUsers() {
+        return usersApi.listUsers().collectList();
     }
 
     @Override

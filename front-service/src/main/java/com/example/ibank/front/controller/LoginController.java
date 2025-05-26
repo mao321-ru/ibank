@@ -1,12 +1,11 @@
 package com.example.ibank.front.controller;
 
 import com.example.ibank.front.dto.SignupDto;
-import com.example.ibank.front.security.AuthService;
+import com.example.ibank.front.service.UserService;
 import com.example.ibank.front.security.RestAuthManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Controller;
@@ -28,7 +27,7 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @Validated
 public class LoginController {
 
-    private final AuthService srv;
+    private final UserService srv;
     private final RestAuthManager restAuthManager;
 
     @GetMapping( "/login")

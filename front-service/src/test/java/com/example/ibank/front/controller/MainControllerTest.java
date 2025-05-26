@@ -1,5 +1,6 @@
 package com.example.ibank.front.controller;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
@@ -62,6 +64,8 @@ public class MainControllerTest extends ControllerTest {
                 .xpath( "//*[@class='birthDate']").isEqualTo(
                     LocalDate.parse( EXISTS_USER_BIRTHDATE).format( DateTimeFormatter.ofPattern( "dd.MM.yyyy"))
                 )
+                .xpath( "//*[@class='toUser']").nodeCount( Matchers.greaterThanOrEqualTo( 1))
+                .xpath( "//*[@class='toUser'][@value='%s']".formatted( login)).nodeCount( 0)
         ;
     }
 

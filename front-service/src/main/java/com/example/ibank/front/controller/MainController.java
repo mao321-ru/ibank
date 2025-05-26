@@ -1,8 +1,8 @@
 package com.example.ibank.front.controller;
 
+import com.example.ibank.front.accounts.model.UserShort;
 import com.example.ibank.front.dto.EditPasswordDto;
-import com.example.ibank.front.dto.SignupDto;
-import com.example.ibank.front.security.AuthService;
+import com.example.ibank.front.service.UserService;
 import com.example.ibank.front.security.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -28,7 +27,7 @@ import java.util.List;
 @Validated
 public class MainController {
 
-    private final AuthService authService;
+    private final UserService userService;
 
     @GetMapping("/")
     public Mono<String> redirectRoot() {
@@ -54,6 +53,17 @@ public class MainController {
                         user.getBirthDate().format( DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                     );
                 })
+            .flatMap( user ->
+                userService.getUsers()
+                .map( users ->
+                    model.addAttribute( "users",
+                        users.stream()
+                            // исключаем себя из отправки "Другому пользователю"
+                            .filter( u -> ! u.getLogin().equals( user.getLogin()))
+                            .sorted( Comparator.comparing( UserShort::getName))
+                    )
+                )
+            )
             .then( exchange.getSession())
                 .doOnNext( ss -> {
                     model.addAttribute(
@@ -82,7 +92,7 @@ public class MainController {
                         null
                     ;
                     if( errorMessage != null) throw new IllegalArgumentException( errorMessage);
-                    return authService.changePassword( login, dto.getPassword());
+                    return userService.changePassword( login, dto.getPassword());
                 })
                 .onErrorResume( e -> exchange.getSession()
                     .doOnNext( ss -> {

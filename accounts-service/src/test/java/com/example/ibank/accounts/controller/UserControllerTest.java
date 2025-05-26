@@ -1,5 +1,6 @@
 package com.example.ibank.accounts.controller;
 
+import com.example.ibank.accounts.model.UserShort;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -9,6 +10,22 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 public class UserControllerTest extends ControllerTest {
+
+    @Test
+    void listUsers_ok() throws Exception {
+        wtc.get().uri( "/users")
+            .headers( headers -> headers.setBearerAuth( getAccessToken( "front-service")))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList( UserShort.class)
+            .value( list -> {
+                //System.out.println( "list: " + list.toString());
+                assertThat( list.size())
+                    .as( "Check users list size")
+                    .isGreaterThanOrEqualTo( 2);
+            })
+        ;
+    }
 
     @Test
     void createUser_ok() throws Exception {
@@ -23,7 +40,7 @@ public class UserControllerTest extends ControllerTest {
                         {
                             "login": "%s",
                             "password": "jjj",
-                            "userName": "%s",
+                            "name": "%s",
                             "birthDate": "%s"
                         }
                         """.formatted( login, userName, birthDate)
@@ -33,7 +50,7 @@ public class UserControllerTest extends ControllerTest {
                 .expectBody()
                 //.consumeWith( System.out::println) // вывод запроса и ответа
                 .jsonPath( "$.login").isEqualTo( login)
-                .jsonPath( "$.userName").isEqualTo( userName)
+                .jsonPath( "$.name").isEqualTo( userName)
                 .jsonPath( "$.birthDate").isEqualTo( birthDate)
         ;
     }
@@ -55,7 +72,7 @@ public class UserControllerTest extends ControllerTest {
             .expectBody()
             //.consumeWith( System.out::println) // вывод запроса и ответа
             .jsonPath( "$.login").isEqualTo( EXISTS_USER_LOGIN)
-            .jsonPath( "$.userName").isEqualTo( EXISTS_USER_NAME)
+            .jsonPath( "$.name").isEqualTo( EXISTS_USER_NAME)
             .jsonPath( "$.birthDate").isEqualTo( EXISTS_USER_BIRTHDATE)
         ;
     }
