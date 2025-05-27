@@ -2,6 +2,7 @@ package com.example.ibank.front.service;
 
 import com.example.ibank.front.accounts.model.UserInfo;
 import com.example.ibank.front.accounts.model.UserShort;
+import com.example.ibank.front.accounts.model.UserAccounts;
 import com.example.ibank.front.dto.SignupDto;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +18,8 @@ public interface UserService {
     Mono<Void> changePassword(String login, String password);
 
     Mono<List<UserShort>> getUsers();
+
+    Mono<UserAccounts> getUserAccounts( String login);
 
     boolean isAdult(LocalDate birthDate);
 

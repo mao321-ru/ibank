@@ -46,6 +46,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Mono<UserAccounts> getUserAccounts( String login) {
+        return usersApi.getUserAccounts( login);
+    }
+
+    @Override
     public boolean isAdult(LocalDate birthDate) {
         return !birthDate.plusYears(18).isAfter( LocalDate.now());
     }

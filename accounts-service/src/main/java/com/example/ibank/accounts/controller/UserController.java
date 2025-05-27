@@ -21,19 +21,18 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@PreAuthorize( "hasRole('AUTH')")
 public class UserController implements UserApi {
 
     private final UserService userService;
 
     @Override
-    @PreAuthorize( "hasRole('AUTH')")
     public Mono<ResponseEntity<Flux<UserShort>>> listUsers(ServerWebExchange exchange) {
         log.debug( "listUsers: ...");
         return Mono.just( ResponseEntity.ok( userService.getAllUsers()));
     }
 
     @Override
-    @PreAuthorize( "hasRole('AUTH')")
     public Mono<ResponseEntity<UserInfo>> createUser(
             Mono<UserCreate> registerRequest,
             ServerWebExchange exchange
@@ -49,7 +48,13 @@ public class UserController implements UserApi {
     }
 
     @Override
-    @PreAuthorize( "hasRole('AUTH')")
+    public Mono<ResponseEntity<UserAccounts>> getUserAccounts(String login, ServerWebExchange exchange) {
+        return userService.getUserAccounts(login)
+            .map( ResponseEntity::ok)
+            .defaultIfEmpty( ResponseEntity.notFound().build());
+    }
+
+    @Override
     public Mono<ResponseEntity<UserInfo>> validate(
         String login,
         Mono<ValidateRequest> validateRequest,
@@ -67,7 +72,6 @@ public class UserController implements UserApi {
     }
 
     @Override
-    @PreAuthorize( "hasRole('AUTH')")
     public Mono<ResponseEntity<Void>> changePassword(
         String login,
         Mono<ChangePasswordRequest> changePasswordRequest,

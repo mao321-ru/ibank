@@ -64,6 +64,14 @@ public class MainControllerTest extends ControllerTest {
                 .xpath( "//*[@class='birthDate']").isEqualTo(
                     LocalDate.parse( EXISTS_USER_BIRTHDATE).format( DateTimeFormatter.ofPattern( "dd.MM.yyyy"))
                 )
+                .xpath( "//*[@class='getAccountsError']").nodeCount( 0)
+                .xpath( "//*[@class='userAccount']").nodeCount( CURRENCIES_COUNT)
+                .xpath( "//*[@class='userAccount__curName'][1]").isEqualTo( CURRENCY_RUB_NAME)
+                .xpath( "//*[@class='userAccount__valueText'][1]").isEqualTo(
+                    EXISTS_USER_RUB_AMOUNT + " " + CURRENCY_RUB_CODE
+                )
+                .xpath( "//*[@class='eachCurrency']").nodeCount( CURRENCIES_COUNT)
+                .xpath( "//*[@class='getUsersError']").nodeCount( 0)
                 .xpath( "//*[@class='toUser']").nodeCount( Matchers.greaterThanOrEqualTo( 1))
                 .xpath( "//*[@class='toUser'][@value='%s']".formatted( login)).nodeCount( 0)
         ;

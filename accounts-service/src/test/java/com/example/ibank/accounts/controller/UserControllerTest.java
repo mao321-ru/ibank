@@ -1,5 +1,6 @@
 package com.example.ibank.accounts.controller;
 
+import com.example.ibank.accounts.model.UserAccounts;
 import com.example.ibank.accounts.model.UserShort;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,22 @@ public class UserControllerTest extends ControllerTest {
                     .as( "Check users list size")
                     .isGreaterThanOrEqualTo( 2);
             })
+        ;
+    }
+
+    @Test
+    void getUserAccounts_ok() throws Exception {
+        wtc.get().uri( "/users/{login}", EXISTS_USER_LOGIN)
+                .headers( headers -> headers.setBearerAuth( getAccessToken( "front-service")))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody( UserAccounts.class)
+                .value( res -> {
+                    //System.out.println( "response: " + res.toString());
+                    assertThat( res.getAccounts().size())
+                        .as( "Check accounts count")
+                        .isEqualTo( CURRENCIES_COUNT);
+                })
         ;
     }
 

@@ -44,6 +44,21 @@ paths:
           description: Неверный запрос (валидация не пройдена)
         '409':
           description: Такой пользователь уже существует
+  /users/{login}:
+    get:
+      tags:
+        - User
+      operationId: getUserAccounts
+      summary: Получить информацию о пользователе и его счетах
+      parameters:
+        - $ref: '#/components/parameters/loginPathParam'
+      responses:
+        200:
+          description:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccounts'
   /users/{login}/validate:
     post:
       tags:
@@ -51,12 +66,7 @@ paths:
       operationId: validate
       summary: Проверяет наличие пользователя с указанным логином и паролем
       parameters:
-        - name: login
-          in: path
-          required: true
-          schema:
-            type: string
-            minLength: 1
+        - $ref: '#/components/parameters/loginPathParam'
       requestBody:
         required: true
         content:
@@ -81,12 +91,7 @@ paths:
       operationId: changePassword
       summary: Меняет пароль пользователя
       parameters:
-        - name: login
-          in: path
-          required: true
-          schema:
-            type: string
-            minLength: 1
+        - $ref: '#/components/parameters/loginPathParam'
       requestBody:
         required: true
         content:
@@ -101,6 +106,15 @@ paths:
         '404':
           description: Пользователь не найден
 components:
+  parameters:
+    loginPathParam:
+      name: login
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: Логин пользователя
   schemas:
     UserShort:
       type: object
@@ -159,6 +173,60 @@ components:
         - login
         - name
         - birthDate
+    UserAccounts:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+        name:
+          type: string
+          description: Фамилия Имя
+        birthDate:
+          type: string
+          format: date
+          description: Дата рождения
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+      required:
+        - login
+        - name
+        - birthDate
+        - accounts
+    Account:
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        value:
+          type: number
+          format: double
+          example: 1500.75
+          description: Сумма на счете
+        exists:
+          type: boolean
+          example: true
+          description: Наличие счета у пользователя
+      required:
+        - currency
+        - value
+        - exists
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "USD"
+          description: Код валюты (ISO 4217)
+        name:
+          type: string
+          example: "Доллар США"
+          description: Название валюты
+      required:
+        - code
+        - name
     ValidateRequest:
       type: object
       properties:

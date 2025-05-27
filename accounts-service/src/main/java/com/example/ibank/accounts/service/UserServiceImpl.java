@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -130,6 +131,60 @@ public class UserServiceImpl implements UserService {
             .doOnNext( rowCount -> log.debug( "changePassword: updated rows: {}", rowCount))
             .map( rowCount -> rowCount > 0)
        ;
+    }
+
+    @Override
+    public Mono<UserAccounts> getUserAccounts(String login) {
+        return etm.getDatabaseClient()
+            .sql(
+                """
+                select
+                    u.login,
+                    u.user_name,
+                    u.birth_date,
+                    cr.currency_code,
+                    cr.currency_name,
+                    coalesce( ac.amount, 0) as amount,
+                    ac.account_id is not null as account_exists
+                from
+                    users u
+                    cross join currencies cr
+                    left join accounts ac
+                        on ac.user_id = u.user_id
+                            and ac.currency_code = cr.currency_code
+                where
+                    u.login = :login
+                order by
+                    case when cr.currency_code != 'RUB' then cr.currency_name end nulls first
+                """
+            )
+            .bind( "login", login)
+            .map( row -> new UserAccounts()
+                    .login( row.get( "login", String.class))
+                    .name( row.get( "user_name", String.class))
+                    .birthDate( row.get( "birth_date", LocalDate.class))
+                    .accounts( List.of( new Account()
+                        .currency( new Currency()
+                            .code( row.get( "currency_code", String.class))
+                            .name( row.get( "currency_name", String.class))
+                        )
+                        .value( row.get( "amount", BigDecimal.class))
+                        .exists( row.get( "account_exists", Boolean.class))
+                    ))
+            )
+            .all()
+            .collectList()
+            .filter( list -> ! list.isEmpty())
+            .map( list -> {
+                var f = list.getFirst();
+                return new UserAccounts()
+                    .login( f.getLogin())
+                    .name( f.getName())
+                    .birthDate( f.getBirthDate())
+                    .accounts( list.stream().map( ua -> ua.getAccounts().getFirst()).toList())
+                ;
+            })
+        ;
     }
 
 }

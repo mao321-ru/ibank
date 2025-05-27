@@ -1,5 +1,6 @@
 package com.example.ibank.front.controller;
 
+import com.example.ibank.front.accounts.model.Account;
 import com.example.ibank.front.accounts.model.UserShort;
 import com.example.ibank.front.dto.EditPasswordDto;
 import com.example.ibank.front.service.UserService;
@@ -54,14 +55,39 @@ public class MainController {
                     );
                 })
             .flatMap( user ->
-                userService.getUsers()
-                .map( users ->
-                    model.addAttribute( "users",
-                        users.stream()
-                            // исключаем себя из отправки "Другому пользователю"
-                            .filter( u -> ! u.getLogin().equals( user.getLogin()))
-                            .sorted( Comparator.comparing( UserShort::getName))
-                    )
+                Mono.when(
+                    userService.getUsers()
+                        .doOnNext( users ->
+                            model.addAttribute( "users",
+                                users.stream()
+                                    // исключаем себя из отправки "Другому пользователю"
+                                    .filter( u -> ! u.getLogin().equals( user.getLogin()))
+                                    .sorted( Comparator.comparing( UserShort::getName))
+                            )
+                        )
+                        .onErrorComplete( e -> {
+                            log.debug( "getUsers error: {}", e.getMessage());
+                            model.addAttribute("getUsersErrors", List.of( e.getMessage()));
+                            return true;
+                        }),
+                    userService.getUserAccounts( user.getLogin())
+                        .doOnNext( ua -> {
+                            model.addAttribute("name", ua.getName());
+                            model.addAttribute(
+                                "birthdate",
+                                ua.getBirthDate().format( DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                            );
+                            model.addAttribute("accounts", ua.getAccounts());
+                            model.addAttribute(
+                                "currency",
+                                ua.getAccounts().stream().map( Account::getCurrency).toList()
+                            );
+                        })
+                        .onErrorComplete( e -> {
+                            log.debug( "getUserAccounts error: {}", e.getMessage());
+                            model.addAttribute("getAccountsErrors", List.of( e.getMessage()));
+                            return true;
+                        })
                 )
             )
             .then( exchange.getSession())
