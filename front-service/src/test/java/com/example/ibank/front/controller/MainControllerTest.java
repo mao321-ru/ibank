@@ -17,6 +17,10 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 public class MainControllerTest extends ControllerTest {
 
     final String PASSWORD_ERROR_XPATH = "//*[@class='passwordError']";
+    final String USER_ACCOUNTS_ERROR_XPATH = "//*[@class='userAccountsError']";
+    final String USERNAME_XPATH = "//*[@class='userName']";
+    final String BIRTHDATE_XPATH = "//*[@class='birthDate']";
+    final String ACCOUNT_EXISTS_XPF = "//*[@class='userAccount__check'][@value='%s'][@checked='checked']";
 
     @Test
     void root_noAuth() throws Exception {
@@ -60,8 +64,8 @@ public class MainControllerTest extends ControllerTest {
                 .expectBody()
                 //.consumeWith( System.out::println) // вывод запроса и ответа
                 .xpath( "//*[@class='login']").isEqualTo( EXISTS_USER_LOGIN)
-                .xpath( "//*[@class='userName']").isEqualTo( EXISTS_USER_NAME)
-                .xpath( "//*[@class='birthDate']").isEqualTo(
+                .xpath( USERNAME_XPATH).isEqualTo( EXISTS_USER_NAME)
+                .xpath( BIRTHDATE_XPATH).isEqualTo(
                     LocalDate.parse( EXISTS_USER_BIRTHDATE).format( DateTimeFormatter.ofPattern( "dd.MM.yyyy"))
                 )
                 .xpath( "//*[@class='getAccountsError']").nodeCount( 0)
@@ -152,4 +156,81 @@ public class MainControllerTest extends ControllerTest {
         checkLoginOk( login, newPassword);
     }
 
+    @Test
+    void editUserAccounts_ok() throws Exception {
+        final String login = EDITED_USER_LOGIN;
+        final String password = EDITED_USER_PASSWORD;
+
+        final String userName = "editedUserAccounts_ok";
+        final String birthDate = "2001-12-23";
+
+        String sessionCookie = checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/editUserAccounts",login)
+                .cookie("SESSION", sessionCookie)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "name", userName)
+                        .with( "birthdate", birthDate)
+                        .with( "account", "USD")
+                        .with( "account", "RUB")
+                )
+                .exchange()
+                .expectStatus().isSeeOther()
+                .expectHeader().location( MAIN_URL)
+            //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        wtc.get().uri( MAIN_URL)
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", sessionCookie)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( USER_ACCOUNTS_ERROR_XPATH).nodeCount( 0)
+                .xpath( USERNAME_XPATH).isEqualTo( userName)
+                .xpath( BIRTHDATE_XPATH).isEqualTo(
+                    LocalDate.parse( birthDate).format( DateTimeFormatter.ofPattern( "dd.MM.yyyy"))
+                )
+                .xpath( ACCOUNT_EXISTS_XPF.formatted( "RUB")).nodeCount( 1)
+                .xpath( ACCOUNT_EXISTS_XPF.formatted( "USD")).nodeCount( 1)
+                .xpath( ACCOUNT_EXISTS_XPF.formatted( "EUR")).nodeCount( 0)
+        ;
+    }
+
+    @Test
+    void editUserAccounts_nameOnly() throws Exception {
+        final String login = EDITED_USER_LOGIN;
+        final String password = EDITED_USER_PASSWORD;
+
+        final String userName = "editedUserAccounts_nameOnly";
+
+        String sessionCookie = checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/editUserAccounts",login)
+                .cookie("SESSION", sessionCookie)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters.fromFormData( "name", userName))
+                .exchange()
+                .expectStatus().isSeeOther()
+                .expectHeader().location( MAIN_URL)
+            //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        wtc.get().uri( MAIN_URL)
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", sessionCookie)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( USER_ACCOUNTS_ERROR_XPATH).doesNotExist()
+                .xpath( USERNAME_XPATH).isEqualTo( userName)
+        ;
+    }
 }

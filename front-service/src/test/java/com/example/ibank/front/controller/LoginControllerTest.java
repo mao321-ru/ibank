@@ -95,11 +95,12 @@ public class LoginControllerTest extends ControllerTest {
 
     @Test
     void signup_usedLogin() throws Exception {
+        final String login = EXISTS_USER_LOGIN;
         wtc.mutateWith( csrf())
                 .post().uri( "/signup")
                 .contentType( MediaType.APPLICATION_FORM_URLENCODED)
                 .body( BodyInserters
-                        .fromFormData( "login", EXISTS_USER_LOGIN)
+                        .fromFormData( "login", login)
                         .with( "password", "signupOkPwd")
                         .with( "confirm_password", "signupOkPwd")
                         .with( "name", "Sugnup UsedLogin")
@@ -111,7 +112,7 @@ public class LoginControllerTest extends ControllerTest {
                 .expectBody()
                 //.consumeWith( System.out::println) // вывод запроса и ответа
                 .xpath( ERROR_INFO_XPATH).nodeCount( 1)
-                .xpath( ERROR_INFO_XPATH).isEqualTo( "Этот логин уже используется")
+                .xpath( ERROR_INFO_XPATH).isEqualTo( "Login [%s] already used".formatted( login))
         ;
     }
 

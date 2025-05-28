@@ -70,7 +70,7 @@
                 <td class="getAccountsError" style="color:red;" th:text="${getAccountsError}"/>
             </tr>
             <tr th:if="${userAccountsErrors!=null}" th:each="userAccountsError : ${userAccountsErrors}">
-                <td style="color:red;" th:text="${userAccountsError}"/>
+                <td class="userAccountsError" style="color:red;" th:text="${userAccountsError}"/>
             </tr>
             <tr>
                 <td style="font-weight:bold;">Фамилия Имя</td>
@@ -90,7 +90,7 @@
                 <td class="userAccount__curName" style="font-weight:bold;" th:text="${account.getCurrency().getName()}"/>
                 <td class="userAccount__valueText" th:text="${account.getExists() ? (account.getValue()+' '+account.getCurrency().getCode()) : ''}"/>
                 <td style="text-align:right">
-                    <input name="account" type="checkbox" th:checked="${account.getExists()}" th:value="${account.getCurrency().getCode()}"/>
+                    <input class="userAccount__check" name="account" type="checkbox" th:checked="${account.getExists()}" th:value="${account.getCurrency().getCode()}"/>
                 </td>
             </tr>
             <tr>

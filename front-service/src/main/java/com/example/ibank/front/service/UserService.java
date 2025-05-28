@@ -3,6 +3,7 @@ package com.example.ibank.front.service;
 import com.example.ibank.front.accounts.model.UserInfo;
 import com.example.ibank.front.accounts.model.UserShort;
 import com.example.ibank.front.accounts.model.UserAccounts;
+import com.example.ibank.front.dto.EditUserAccountsDto;
 import com.example.ibank.front.dto.SignupDto;
 import reactor.core.publisher.Mono;
 
@@ -23,4 +24,5 @@ public interface UserService {
 
     boolean isAdult(LocalDate birthDate);
 
+    Mono<Void> editUserAccounts(String login, EditUserAccountsDto dto);
 }

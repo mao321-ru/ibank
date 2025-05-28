@@ -13,6 +13,10 @@ interface TestData {
     // Существующий пользователь (можно менять пароль)
     String EXISTS_USER2_LOGIN = "user2";
 
+    // Можно редактировать имя, дату рождения и счета
+    String EDITED_USER_LOGIN = "editedUser";
+    String EDITED_USER_PASSWORD = "user";
+
     // Число валют
     int CURRENCIES_COUNT = 3;
     String CURRENCY_RUB_CODE = "RUB";

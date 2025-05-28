@@ -27,6 +27,11 @@ from
         '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
         'Меняй Пароль',
         DATE '1980-04-21'
+    union all select
+        'editedUser',
+        '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
+        'Редактируемый Юзер',
+        DATE '1979-05-18'
     ) s
 ;
 

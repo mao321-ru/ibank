@@ -44,6 +44,10 @@ paths:
           description: Неверный запрос (валидация не пройдена)
         '409':
           description: Такой пользователь уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /users/{login}:
     get:
       tags:
@@ -59,6 +63,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserAccounts'
+    patch:
+      tags:
+        - User
+      operationId: updateUserAccounts
+      summary: Обновление данных пользователя и его счетов
+      parameters:
+        - $ref: '#/components/parameters/loginPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '204':
+          description: Данные успешно обновлены
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+        '404':
+          description: Пользователь не найден
+        '409':
+          description: Счет с ненулевым балансом не можеть быть закрыт
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /users/{login}/validate:
     post:
       tags:
@@ -227,6 +257,32 @@ components:
       required:
         - code
         - name
+    UserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+          default: null
+          description: Новое имя пользователя (null - не изменять)
+        birthDate:
+          type: string
+          format: date
+          nullable: true
+          default: null
+          example: "1990-01-20"
+          description: Новая дата рождения (null - не изменять)
+        currencies:
+          type: array
+          items:
+            type: string
+            example: "USD"
+          description: |
+            Список кодов валют для счетов:
+            - [] - закрыть все счета
+            - ["USD", "EUR"] - оставить/добавить счета в этих валютах, закрыть остальные
+      required:
+        - currencies
     ValidateRequest:
       type: object
       properties:
@@ -248,3 +304,14 @@ components:
           description: Пароль (непустой)
       required:
         - password
+    Error:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          format: int32
+        error_message:
+          type: string
+      required:
+        - error_code
+        - error_message

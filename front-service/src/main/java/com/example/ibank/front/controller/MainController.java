@@ -3,6 +3,7 @@ package com.example.ibank.front.controller;
 import com.example.ibank.front.accounts.model.Account;
 import com.example.ibank.front.accounts.model.UserShort;
 import com.example.ibank.front.dto.EditPasswordDto;
+import com.example.ibank.front.dto.EditUserAccountsDto;
 import com.example.ibank.front.service.UserService;
 import com.example.ibank.front.security.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -92,11 +93,10 @@ public class MainController {
             )
             .then( exchange.getSession())
                 .doOnNext( ss -> {
-                    model.addAttribute(
-                        "passwordErrors",
-                        ss.getAttributes().getOrDefault( "passwordErrors", null)
-                    );
-                    ss.getAttributes().remove( "passwordErrors");
+                    for (var errType: List.of( "passwordErrors", "userAccountsErrors")) {
+                        model.addAttribute( errType, ss.getAttributes().getOrDefault( errType, null));
+                        ss.getAttributes().remove( errType);
+                    }
                 })
             .thenReturn( "main");
     }
@@ -126,6 +126,33 @@ public class MainController {
                         ss.getAttributes().put( "passwordErrors", List.of( e.getMessage()));
                     })
                     .then( Mono.empty())
+                )
+                .thenReturn( "redirect:/main");
+    }
+
+    @PostMapping( "/user/{login}/editUserAccounts")
+    Mono<String> editUserAccounts(
+            EditUserAccountsDto dto,
+            ServerWebExchange exchange,
+            Model model
+    ) {
+        log.debug( "editUserAccounts");
+        return exchange.getPrincipal()
+                .map( Principal::getName)
+                .flatMap( login -> {
+                    log.debug("login: {}", login);
+                    log.debug("dto: {}", dto);
+                    if( dto.getBirthDate() != null && ! userService.isAdult( dto.getBirthDate())) {
+                        throw new IllegalArgumentException( "Возраст дожен быть не менее 18 лет");
+                    }
+                    return userService.editUserAccounts( login, dto);
+                })
+                .onErrorResume( e -> exchange.getSession()
+                        .doOnNext( ss -> {
+                            log.debug( "userAccountsErrors: {}", e.getMessage());
+                            ss.getAttributes().put( "userAccountsErrors", List.of( e.getMessage()));
+                        })
+                        .then( Mono.empty())
                 )
                 .thenReturn( "redirect:/main");
     }

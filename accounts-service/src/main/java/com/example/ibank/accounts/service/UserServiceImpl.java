@@ -3,6 +3,7 @@ package com.example.ibank.accounts.service;
 import com.example.ibank.accounts.model.*;
 import com.example.ibank.accounts.repository.UserRepository;
 
+import io.r2dbc.spi.Parameters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import org.springframework.r2dbc.core.Parameter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -28,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional( readOnly = true)
     public Flux<UserShort> getAllUsers() {
         return etm.getDatabaseClient().sql(
                 """
@@ -114,6 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Mono<Boolean> changePassword(  String login, String password) {
         return etm.getDatabaseClient()
             .sql("""
@@ -184,6 +189,126 @@ public class UserServiceImpl implements UserService {
                     .accounts( list.stream().map( ua -> ua.getAccounts().getFirst()).toList())
                 ;
             })
+        ;
+    }
+
+    @Override
+    public Mono<Boolean> updateUserAccounts(String login, UserUpdateRequest rq) {
+        log.debug( "updateUserAccounts: userName: {}", rq.getName());
+        final String notFoundMsg = "USER_NOT_FOUND";
+        return etm.getDatabaseClient()
+            .sql("""
+                with
+                    validate_errors_q as
+                        (
+                        select
+                            :notFoundMsg as error_message
+                        from
+                            users u
+                        where
+                            u.login = :login
+                        having
+                            count(1) = 0
+                        union all
+                        select
+                            'Balance must be zero for close ' || ac.currency_code || ' account'
+                        from
+                            accounts ac
+                        where
+                            ac.user_id = (select u.user_id from users u where u.login = :login)
+                            and not exists
+                                (
+                                select
+                                    null
+                                from
+                                    (select unnest( :currencies) currency_code) t
+                                where
+                                    t.currency_code = ac.currency_code
+                                )
+                            and ac.amount != 0
+                        ),
+                    user_id_q as
+                        -- возвращает user_id только при отсутствии ошибок, чтобы исключить фактическое внесение
+                        -- изменений в последующих модифицирующих подзапросах (которые будут выполняться БД)
+                        (
+                        select
+                            u.user_id
+                        from
+                            users u
+                        where
+                            u.login = :login
+                            and not exists (select null from validate_errors_q)
+                        ),
+                    update_users_q as
+                        (
+                        update
+                            users u
+                        set
+                            user_name = coalesce( nullif( trim( :userName), ''), user_name),
+                            birth_date = coalesce( :birthDate, birth_date)
+                        where
+                            u.user_id = (select t.user_id from user_id_q t)
+                        ),
+                    merge_accounts_q as
+                        (
+                        merge into
+                            accounts d
+                        using
+                            (
+                            select distinct
+                                u.user_id,
+                                t.currency_code
+                            from
+                                (select unnest( :currencies) currency_code) t
+                                cross join user_id_q u
+                            ) s
+                        on
+                            d.user_id = s.user_id
+                            and d.currency_code = s.currency_code
+                        when not matched then
+                            insert
+                            (
+                                user_id,
+                                currency_code,
+                                amount
+                            )
+                            values
+                            (
+                                s.user_id,
+                                s.currency_code,
+                                0
+                            )
+                        when not matched by source and
+                                d.user_id = (select user_id from user_id_q)
+                                -- закрываем только нулевые счета
+                                and d.amount = 0
+                            then delete
+                        )
+                select
+                    max( e.error_message) as error_message
+                from
+                    (
+                    select
+                        ve.*
+                    from
+                        validate_errors_q ve
+                    limit 1
+                    ) e
+            """)
+                .bind( "login", login)
+                // для передачи null нужно использовать Parameter, иначе будет ошибка
+                .bind( "userName", Parameter.fromOrEmpty( rq.getName(), String.class))
+                .bind( "birthDate", Parameter.fromOrEmpty( rq.getBirthDate(), LocalDate.class))
+                .bind( "currencies", rq.getCurrencies().toArray( new String[0]))
+                .bind( "notFoundMsg", notFoundMsg)
+                .map( row -> {
+                    var errorMessage = row.get( "error_message", String.class);
+                    if( errorMessage != null && ! notFoundMsg.equals( errorMessage)) {
+                        throw new IllegalStateException( errorMessage);
+                    }
+                    return errorMessage == null;
+                })
+                .one()
         ;
     }
 

@@ -2,6 +2,7 @@ package com.example.ibank.front.service;
 
 import com.example.ibank.front.accounts.api.UserApi;
 import com.example.ibank.front.accounts.model.*;
+import com.example.ibank.front.dto.EditUserAccountsDto;
 import com.example.ibank.front.dto.SignupDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public Mono<UserAccounts> getUserAccounts( String login) {
         return usersApi.getUserAccounts( login);
+    }
+
+
+    @Override
+    public Mono<Void> editUserAccounts(String login, EditUserAccountsDto dto) {
+        return usersApi.updateUserAccounts(
+            login,
+            new UserUpdateRequest()
+                .name( dto.getName())
+                .birthDate( dto.getBirthDate())
+                .currencies( dto.getAccountCurrencies() != null ? dto.getAccountCurrencies() : List.of())
+        );
     }
 
     @Override

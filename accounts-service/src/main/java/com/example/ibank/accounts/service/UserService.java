@@ -10,7 +10,7 @@ public interface UserService {
 
     Flux<UserShort> getAllUsers();
 
-    Mono<UserInfo> createUser(UserCreate request);
+    Mono<UserInfo> createUser(UserCreate rq);
 
     Mono<UserInfo> validate( String login, String password);
 
@@ -18,4 +18,5 @@ public interface UserService {
 
     Mono<UserAccounts> getUserAccounts( String login);
 
+    Mono<Boolean> updateUserAccounts( String login, UserUpdateRequest rq);
 }

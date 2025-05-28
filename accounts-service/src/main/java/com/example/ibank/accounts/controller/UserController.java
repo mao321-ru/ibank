@@ -3,6 +3,7 @@ package com.example.ibank.accounts.controller;
 import com.example.ibank.accounts.api.UserApi;
 import com.example.ibank.accounts.model.*;
 
+import com.example.ibank.accounts.model.Error;
 import com.example.ibank.accounts.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,11 +41,18 @@ public class UserController implements UserApi {
     {
         log.debug( "createUser: ...");
         return registerRequest
-                .flatMap( userService::createUser)
-                .map( resp -> ResponseEntity.status( HttpStatus.CREATED).body( resp))
-                .switchIfEmpty( Mono.just(
-                        ResponseEntity.status( HttpStatus.CONFLICT).build()
-                ));
+            .flatMap( rq ->
+                userService.createUser( rq)
+                .switchIfEmpty(
+                     Mono.error(
+                         new IllegalStateException(
+                             "Login [%s] already used".formatted( rq.getLogin())
+                         )
+                     )
+                )
+            )
+            .map( resp -> ResponseEntity.status( HttpStatus.CREATED).body( resp))
+        ;
     }
 
     @Override
@@ -52,6 +60,15 @@ public class UserController implements UserApi {
         return userService.getUserAccounts(login)
             .map( ResponseEntity::ok)
             .defaultIfEmpty( ResponseEntity.notFound().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> updateUserAccounts(String login, Mono<UserUpdateRequest> userUpdateRequest, ServerWebExchange exchange) {
+        log.debug( "updateUserAccounts: login: {}", login);
+        return userUpdateRequest
+            .flatMap( rq -> userService.updateUserAccounts( login, rq))
+            .map( isOk -> ResponseEntity.status( isOk ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND).<Void>build())
+        ;
     }
 
     @Override

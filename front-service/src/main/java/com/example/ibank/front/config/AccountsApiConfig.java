@@ -3,6 +3,7 @@ package com.example.ibank.front.config;
 
 import com.example.ibank.front.accounts.api.UserApi;
 import com.example.ibank.front.accounts.invoker.ApiClient;
+import com.example.ibank.front.accounts.model.Error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,10 @@ public class AccountsApiConfig {
             authWebClient.mutate()
                 .defaultStatusHandler(
                     status -> status == HttpStatus.CONFLICT,
-                    resp ->  Mono.error( new IllegalStateException( "Этот логин уже используется"))
+                    resp ->  resp.bodyToMono( Error.class)
+                        .flatMap( e ->
+                            Mono.error( new IllegalStateException( e.getErrorMessage()))
+                        )
                 )
                 .build()
         );
