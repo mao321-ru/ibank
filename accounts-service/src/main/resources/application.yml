@@ -6,5 +6,6 @@ spring.profiles.active: dev
 spring:
   profiles:
     include:
+      - client
       - resourceserver
       - postgres

@@ -1,6 +1,8 @@
 package com.example.ibank.accounts.service;
 
 import com.example.ibank.accounts.model.*;
+import com.example.ibank.accounts.notify.api.EventApi;
+import com.example.ibank.accounts.notify.model.EventCreate;
 import com.example.ibank.accounts.repository.UserRepository;
 
 import io.r2dbc.spi.Parameters;
@@ -24,6 +26,8 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private final EventApi eventApi;
 
     private final UserRepository repo;
     private final R2dbcEntityTemplate etm;
@@ -99,7 +103,18 @@ public class UserServiceImpl implements UserService {
                             ;
                         })
                         .one()
-                ;
+            .flatMap( u ->
+                eventApi.createEvent( new EventCreate()
+                    .source( "accounts-service")
+                    .eventType( "createUser")
+                    .userLogin( u.getLogin())
+                    .message( "Зарегистрирован пользователь [%s] с логином [%s]".formatted( u.getLogin(), u.getName()))
+                )
+                .doOnError( e -> log.error( "Notification failed: {}", e.getMessage()))
+                .onErrorResume( e -> Mono.empty())
+                .thenReturn( u)
+            )
+        ;
     }
 
     @Override
@@ -211,6 +226,18 @@ public class UserServiceImpl implements UserService {
             .rowsUpdated()
             .doOnNext( rowCount -> log.debug( "changePassword: updated rows: {}", rowCount))
             .map( rowCount -> rowCount > 0)
+            .flatMap( isOk -> isOk
+                ? eventApi.createEvent( new EventCreate()
+                        .source( "accounts-service")
+                        .eventType( "changePassword")
+                        .userLogin( login)
+                        .message( "Пароль пользователя с логином [%s] изменен".formatted( login))
+                    )
+                    .doOnError( e -> log.error( "Notification failed: {}", e.getMessage()))
+                    .onErrorResume( e -> Mono.empty())
+                    .thenReturn( true)
+                : Mono.just( false)
+            )
        ;
     }
 

@@ -21,6 +21,12 @@ spring:
             - Path=/api/accounts/**
           filters:
             - StripPrefix=2  # Удаляет /api/accounts
+        - id: notify-route
+          uri: lb://notify-service
+          predicates:
+            - Path=/api/notify/**
+          filters:
+            - StripPrefix=2
         # запрос по неизвестному API (возвращает HTTP 404)
         - id: api-not-found
           uri: no://op  # Специальный URI для "ничего не делать"

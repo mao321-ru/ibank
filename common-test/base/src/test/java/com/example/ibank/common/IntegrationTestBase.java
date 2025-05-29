@@ -32,7 +32,8 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
         EUREKA,
         GATEWAY,
         POSTGRES,
-        ACCOUNTS_SERVICE
+        ACCOUNTS_SERVICE,
+        NOTIFY_SERVICE
     };
 
     protected static EnumMap<Container,GenericContainer<?>> containers = new EnumMap<>( Container.class);
@@ -121,6 +122,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
 
         startIfUsed.accept( Container.EUREKA, 8761);
 
+        startIfUsed.accept( Container.NOTIFY_SERVICE, 8080);
         startIfUsed.accept( Container.ACCOUNTS_SERVICE, 8080);
 
         // старт после запуска всех сервисов

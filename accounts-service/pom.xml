@@ -61,6 +61,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- OAuth 2.0 client -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
         <!-- OAuth 2.0 resource server -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -138,6 +144,12 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>add-shared-client</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>add-shared-resourceserver</id>
                         <goals>
                             <goal>add-source</goal>
@@ -166,6 +178,18 @@
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>java-client-generator</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/../notify-service/${openapi.spec.path}</inputSpec>
+                            <apiPackage>${module.base.package}.notify.api</apiPackage>
+                            <modelPackage>${module.base.package}.notify.model</modelPackage>
+                            <invokerPackage>${module.base.package}.notify.invoker</invokerPackage>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
