@@ -10,12 +10,12 @@
 Прикладные микросервисы:
 1. фронта (Front UI) (front-service);
 2. сервиса аккаунтов (Accounts) (accounts-service);
-3. сервиса обналичивания денег (Cash);
-4. сервиса перевода денег между счетами одного или двух аккаунтов (Transfer);
-5. сервиса конвертации валют (Exchange);
-6. сервиса генерации курсов валют (Exchange Generator);
-7. сервиса блокировки подозрительных операций (Blocker);
-8. сервиса уведомлений (Notifications).
+3. сервиса обналичивания денег (Cash) (cash-service);
+4. сервиса перевода денег между счетами одного или двух аккаунтов (Transfer) (transfer-service);
+5. сервиса конвертации валют (Exchange) (exchange-service);
+6. сервиса генерации курсов валют (Exchange Generator) (exrate-service);
+7. сервиса блокировки подозрительных операций (Blocker) (blocker-service);
+8. сервиса уведомлений (Notifications) (notify-service);
 
 
 ## Установка приложения в Docker
@@ -33,6 +33,11 @@
 
 ```cmd
   docker compose down
+```
+Команда для остановки и удаления приложения вместе созданными данными БД PostgreSQL:
+
+```cmd
+  docker compose down -v
 ```
 
 

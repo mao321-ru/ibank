@@ -5,13 +5,22 @@
 # ${IMPORT_DIR}/${REALM}.realm.json с актуальными паролями клиентов (которые не экспортируются).
 # Также обновляется файл с тестовым realm в ${IMPORT_TEST_DIR} (должен отличаться от основного
 # только секретами сервисов).
+#
+# Замечания:
+# т.к. через web-интерфейс нельзя явно указать secret, можно:
+#   - создать клиента
+#   - экспортировать realm в ibank.export.json
+#   - выполнить этот скрипт получив ibank.realm.json
+#   - вручную указать секрет в ibank.realm.json
+#   - импортировать ibank.realm.json через web-интерфейс, получив в результате нужный секрет
+#
 
 REALM="ibank"
 
 KEYCLOAK_URL="http://localhost:8954"
 
 IMPORT_DIR="./keycloak/import"
-IMPORT_TEST_DIR="./common-test/src/test/resources/keycloak"
+IMPORT_TEST_DIR="./common-test/base/src/test/resources/keycloak"
 
 TOKEN=$( \
     curl -s -X POST \
@@ -30,6 +39,7 @@ curl -s -X GET \
   "${KEYCLOAK_URL}/admin/realms/${REALM}/clients" \
   > ${IMPORT_DIR}/new_clients.json
 
+# jq скачал для винды: https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-windows-amd64.exe
 jq --slurpfile new ${IMPORT_DIR}/new_clients.json '.clients = $new[0]' ${IMPORT_DIR}/${REALM}.export.json \
   > ${IMPORT_DIR}/${REALM}.realm.json
 

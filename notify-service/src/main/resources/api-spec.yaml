@@ -1,0 +1,50 @@
+openapi: 3.0.3
+info:
+  title: Notify service API
+  description: API сервиса нотификации
+  version: 1.0.0
+tags:
+  - name: Event
+    description: API для добавления событий
+paths:
+  /events:
+    post:
+      tags:
+        - Event
+      operationId: createEvent
+      summary: Добавляет новое событие
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCreate'
+      responses:
+        '201':
+          description: Событие добавлено
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+components:
+  schemas:
+    EventCreate:
+      type: object
+      properties:
+        source:
+          type: string
+          description: Источник события
+        eventType:
+          type: string
+          description: Тип события
+        eventTime:
+          type: string
+          format: date-time
+          description: Дата события
+        userLogin:
+          type: string
+          description: Логин пользователя
+        message:
+          type: string
+          description: Сообщение
+      required:
+        - source
+        - message

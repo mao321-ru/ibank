@@ -168,6 +168,34 @@ services:
       timeout: 5s
       retries: 10
 
+  notify-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        MODULE_NAME: notify-service
+    ports:
+      - "8968:8080"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      confsrv:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: >
+        sh -c '
+          curl -sf http://localhost:8080/actuator/health |
+          grep -q '"'"'"status":"UP"'"'"' || exit 1
+        '
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   # Фиктивный сервис, который проверят healthcheck сервисов, от которых не зависят другие сервисы
   health-checker:
     image: alpine
@@ -178,6 +206,8 @@ services:
       front-service:
         condition: service_healthy
       accounts-service:
+        condition: service_healthy
+      notify-service:
         condition: service_healthy
 volumes:
   postgres_data:

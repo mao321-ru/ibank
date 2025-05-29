@@ -1,3 +1,10 @@
+logging:
+  level:
+    com.example.ibank: TRACE
+    #org.springframework.r2dbc.core.DefaultDatabaseClient: DEBUG # логирование SQL-запросов
+    #org.springframework: DEBUG
+    #io.r2dbc: DEBUG # и добавим больше деталей (не включать в настоящем приложении)
+
 spring:
   security:
     oauth2:
