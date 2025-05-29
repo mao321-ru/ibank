@@ -32,6 +32,11 @@ from
         '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
         'Редактируемый Юзер',
         DATE '1979-05-18'
+    union all select
+        'deletedUser',
+        '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
+        'Удаляемый Юзер',
+        DATE '1979-05-18'
     ) s
 ;
 
@@ -50,6 +55,8 @@ from
     (
     select 'ivan' as login, 'RUB' as currency_code, 1000.01 as amount
     union all select 'ivan', 'USD', 55.99
+    union all select 'deletedUser', 'USD', 0.0
+    union all select 'deletedUser', 'EUR', 0.0
     ) s
 ;
 

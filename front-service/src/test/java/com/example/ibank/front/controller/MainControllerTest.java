@@ -82,6 +82,38 @@ public class MainControllerTest extends ControllerTest {
     }
 
     @Test
+    @WithMockUser( username = DELETED_USER_LOGIN)
+    void deleteUser_ok() throws Exception {
+        final String login = DELETED_USER_LOGIN;
+        final String password = DELETED_USER_PASSWORD;
+
+        // проверяем что можем войти
+        checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/deleteUser",login)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .exchange()
+                .expectStatus().isFound()
+                .expectHeader().location( LOGIN_URL)
+        //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        // проверяем что теперь не можем войти
+        wtc.mutateWith( csrf())
+                .post().uri( "/login")
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "username", login)
+                        .with( "password", password)
+                )
+                .exchange()
+                .expectStatus().isFound()
+                .expectHeader().location( LOGIN_ERROR_URL)
+        ;
+    }
+
+    @Test
     void editPassword_diffPwd() throws Exception {
         final String login = EXISTS_USER_LOGIN;
         final String password = EXISTS_USER_PASSWORD;

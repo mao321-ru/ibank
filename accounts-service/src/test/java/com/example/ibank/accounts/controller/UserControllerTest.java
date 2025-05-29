@@ -103,6 +103,16 @@ public class UserControllerTest extends ControllerTest {
     }
 
     @Test
+    void deleteUser_ok() throws Exception {
+        wtc.delete().uri( "/users/{login}", DELETED_USER_LOGIN)
+            .headers( headers -> headers.setBearerAuth( getAccessToken( "front-service")))
+            .exchange()
+            .expectStatus().isNoContent()
+        //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+    }
+
+    @Test
     void validate_ok() throws Exception {
         wtc.post().uri( "/users/{login}/validate", EXISTS_USER_LOGIN)
             .headers( headers -> headers.setBearerAuth( getAccessToken( "front-service")))

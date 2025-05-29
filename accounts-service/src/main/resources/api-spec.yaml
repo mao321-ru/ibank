@@ -89,6 +89,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - User
+      operationId: deleteUser
+      summary: Удаление пользователя
+      parameters:
+        - $ref: '#/components/parameters/loginPathParam'
+      responses:
+        '204':
+          description: Пользователь успешно удален
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+        '404':
+          description: Пользователь не найден
+        '409':
+          description: Нельзя удалить пользователя если имеются счета с ненулевым балансом
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /users/{login}/validate:
     post:
       tags:

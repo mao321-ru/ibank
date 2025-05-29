@@ -16,6 +16,8 @@ public interface UserService {
 
     Mono<UserInfo> register(SignupDto sd);
 
+    Mono<Void> deleteUser(String login);
+
     Mono<Void> changePassword(String login, String password);
 
     Mono<List<UserShort>> getUsers();

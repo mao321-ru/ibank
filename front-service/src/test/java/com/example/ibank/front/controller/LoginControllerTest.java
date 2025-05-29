@@ -9,8 +9,6 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 
 public class LoginControllerTest extends ControllerTest {
 
-    // URL для перехода в случае ошибки при логине
-    final String LOGIN_ERROR_URL = "/login?error";
     final String ERROR_INFO_XPATH = "//*[@class='errorInfo']";
 
     @Test

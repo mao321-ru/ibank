@@ -17,6 +17,11 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 public class ControllerTest extends IntegrationTest {
 
     protected final String MAIN_URL = "/main";
+    protected final String LOGOUT_URL = "/logout";
+    final String LOGIN_URL = "/login";
+
+    // URL для перехода в случае ошибки при логине
+    final String LOGIN_ERROR_URL = "/login?error";
 
     @Autowired
     protected WebTestClient wtc;

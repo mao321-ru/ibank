@@ -9,6 +9,8 @@ import com.example.ibank.front.security.AuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.security.Principal;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -93,12 +96,47 @@ public class MainController {
             )
             .then( exchange.getSession())
                 .doOnNext( ss -> {
-                    for (var errType: List.of( "passwordErrors", "userAccountsErrors")) {
+                    for (var errType: List.of( "deleteUserErrors", "passwordErrors", "userAccountsErrors")) {
                         model.addAttribute( errType, ss.getAttributes().getOrDefault( errType, null));
                         ss.getAttributes().remove( errType);
                     }
                 })
             .thenReturn( "main");
+    }
+
+    @PostMapping( "/user/{login}/deleteUser")
+    Mono<ResponseEntity<Void>> deleteUser(
+            ServerWebExchange exchange,
+            Model model
+    ) {
+        log.debug( "deleteUser");
+        return exchange.getPrincipal()
+            .map( Principal::getName)
+            .flatMap( login -> {
+                log.debug("login: {}", login);
+                return userService.deleteUser( login);
+            })
+            .then( exchange.getSession())
+            .flatMap( session -> {
+                // очистка сессии после удаления пользователя и переход на страницу логина
+                session.invalidate();
+                return Mono.just( ResponseEntity
+                    .status( HttpStatus.FOUND)
+                    .header("Location", "/login")
+                    .header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
+                    .<Void>build());
+            })
+            .onErrorResume( e -> exchange.getSession()
+                    .doOnNext( ss -> {
+                        log.debug( "set deleteUserErrors: {}", e.getMessage());
+                        ss.getAttributes().put( "deleteUserErrors", List.of( e.getMessage()));
+                    })
+                    .thenReturn(
+                        ResponseEntity.status( HttpStatus.FOUND)
+                            .location( URI.create("/main"))
+                            .build()
+                    )
+            );
     }
 
     @PostMapping( "/user/{login}/editPassword")

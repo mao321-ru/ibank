@@ -37,6 +37,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Mono<Void> deleteUser(String login) {
+        return usersApi.deleteUser( login);
+    }
+
+    @Override
     public Mono<Void> changePassword(String login, String password) {
         return usersApi.changePassword( login, new ChangePasswordRequest().password( password));
     }

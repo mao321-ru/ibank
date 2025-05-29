@@ -17,6 +17,10 @@ interface TestData {
     String EDITED_USER_LOGIN = "editedUser";
     String EDITED_USER_PASSWORD = "user";
 
+    // Можно удалить (нет ненулевых счетов)
+    String DELETED_USER_LOGIN = "deletedUser";
+    String DELETED_USER_PASSWORD = "user";
+
     // Число валют
     int CURRENCIES_COUNT = 3;
     String CURRENCY_RUB_CODE = "RUB";

@@ -12,6 +12,8 @@ public interface UserService {
 
     Mono<UserInfo> createUser(UserCreate rq);
 
+    Mono<Boolean> deleteUser(String login);
+
     Mono<UserInfo> validate( String login, String password);
 
     Mono<Boolean> changePassword( String login, String password);

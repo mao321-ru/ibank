@@ -103,6 +103,82 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Mono<Boolean> deleteUser(String login) {
+        final String notFoundMsg = "USER_NOT_FOUND";
+        return etm.getDatabaseClient()
+            .sql("""
+                with
+                    validate_errors_q as
+                        (
+                        select
+                            :notFoundMsg as error_message
+                        from
+                            users u
+                        where
+                            u.login = :login
+                        having
+                            count(1) = 0
+                        union all
+                        select
+                            'Balance must be zero for close ' || ac.currency_code || ' account'
+                        from
+                            accounts ac
+                        where
+                            ac.user_id = (select u.user_id from users u where u.login = :login)
+                            and ac.amount != 0
+                        ),
+                    user_id_q as
+                        -- возвращает user_id только при отсутствии ошибок, чтобы исключить фактическое внесение
+                        -- изменений в последующих модифицирующих подзапросах (которые будут выполняться БД)
+                        (
+                        select
+                            u.user_id
+                        from
+                            users u
+                        where
+                            u.login = :login
+                            and not exists (select null from validate_errors_q)
+                        ),
+                    delete_accounts_q as
+                        (
+                        delete from
+                            accounts ac
+                        where
+                            ac.user_id = (select t.user_id from user_id_q t)
+                            and ac.amount = 0
+                        ),
+                    delete_users_q as
+                        (
+                        delete from
+                            users u
+                        where
+                            u.user_id = (select t.user_id from user_id_q t)
+                        )
+                select
+                    max( e.error_message) as error_message
+                from
+                    (
+                    select
+                        ve.*
+                    from
+                        validate_errors_q ve
+                    limit 1
+                    ) e
+            """)
+                .bind( "login", login)
+                .bind( "notFoundMsg", notFoundMsg)
+                .map( row -> {
+                    var errorMessage = row.get( "error_message", String.class);
+                    if( errorMessage != null && ! notFoundMsg.equals( errorMessage)) {
+                        throw new IllegalStateException( errorMessage);
+                    }
+                    return errorMessage == null;
+                })
+                .one()
+                ;
+    }
+
+    @Override
     @Transactional( readOnly = true)
     public Mono<UserInfo> validate( String login, String password) {
         return repo.findByLogin( login)

@@ -56,6 +56,14 @@ public class UserController implements UserApi {
     }
 
     @Override
+    public Mono<ResponseEntity<Void>> deleteUser(String login, ServerWebExchange exchange) {
+        log.debug( "deleteUser: login: {}", login);
+        return userService.deleteUser( login)
+            .map( isOk -> ResponseEntity.status( isOk ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND).<Void>build())
+        ;
+    }
+
+    @Override
     public Mono<ResponseEntity<UserAccounts>> getUserAccounts(String login, ServerWebExchange exchange) {
         return userService.getUserAccounts(login)
             .map( ResponseEntity::ok)
