@@ -16,6 +16,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 
+import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -44,6 +45,33 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     protected static String  keycloakIssuerUrl;
 
     protected static PostgreSQLContainer postgres;
+
+    private static void startGateway() {
+        var cntType = Container.GATEWAY;
+        int port = 8880;
+        String cntName = cntType.toString().toLowerCase();
+        containers.put(
+            cntType,
+            new GenericContainer<>( "local/ibank-%s:test".formatted( cntName))
+                .withExposedPorts( port)
+                .withNetwork(network)
+                .withNetworkAliases( cntName)
+                .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
+                .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
+                .withEnv( "SPRING_PROFILES_ACTIVE", "docker,itest")
+                .withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger("TC-GATEWAY")))
+                .waitingFor( Wait.forHttp("/actuator/health"))
+        );
+        containers.get( cntType).start();
+
+        // для исключения ошибка вида: Gateway not available при нотификации
+        log.info( "waiting after start Gateway (for prevent error: Gateway not available) ...");
+        try {
+            Thread.sleep( 20 * 1000);
+        } catch (InterruptedException e) {
+            log.info( "waiting interrupted: {}" + e.getMessage());
+        }
+    }
 
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
     protected static void startContainers(
@@ -125,8 +153,9 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
         startIfUsed.accept( Container.NOTIFY_SERVICE, 8080);
         startIfUsed.accept( Container.ACCOUNTS_SERVICE, 8080);
 
-        // старт после запуска всех сервисов
-        startIfUsed.accept( Container.GATEWAY, 8880);
+        // старт после запуска всех сервисов, иначе могут быть ошибки вида
+        // [gateway] o.s.c.l.core.RoundRobinLoadBalancer : No servers available for service: accounts-service
+        if( addonContainers.contains( Container.GATEWAY)) startGateway();;
     }
 
     @DynamicPropertySource

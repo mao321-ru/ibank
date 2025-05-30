@@ -6,8 +6,26 @@ eureka:
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 2
 
+management:
+  endpoint:
+    web:
+      exposure:
+        include: health  # явно включаем
+    health:
+      probes:
+        enabled: true  # Включает /health/readiness и /health/liveness
+      show-details: always
+  health:
+    readiness-state:
+      enabled: true    # Активирует проверку readiness состояния приложения
+
 spring:
   cloud:
+    loadbalancer:
+      configurations: health-check
+      health-check:
+        initial-delay: 1s
+        interval: 2s
     gateway:
       discovery:
         locator:
