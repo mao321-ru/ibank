@@ -1,0 +1,9 @@
+# Общие тестовые для интеграционных тестов
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          ibank-service:
+            client-secret: ${spring.application.name}-TestSecret
