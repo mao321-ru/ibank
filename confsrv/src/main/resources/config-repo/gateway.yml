@@ -32,6 +32,14 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        # перенаправление на keycloak для тестирования
+        # (способ получения токенов в тестах, обеспечивающий стабильный iss токена)
+        - id: keycloak-all
+          uri: http://keycloak:8954
+          predicates:
+            - Path=/api/keycloak/**
+          filters:
+            - StripPrefix=2
         # запросы по API конкретных сервисов
         - id: accounts-route
           uri: lb://accounts-service

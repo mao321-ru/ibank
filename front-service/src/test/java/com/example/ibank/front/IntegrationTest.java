@@ -16,7 +16,8 @@ public abstract class IntegrationTest extends IntegrationTestBase {
         startContainers( 8921, List.of(
             Container.EUREKA,
             Container.GATEWAY,
-            Container.ACCOUNTS_SERVICE
+            Container.ACCOUNTS_SERVICE,
+            Container.NOTIFY_SERVICE
         ));
     }
 

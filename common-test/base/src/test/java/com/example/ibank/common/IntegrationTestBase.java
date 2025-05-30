@@ -24,6 +24,7 @@ import java.util.function.BiConsumer;
 // использование @AutoConfigureWebTestClient приводит к ошибке в getAccessToken (см. ниже)
 public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv implements TestData {
 
+    static final String profilesActive = "docker,itest";
     static final String keycloakTestRealm = "ibank";
     static final String clientTestSecretTail = "-TestSecret";
 
@@ -56,15 +57,16 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                 .withExposedPorts( port)
                 .withNetwork(network)
                 .withNetworkAliases( cntName)
-                .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
                 .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
-                .withEnv( "SPRING_PROFILES_ACTIVE", "docker,itest")
+                .withEnv( "SPRING_PROFILES_ACTIVE", profilesActive)
                 .withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger("TC-GATEWAY")))
                 .waitingFor( Wait.forHttp("/actuator/health"))
         );
         containers.get( cntType).start();
 
         // для исключения ошибка вида: Gateway not available при нотификации
+        // (вероятно больше связана с задержкой обновления данных в eureka или в клиенте eureka в notify-service,
+        // возникает в com.example.ibank.shared.client.config.GatewayWebClientBuilderConfig)
         log.info( "waiting after start Gateway (for prevent error: Gateway not available) ...");
         try {
             Thread.sleep( 20 * 1000);
@@ -93,10 +95,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                 .withRealmImportFile( "/keycloak/" + keycloakTestRealm + ".realm.json")
             ;
             keycloak.start();
-            // такой вариант не сработает при получении сервисом в контейнере токена для авторизации на другом
-            // сервисе в контейнере (т.к. будет другой iss) - нужно будет добиваться идентичности iss
-            keycloakUrl = "http://localhost:" + keycloak.getMappedPort( keycloakKcHttpPort);
-            keycloakIssuerUrl = "http://localhost:" + keycloak.getMappedPort( keycloakKcHttpPort);
+            keycloakIssuerUrl = "http://keycloak:8954";
             log.info( "keycloakIssuerUrl: {}", keycloakIssuerUrl);
         }
 
@@ -140,7 +139,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                         .withNetworkAliases( cntName)
                         .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
                         .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
-                        .withEnv( "SPRING_PROFILES_ACTIVE", "docker,itest")
+                        .withEnv( "SPRING_PROFILES_ACTIVE", profilesActive)
                         .withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger("TC-LOGS")))
                         .waitingFor( Wait.forHttp("/actuator/health"))
                 );
@@ -155,7 +154,18 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
 
         // старт после запуска всех сервисов, иначе могут быть ошибки вида
         // [gateway] o.s.c.l.core.RoundRobinLoadBalancer : No servers available for service: accounts-service
-        if( addonContainers.contains( Container.GATEWAY)) startGateway();;
+        if( addonContainers.contains( Container.GATEWAY)) {
+            startGateway();
+            // получаем токен не напрямую из keycloak через localhost, а запросом через gateway, который обратится
+            // к keycloak через сеть докера через url "http://keycloak:8954", который попадет в iss возвращаемого
+            // от keycloak токена. В результате iss токена будет совпадать с ожидаемымым (указанным keycloakIssuerUrl)
+            // и авторизация пройдет успешно
+            keycloakUrl = "http://localhost:%s/api/keycloak".formatted(
+                containers.get( Container.GATEWAY).getMappedPort( 8880).toString()
+            );
+            log.info( "keycloakUrl: {}", keycloakUrl);
+        }
+
     }
 
     @DynamicPropertySource
