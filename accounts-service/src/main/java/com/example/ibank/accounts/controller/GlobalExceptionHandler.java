@@ -1,6 +1,6 @@
 package com.example.ibank.accounts.controller;
 
-import com.example.ibank.accounts.model.Error;
+import com.example.ibank.accounts.model.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +33,10 @@ public class GlobalExceptionHandler {
 
     // Ошибка согласно спецификации OpenAPI
     @ExceptionHandler( IllegalStateException.class)
-    public Mono<ResponseEntity<Error>> handleException(IllegalStateException e) {
+    public Mono<ResponseEntity<ErrorResponse>> handleException(IllegalStateException e) {
         return Mono.just( ResponseEntity
                 .status( HttpStatus.CONFLICT)
-                .body( new Error()
+                .body( new ErrorResponse()
                     .errorCode( HttpStatus.CONFLICT.value())
                     .errorMessage( e.getMessage())
                 )

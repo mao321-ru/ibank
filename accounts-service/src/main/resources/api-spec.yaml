@@ -6,7 +6,32 @@ info:
 tags:
   - name: User
     description: API для управления пользователями
+  - name: TrCash
+    description: API для отражения операций с наличными
 paths:
+  /transactions/cash:
+    post:
+      tags:
+        - TrCash
+      operationId: createCashTransaction
+      summary: Создает транзакцию по операции с наличными
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashTransactionRequest'
+      responses:
+        '204':
+          description: Транзакция выполнена
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+        '409':
+          description: Ошибка при выполнении транзакции
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /users:
     get:
       tags:
@@ -47,7 +72,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
   /users/{login}:
     get:
       tags:
@@ -88,7 +113,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - User
@@ -108,7 +133,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
   /users/{login}/validate:
     post:
       tags:
@@ -166,6 +191,25 @@ components:
         minLength: 1
       description: Логин пользователя
   schemas:
+    CashTransactionRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+        amount:
+          type: number
+          format: decimal
+          description: Сумма с двумя знаками после запятой (положительная при зачислении на счет, отрицательная при списании со счета)
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          example: "USD"
+          description: Валюта (ISO 4217)
+      required:
+        - login
+        - amount
+        - currency
     UserShort:
       type: object
       properties:
@@ -324,7 +368,7 @@ components:
           description: Пароль (непустой)
       required:
         - password
-    Error:
+    ErrorResponse:
       type: object
       properties:
         error_code:

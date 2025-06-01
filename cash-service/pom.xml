@@ -158,6 +158,12 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>accounts-client-generator</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>notify-client-generator</id>
                         <goals>
                             <goal>generate</goal>

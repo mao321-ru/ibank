@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.web.reactive.function.BodyInserters;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public class MainControllerTest extends ControllerTest {
     final String USERNAME_XPATH = "//*[@class='userName']";
     final String BIRTHDATE_XPATH = "//*[@class='birthDate']";
     final String ACCOUNT_EXISTS_XPF = "//*[@class='userAccount__check'][@value='%s'][@checked='checked']";
-    final String ACCOUNT_VALUE_TEXT_XPF = "//*[@class='userAccount__valueText'][@value='%s']";
+    final String ACCOUNT_VALUE_RUB_TEXT_XPATH = "//*[@class='userAccount__valueText'][1]";
 
     @Test
     void root_noAuth() throws Exception {
@@ -274,7 +275,123 @@ public class MainControllerTest extends ControllerTest {
         final String password = CASH_USER_PASSWORD;
 
         final String currency = "RUB";
-        final String putAmount = "1000.91";
+        final String putAmount = "100.91";
+        final String amount = new BigDecimal( CASH_USER_RUB_AMOUNT).add( new BigDecimal( putAmount)).toString();
+
+        String sessionCookie = checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/cash",login)
+                .cookie("SESSION", sessionCookie)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "currency", currency)
+                        .with( "value", putAmount)
+                        .with( "action", "PUT")
+                )
+                .exchange()
+                .expectStatus().isSeeOther()
+                .expectHeader().location( MAIN_URL)
+            //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        wtc.get().uri( MAIN_URL)
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", sessionCookie)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( ERROR_XPF.formatted( "cash")).nodeCount( 0)
+                .xpath( ACCOUNT_EXISTS_XPF.formatted( "RUB")).nodeCount( 1)
+                .xpath( ACCOUNT_VALUE_RUB_TEXT_XPATH).isEqualTo("%s %s".formatted( amount, currency))
+        ;
+    }
+
+    @Test
+    void cashAction_get() throws Exception {
+        final String login = CASH_USER_LOGIN;
+        final String password = CASH_USER_PASSWORD;
+
+        final String currency = "USD";
+        final String getAmount = "150.00";
+        final String amount = new BigDecimal( CASH_USER_USD_AMOUNT).subtract( new BigDecimal( getAmount)).toString();
+
+        String sessionCookie = checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/cash",login)
+                .cookie("SESSION", sessionCookie)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "currency", currency)
+                        .with( "value", getAmount)
+                        .with( "action", "GET")
+                )
+                .exchange()
+                .expectStatus().isSeeOther()
+                .expectHeader().location( MAIN_URL)
+        //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        wtc.get().uri( MAIN_URL)
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", sessionCookie)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( ERROR_XPF.formatted( "cash")).nodeCount( 0)
+        ;
+    }
+
+    @Test
+    void cashAction_noMoney() throws Exception {
+        final String login = CASH_USER_LOGIN;
+        final String password = CASH_USER_PASSWORD;
+
+        final String currency = "RUB";
+        final String getAmount = "250.00";
+
+        String sessionCookie = checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/cash",login)
+                .cookie("SESSION", sessionCookie)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "currency", currency)
+                        .with( "value", getAmount)
+                        .with( "action", "GET")
+                )
+                .exchange()
+                .expectStatus().isSeeOther()
+                .expectHeader().location( MAIN_URL)
+        //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        wtc.get().uri( MAIN_URL)
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", sessionCookie)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( ERROR_XPF.formatted( "cash"))
+                    .isEqualTo( "Недостаточно средств на счете [RUB] для выполнения операции")
+        ;
+    }
+
+    @Test
+    void cashAction_noAccount() throws Exception {
+        final String login = CASH_USER_LOGIN;
+        final String password = CASH_USER_PASSWORD;
+
+        final String currency = "EUR";
+        final String putAmount = "5.00";
 
         String sessionCookie = checkLoginOk( login, password);
 
@@ -300,11 +417,10 @@ public class MainControllerTest extends ControllerTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType( "text/html;charset=UTF-8")
                 .expectBody()
-                .consumeWith( System.out::println) // вывод запроса и ответа
-                .xpath( ERROR_XPF.formatted( "cash")).nodeCount( 0)
-                .xpath( ACCOUNT_EXISTS_XPF.formatted( "RUB")).nodeCount( 1)
-                .xpath( ACCOUNT_VALUE_TEXT_XPF.formatted( "%s %s".formatted( putAmount, currency)))
-                    .nodeCount( 1)
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( ERROR_XPF.formatted( "cash")).isEqualTo(
+                    "Нужно открыть счет в [%s] для выполнения операции".formatted( currency)
+                )
         ;
     }
 }

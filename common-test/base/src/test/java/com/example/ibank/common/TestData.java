@@ -24,6 +24,8 @@ interface TestData {
     // Тестирование операций с наличными (открыты нулевые счета RUB и USD)
     String CASH_USER_LOGIN = "cashUser";
     String CASH_USER_PASSWORD = EDITED_USER_PASSWORD;
+    String CASH_USER_RUB_AMOUNT = "0";
+    String CASH_USER_USD_AMOUNT = "200.01";
 
     // Число валют
     int CURRENCIES_COUNT = 3;

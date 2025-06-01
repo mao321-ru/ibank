@@ -1,9 +1,9 @@
-package com.example.ibank.front.config;
+package com.example.ibank.cash.config;
 
 
-import com.example.ibank.front.accounts.api.UserApi;
-import com.example.ibank.front.accounts.invoker.ApiClient;
-import com.example.ibank.front.accounts.model.ErrorResponse;
+import com.example.ibank.cash.accounts.api.TrCashApi;
+import com.example.ibank.cash.accounts.invoker.ApiClient;
+import com.example.ibank.cash.accounts.model.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +33,7 @@ public class AccountsApiConfig {
     }
 
     @Bean
-    UserApi usersApi( ApiClient apiClient) {
-        return new UserApi( apiClient);
+    TrCashApi trCashApi(ApiClient apiClient) {
+        return new TrCashApi( apiClient);
     }
 }

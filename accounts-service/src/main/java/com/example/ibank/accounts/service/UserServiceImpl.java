@@ -118,6 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Mono<Boolean> deleteUser(String login) {
         final String notFoundMsg = "USER_NOT_FOUND";
         return etm.getDatabaseClient()
@@ -242,6 +243,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional( readOnly = true)
     public Mono<UserAccounts> getUserAccounts(String login) {
         return etm.getDatabaseClient()
             .sql(
@@ -296,6 +298,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Mono<Boolean> updateUserAccounts(String login, UserUpdateRequest rq) {
         log.debug( "updateUserAccounts: userName: {}", rq.getName());
         final String notFoundMsg = "USER_NOT_FOUND";

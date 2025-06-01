@@ -3,7 +3,6 @@ package com.example.ibank.accounts.controller;
 import com.example.ibank.accounts.api.UserApi;
 import com.example.ibank.accounts.model.*;
 
-import com.example.ibank.accounts.model.Error;
 import com.example.ibank.accounts.service.UserService;
 
 import lombok.RequiredArgsConstructor;

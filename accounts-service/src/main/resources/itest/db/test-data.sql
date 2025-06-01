@@ -63,7 +63,7 @@ from
     union all select 'deletedUser', 'USD', 0.0
     union all select 'deletedUser', 'EUR', 0.0
     union all select 'cashUser', 'RUB', 0.0
-    union all select 'cashUser', 'USD', 0.0
+    union all select 'cashUser', 'USD', 200.01
     ) s
 ;
 

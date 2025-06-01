@@ -12,14 +12,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class NotifyApiConfig {
 
     @Bean
-    ApiClient apiClient( WebClient authWebClient) {
+    ApiClient notifyApiClient( WebClient authWebClient) {
         ApiClient apiClient = new ApiClient( authWebClient);
         apiClient.setBasePath( "notify");
         return apiClient;
     }
 
     @Bean
-    EventApi usersApi( ApiClient apiClient) {
+    EventApi eventApi( ApiClient apiClient) {
         return new EventApi( apiClient);
     }
 }

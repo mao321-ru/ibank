@@ -1,5 +1,7 @@
 package com.example.ibank.cash.service;
 
+import com.example.ibank.cash.accounts.api.TrCashApi;
+import com.example.ibank.cash.accounts.model.CashTransactionRequest;
 import com.example.ibank.cash.model.*;
 import com.example.ibank.cash.notify.api.EventApi;
 import com.example.ibank.cash.notify.model.EventCreate;
@@ -21,11 +23,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CashServiceImpl implements CashService {
 
+    private final TrCashApi trCashApi;
     private final EventApi eventApi;
 
     @Override
     public Mono<Void> processOperation( CashOperation cashOperation, CashOperationRequest req) {
-        return eventApi.createEvent( new EventCreate()
+        return
+            trCashApi.createCashTransaction( new CashTransactionRequest()
+                    .login( req.getLogin())
+                    .amount(
+                        switch ( cashOperation) {
+                            case DEPOSIT -> req.getAmount();
+                            case WITHDRAW -> req.getAmount().negate();
+                        }
+                    )
+                    .currency( req.getCurrency())
+            )
+            .then(
+                eventApi.createEvent( new EventCreate()
                     .source( "cash-service")
                     .eventType( cashOperation.toString().toLowerCase())
                     .userLogin( req.getLogin())
@@ -36,10 +51,11 @@ public class CashServiceImpl implements CashService {
                         }
                         + req.getAmount().toString() + " " + req.getCurrency()
                     )
+                )
+                .doOnError( e -> log.error( "Notification failed: {}", e.getMessage()))
+                .onErrorResume( e -> Mono.empty())
+                .then()
             )
-            .doOnError( e -> log.error( "Notification failed: {}", e.getMessage()))
-            .onErrorResume( e -> Mono.empty())
-            .then()
         ;
     }
 }
