@@ -34,7 +34,7 @@ spring:
       routes:
         # перенаправление на keycloak для тестирования
         # (способ получения токенов в тестах, обеспечивающий стабильный iss токена)
-        - id: keycloak-all
+        - id: keycloak-itest
           uri: http://keycloak:8954
           predicates:
             - Path=/api/keycloak/**
@@ -47,6 +47,12 @@ spring:
             - Path=/api/accounts/**
           filters:
             - StripPrefix=2  # Удаляет /api/accounts
+        - id: cash-route
+          uri: lb://cash-service
+          predicates:
+            - Path=/api/cash/**
+          filters:
+            - StripPrefix=2
         - id: notify-route
           uri: lb://notify-service
           predicates:

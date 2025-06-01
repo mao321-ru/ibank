@@ -15,11 +15,15 @@ interface TestData {
 
     // Можно редактировать имя, дату рождения и счета
     String EDITED_USER_LOGIN = "editedUser";
-    String EDITED_USER_PASSWORD = "user";
+    String EDITED_USER_PASSWORD = EXISTS_USER_PASSWORD;
 
     // Можно удалить (нет ненулевых счетов)
     String DELETED_USER_LOGIN = "deletedUser";
-    String DELETED_USER_PASSWORD = "user";
+    String DELETED_USER_PASSWORD = EXISTS_USER_PASSWORD;
+
+    // Тестирование операций с наличными (открыты нулевые счета RUB и USD)
+    String CASH_USER_LOGIN = "cashUser";
+    String CASH_USER_PASSWORD = EDITED_USER_PASSWORD;
 
     // Число валют
     int CURRENCIES_COUNT = 3;

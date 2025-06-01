@@ -129,16 +129,22 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>java-client-generator</id>
+                        <id>accounts-client-generator</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/../accounts-service/${openapi.spec.path}</inputSpec>
-                            <apiPackage>${module.base.package}.accounts.api</apiPackage>
-                            <modelPackage>${module.base.package}.accounts.model</modelPackage>
-                            <invokerPackage>${module.base.package}.accounts.invoker</invokerPackage>
-                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>cash-client-generator</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

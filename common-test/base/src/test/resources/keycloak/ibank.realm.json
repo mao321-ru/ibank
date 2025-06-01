@@ -88,7 +88,6 @@
       }
     ],
     "client": {
-      "front-service": [],
       "realm-management": [
         {
           "id": "6f0ffd5e-9d18-4746-9fe9-b55c59084490",
@@ -301,8 +300,37 @@
           "attributes": {}
         }
       ],
+      "cash-service": [
+        {
+          "id": "052ec18f-6d0d-41d2-9781-fcd51bf55186",
+          "name": "cash_api",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "f0f46bc5-7ca9-46cb-8235-70f1c7adfa3f",
+          "attributes": {}
+        }
+      ],
       "security-admin-console": [],
       "accounts-service": [
+        {
+          "id": "517afa89-055a-4305-be9e-9d7ce892b759",
+          "name": "transfer",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "7043dc41-dc4e-49ec-a1db-841a655b1555",
+          "attributes": {}
+        },
+        {
+          "id": "fe999515-0734-4783-9827-737ae3db2f7d",
+          "name": "cash",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "7043dc41-dc4e-49ec-a1db-841a655b1555",
+          "attributes": {}
+        },
         {
           "id": "caffe8e1-5b62-427b-a0d2-59e09baa4141",
           "name": "auth",
@@ -313,7 +341,6 @@
           "attributes": {}
         }
       ],
-      "admin-cli": [],
       "account-console": [],
       "broker": [
         {
@@ -337,6 +364,51 @@
           "attributes": {}
         }
       ],
+      "transfer-service": [
+        {
+          "id": "5951e69f-07d7-41be-8363-ec4830108570",
+          "name": "transfer_api",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "aa55f002-4f17-47cb-ad71-c472132c9eb1",
+          "attributes": {}
+        }
+      ],
+      "front-service": [],
+      "exchange-service": [
+        {
+          "id": "13860f7d-c13d-41d3-963a-480eb6c2300c",
+          "name": "exchange_api",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "66927075-0a7f-41bb-ad24-a7abe88078bb",
+          "attributes": {}
+        },
+        {
+          "id": "e0394c8d-24d3-48d7-ada5-3b26afeef4ae",
+          "name": "setrate_api",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "66927075-0a7f-41bb-ad24-a7abe88078bb",
+          "attributes": {}
+        }
+      ],
+      "exrate-service": [],
+      "blocker-service": [
+        {
+          "id": "9433de9c-a5e6-45cb-8509-ccd95e0f16c3",
+          "name": "check_api",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "32d25037-b023-4840-945a-2815bc0d941f",
+          "attributes": {}
+        }
+      ],
+      "admin-cli": [],
       "account": [
         {
           "id": "1281c5bb-4eef-4653-ae98-610d95c0b138",
@@ -503,6 +575,86 @@
       "groups": []
     },
     {
+      "id": "203a8f8a-2755-46d9-a71f-f1421c06fa4a",
+      "username": "service-account-blocker-service",
+      "emailVerified": false,
+      "createdTimestamp": 1748729728466,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "blocker-service",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-ibank"
+      ],
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "c72ff0b6-dd7a-4866-902c-f5b5a6e12952",
+      "username": "service-account-cash-service",
+      "emailVerified": false,
+      "createdTimestamp": 1748729572714,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "cash-service",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-ibank"
+      ],
+      "clientRoles": {
+        "blocker-service": [
+          "check_api"
+        ],
+        "accounts-service": [
+          "cash"
+        ],
+        "notify-service": [
+          "event_api"
+        ]
+      },
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "68755701-cd1c-4d93-bbcd-d6a8dbcad53b",
+      "username": "service-account-exchange-service",
+      "emailVerified": false,
+      "createdTimestamp": 1748729642931,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "exchange-service",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-ibank"
+      ],
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "60627c10-096a-4305-b9bf-6f13b7c58763",
+      "username": "service-account-exrate-service",
+      "emailVerified": false,
+      "createdTimestamp": 1748729692129,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "exrate-service",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-ibank"
+      ],
+      "clientRoles": {
+        "exchange-service": [
+          "setrate_api"
+        ]
+      },
+      "notBefore": 0,
+      "groups": []
+    },
+    {
       "id": "f11907cf-e317-470f-98fa-5a03ef492488",
       "username": "service-account-front-service",
       "emailVerified": false,
@@ -516,8 +668,14 @@
         "default-roles-ibank"
       ],
       "clientRoles": {
+        "cash-service": [
+          "cash_api"
+        ],
         "accounts-service": [
           "auth"
+        ],
+        "transfer-service": [
+          "transfer_api"
         ]
       },
       "notBefore": 0,
@@ -536,6 +694,36 @@
       "realmRoles": [
         "default-roles-ibank"
       ],
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "7049023a-ae48-4136-a306-ff43e74d4ad1",
+      "username": "service-account-transfer-service",
+      "emailVerified": false,
+      "createdTimestamp": 1748729610359,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "transfer-service",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-ibank"
+      ],
+      "clientRoles": {
+        "exchange-service": [
+          "exchange_api"
+        ],
+        "blocker-service": [
+          "check_api"
+        ],
+        "accounts-service": [
+          "transfer"
+        ],
+        "notify-service": [
+          "event_api"
+        ]
+      },
       "notBefore": 0,
       "groups": []
     }
@@ -788,6 +976,69 @@
       }
     },
     {
+      "id": "32d25037-b023-4840-945a-2815bc0d941f",
+      "clientId": "blocker-service",
+      "name": "IBank: Blocker",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "blocker-service-TestSecret",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1748729728",
+        "backchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "service_account",
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "organization",
+        "microprofile-jwt"
+      ],
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    },
+    {
       "id": "b9601cc1-95e2-4042-a8c6-8a83c2adf2be",
       "clientId": "broker",
       "name": "${client_broker}",
@@ -815,6 +1066,197 @@
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
       "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "organization",
+        "microprofile-jwt"
+      ],
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    },
+    {
+      "id": "f0f46bc5-7ca9-46cb-8235-70f1c7adfa3f",
+      "clientId": "cash-service",
+      "name": "IBank: Cash",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "cash-service-TestSecret",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1748729572",
+        "backchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "service_account",
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "organization",
+        "microprofile-jwt"
+      ],
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    },
+    {
+      "id": "66927075-0a7f-41bb-ad24-a7abe88078bb",
+      "clientId": "exchange-service",
+      "name": "IBank: Exchange",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "exchange-service-TestSecret",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1748729642",
+        "backchannel.logout.session.required": "true",
+        "frontchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "display.on.consent.screen": "false",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "service_account",
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "organization",
+        "microprofile-jwt"
+      ],
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    },
+    {
+      "id": "06680ab4-1f89-4bd2-ac29-ee2650c02950",
+      "clientId": "exrate-service",
+      "name": "IBank: Exchange Generator",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "exrate-service-TestSecret",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1748729692",
+        "backchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "service_account",
         "web-origins",
         "acr",
         "roles",
@@ -912,7 +1354,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "front-service-TestSecret",
+      "secret": "notify-service-TestSecret",
       "redirectUris": [
         "/*"
       ],
@@ -1065,6 +1507,69 @@
         }
       ],
       "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "organization",
+        "microprofile-jwt"
+      ],
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    },
+    {
+      "id": "aa55f002-4f17-47cb-ad71-c472132c9eb1",
+      "clientId": "transfer-service",
+      "name": "IBank: Transfer",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "transfer-service-TestSecret",
+      "redirectUris": [
+        "/*"
+      ],
+      "webOrigins": [
+        "/*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1748729610",
+        "backchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "service_account",
         "web-origins",
         "acr",
         "roles",
@@ -1821,12 +2326,12 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "oidc-address-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-attribute-mapper",
             "oidc-full-name-mapper",
+            "oidc-usermodel-property-mapper",
             "saml-role-list-mapper",
             "saml-user-property-mapper",
-            "oidc-usermodel-property-mapper",
-            "saml-user-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-attribute-mapper"
           ]
         }
@@ -1882,13 +2387,13 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-user-property-mapper",
             "saml-role-list-mapper",
-            "oidc-usermodel-property-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-full-name-mapper",
             "oidc-sha256-pairwise-sub-mapper",
             "oidc-address-mapper",
+            "oidc-usermodel-property-mapper",
+            "saml-user-property-mapper",
+            "oidc-full-name-mapper",
+            "saml-user-attribute-mapper",
             "oidc-usermodel-attribute-mapper"
           ]
         }

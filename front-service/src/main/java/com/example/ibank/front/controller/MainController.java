@@ -2,8 +2,11 @@ package com.example.ibank.front.controller;
 
 import com.example.ibank.front.accounts.model.Account;
 import com.example.ibank.front.accounts.model.UserShort;
+import com.example.ibank.front.controller.enums.ErrorSource;
+import com.example.ibank.front.dto.CashOperationDto;
 import com.example.ibank.front.dto.EditPasswordDto;
 import com.example.ibank.front.dto.EditUserAccountsDto;
+import com.example.ibank.front.service.CashService;
 import com.example.ibank.front.service.UserService;
 import com.example.ibank.front.security.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,7 @@ import java.util.List;
 public class MainController {
 
     private final UserService userService;
+    private final CashService cashService;
 
     @GetMapping("/")
     public Mono<String> redirectRoot() {
@@ -96,9 +100,12 @@ public class MainController {
             )
             .then( exchange.getSession())
                 .doOnNext( ss -> {
-                    for (var errType: List.of( "deleteUserErrors", "passwordErrors", "userAccountsErrors")) {
-                        model.addAttribute( errType, ss.getAttributes().getOrDefault( errType, null));
-                        ss.getAttributes().remove( errType);
+                    for (var src: ErrorSource.values()) {
+                        String paramName = src.getParamName();
+                        var errors = ss.getAttributes().getOrDefault( paramName, null);
+                        if ( errors != null) log.debug( "show errors: {}: {}", paramName, errors);
+                        model.addAttribute( paramName, errors);
+                        ss.getAttributes().remove( paramName);
                     }
                 })
             .thenReturn( "main");
@@ -189,6 +196,31 @@ public class MainController {
                         .doOnNext( ss -> {
                             log.debug( "userAccountsErrors: {}", e.getMessage());
                             ss.getAttributes().put( "userAccountsErrors", List.of( e.getMessage()));
+                        })
+                        .then( Mono.empty())
+                )
+                .thenReturn( "redirect:/main");
+    }
+
+    @PostMapping( "/user/{login}/cash")
+    Mono<String> cashOperation(
+            CashOperationDto dto,
+            ServerWebExchange exchange,
+            Model model
+    ) {
+        log.debug( "cashOperation");
+        return exchange.getPrincipal()
+                .map( Principal::getName)
+                .flatMap( login -> {
+                    log.debug("login: {}", login);
+                    log.debug("dto: {}", dto);
+                    return cashService.cashOperation( login, dto);
+                })
+                .onErrorResume( e -> exchange.getSession()
+                        .doOnNext( ss -> {
+                            String paramName = ErrorSource.CashAction.getParamName();
+                            log.debug( "save errors: {}: {}", paramName, e.getMessage());
+                            ss.getAttributes().put( paramName, List.of( e.getMessage()));
                         })
                         .then( Mono.empty())
                 )

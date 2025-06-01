@@ -35,6 +35,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
         GATEWAY,
         POSTGRES,
         ACCOUNTS_SERVICE,
+        CASH_SERVICE,
         NOTIFY_SERVICE
     };
 
@@ -151,6 +152,7 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
 
         startIfUsed.accept( Container.NOTIFY_SERVICE, 8080);
         startIfUsed.accept( Container.ACCOUNTS_SERVICE, 8080);
+        startIfUsed.accept( Container.CASH_SERVICE, 8080);
 
         // старт после запуска всех сервисов, иначе могут быть ошибки вида
         // [gateway] o.s.c.l.core.RoundRobinLoadBalancer : No servers available for service: accounts-service

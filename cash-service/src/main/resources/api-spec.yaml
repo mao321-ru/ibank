@@ -1,0 +1,94 @@
+openapi: 3.0.3
+info:
+  title: Cash service API
+  description: API для операций с наличными
+  version: 1.0.0
+tags:
+  - name: Cash
+    description: API для операций с наличными
+paths:
+  /cash/deposit:
+    post:
+      tags:
+        - Cash
+      operationId: deposit
+      summary: Внесение наличных
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashOperationRequest'
+      responses:
+        '200':
+          description: Успешное зачисление
+        '400':
+          description: Неверный запрос
+        '401':
+          description: Не авторизован
+        '409':
+          description: Нужно окрыть счет в указанной валюте
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cash/withdraw:
+    post:
+      tags:
+        - Cash
+      operationId: withdraw
+      summary: Снятие наличных
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CashOperationRequest'
+      responses:
+        '200':
+          description: Успешное снятие
+        '400':
+          description: Неверный запрос
+        '401':
+          description: Не авторизован
+        '409':
+          description: Недостаточно средств
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CashOperationRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+        amount:
+          type: number
+          format: decimal
+          minimum: 0.01
+          description: Сумма с двумя знаками после запятой
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          example: "USD"
+          description: Валюта (ISO 4217)
+      required:
+        - login
+        - amount
+        - currency
+    ErrorResponse:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          format: int32
+        error_message:
+          type: string
+      required:
+        - error_code
+        - error_message

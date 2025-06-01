@@ -23,6 +23,7 @@
         <module>gateway</module>
         <module>notify-service</module>
         <module>accounts-service</module>
+        <module>cash-service</module>
         <module>front-service</module>
     </modules>
 
@@ -288,6 +289,51 @@
                                 <configOptions>
                                     <java8>true</java8>
                                 </configOptions>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>accounts-client-generator</id>
+                            <configuration>
+                                <generatorName>java</generatorName>
+                                <library>webclient</library>
+                                <output>${project.build.directory}/generated-sources</output>
+                                <configOptions>
+                                    <java8>true</java8>
+                                </configOptions>
+                                <inputSpec>${project.basedir}/../accounts-service/${openapi.spec.path}</inputSpec>
+                                <apiPackage>${module.base.package}.accounts.api</apiPackage>
+                                <modelPackage>${module.base.package}.accounts.model</modelPackage>
+                                <invokerPackage>${module.base.package}.accounts.invoker</invokerPackage>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>cash-client-generator</id>
+                            <configuration>
+                                <generatorName>java</generatorName>
+                                <library>webclient</library>
+                                <output>${project.build.directory}/generated-sources</output>
+                                <configOptions>
+                                    <java8>true</java8>
+                                </configOptions>
+                                <inputSpec>${project.basedir}/../cash-service/${openapi.spec.path}</inputSpec>
+                                <apiPackage>${module.base.package}.cash.api</apiPackage>
+                                <modelPackage>${module.base.package}.cash.model</modelPackage>
+                                <invokerPackage>${module.base.package}.cash.invoker</invokerPackage>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>notify-client-generator</id>
+                            <configuration>
+                                <generatorName>java</generatorName>
+                                <library>webclient</library>
+                                <output>${project.build.directory}/generated-sources</output>
+                                <configOptions>
+                                    <java8>true</java8>
+                                </configOptions>
+                                <inputSpec>${project.basedir}/../notify-service/${openapi.spec.path}</inputSpec>
+                                <apiPackage>${module.base.package}.notify.api</apiPackage>
+                                <modelPackage>${module.base.package}.notify.model</modelPackage>
+                                <invokerPackage>${module.base.package}.notify.invoker</invokerPackage>
                             </configuration>
                         </execution>
                     </executions>

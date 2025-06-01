@@ -8,12 +8,12 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>accounts-service</artifactId>
-    <name>accounts-service</name>
-    <description>Accounts</description>
+    <artifactId>cash-service</artifactId>
+    <name>cash-service</name>
+    <description>Cash Service</description>
 
     <properties>
-        <module.base.name>accounts</module.base.name>
+        <module.base.name>cash</module.base.name>
     </properties>
 
     <dependencies>
@@ -81,28 +81,6 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webflux-api</artifactId>
-        </dependency>
-
-        <!-- PostgreSQL with Testcontainers support -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>r2dbc-postgresql</artifactId>
-            <version>${r2dbc-postgresql.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>r2dbc</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

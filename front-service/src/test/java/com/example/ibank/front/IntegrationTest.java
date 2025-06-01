@@ -17,6 +17,7 @@ public abstract class IntegrationTest extends IntegrationTestBase {
             Container.EUREKA,
             Container.GATEWAY,
             Container.ACCOUNTS_SERVICE,
+            Container.CASH_SERVICE,
             Container.NOTIFY_SERVICE
         ));
     }

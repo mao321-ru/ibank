@@ -37,6 +37,11 @@ from
         '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
         'Удаляемый Юзер',
         DATE '1979-05-18'
+    union all select
+        'cashUser',
+        '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
+        'Любитель Кэша',
+        DATE '1988-03-11'
     ) s
 ;
 
@@ -57,6 +62,8 @@ from
     union all select 'ivan', 'USD', 55.99
     union all select 'deletedUser', 'USD', 0.0
     union all select 'deletedUser', 'EUR', 0.0
+    union all select 'cashUser', 'RUB', 0.0
+    union all select 'cashUser', 'USD', 0.0
     ) s
 ;
 

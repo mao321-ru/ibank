@@ -1,9 +1,8 @@
 package com.example.ibank.front.config;
 
-
-import com.example.ibank.front.accounts.api.UserApi;
-import com.example.ibank.front.accounts.invoker.ApiClient;
-import com.example.ibank.front.accounts.model.Error;
+import com.example.ibank.front.cash.api.CashApi;
+import com.example.ibank.front.cash.invoker.ApiClient;
+import com.example.ibank.front.cash.model.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,27 +12,27 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 @Slf4j
-public class AccountsApiConfig {
+public class CashApiConfig {
 
     @Bean
-    ApiClient accountsApiClient( WebClient authWebClient) {
+    ApiClient cashApiClient( WebClient authWebClient) {
         ApiClient apiClient = new ApiClient(
             authWebClient.mutate()
                 .defaultStatusHandler(
                     status -> status == HttpStatus.CONFLICT,
-                    resp ->  resp.bodyToMono( Error.class)
+                    resp ->  resp.bodyToMono( ErrorResponse.class)
                         .flatMap( e ->
                             Mono.error( new IllegalStateException( e.getErrorMessage()))
                         )
                 )
                 .build()
         );
-        apiClient.setBasePath( "accounts");
+        apiClient.setBasePath( "cash");
         return apiClient;
     }
 
     @Bean
-    UserApi usersApi( ApiClient apiClient) {
-        return new UserApi( apiClient);
+    CashApi cashApi( ApiClient apiClient) {
+        return new CashApi( apiClient);
     }
 }
