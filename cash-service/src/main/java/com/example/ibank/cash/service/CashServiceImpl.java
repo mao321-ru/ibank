@@ -2,6 +2,8 @@ package com.example.ibank.cash.service;
 
 import com.example.ibank.cash.accounts.api.TrCashApi;
 import com.example.ibank.cash.accounts.model.CashTransactionRequest;
+import com.example.ibank.cash.blocker.api.CheckApi;
+import com.example.ibank.cash.blocker.model.CheckRequest;
 import com.example.ibank.cash.model.*;
 import com.example.ibank.cash.notify.api.EventApi;
 import com.example.ibank.cash.notify.model.EventCreate;
@@ -23,13 +25,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CashServiceImpl implements CashService {
 
+    private final CheckApi checkApi;
     private final TrCashApi trCashApi;
     private final EventApi eventApi;
 
     @Override
     public Mono<Void> processOperation( CashOperation cashOperation, CashOperationRequest req) {
         return
-            trCashApi.createCashTransaction( new CashTransactionRequest()
+            checkApi.checkOperation( new CheckRequest()
+                .login( req.getLogin())
+                .operationType(
+                    switch ( cashOperation) {
+                        case DEPOSIT -> CheckRequest.OperationTypeEnum.DEPOSIT;
+                        case WITHDRAW -> CheckRequest.OperationTypeEnum.WITHDRAWAL;
+                    }
+                )
+                .amount( req.getAmount())
+                .currency( req.getCurrency())
+            )
+            .then(
+                trCashApi.createCashTransaction( new CashTransactionRequest()
                     .login( req.getLogin())
                     .amount(
                         switch ( cashOperation) {
@@ -38,6 +53,7 @@ public class CashServiceImpl implements CashService {
                         }
                     )
                     .currency( req.getCurrency())
+                )
             )
             .then(
                 eventApi.createEvent( new EventCreate()

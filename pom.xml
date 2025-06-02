@@ -323,6 +323,21 @@
                             </configuration>
                         </execution>
                         <execution>
+                            <id>blocker-client-generator</id>
+                            <configuration>
+                                <generatorName>java</generatorName>
+                                <library>webclient</library>
+                                <output>${project.build.directory}/generated-sources</output>
+                                <configOptions>
+                                    <java8>true</java8>
+                                </configOptions>
+                                <inputSpec>${project.basedir}/../blocker-service/${openapi.spec.path}</inputSpec>
+                                <apiPackage>${module.base.package}.blocker.api</apiPackage>
+                                <modelPackage>${module.base.package}.blocker.model</modelPackage>
+                                <invokerPackage>${module.base.package}.blocker.invoker</invokerPackage>
+                            </configuration>
+                        </execution>
+                        <execution>
                             <id>notify-client-generator</id>
                             <configuration>
                                 <generatorName>java</generatorName>

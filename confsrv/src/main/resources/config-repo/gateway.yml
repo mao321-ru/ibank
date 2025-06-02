@@ -40,6 +40,7 @@ spring:
             - Path=/api/keycloak/**
           filters:
             - StripPrefix=2
+
         # запросы по API конкретных сервисов
         - id: accounts-route
           uri: lb://accounts-service
@@ -47,18 +48,28 @@ spring:
             - Path=/api/accounts/**
           filters:
             - StripPrefix=2  # Удаляет /api/accounts
+
         - id: cash-route
           uri: lb://cash-service
           predicates:
             - Path=/api/cash/**
           filters:
             - StripPrefix=2
+
+        - id: blocker-route
+          uri: lb://blocker-service
+          predicates:
+            - Path=/api/blocker/**
+          filters:
+            - StripPrefix=2
+
         - id: notify-route
           uri: lb://notify-service
           predicates:
             - Path=/api/notify/**
           filters:
             - StripPrefix=2
+
         # запрос по неизвестному API (возвращает HTTP 404)
         - id: api-not-found
           uri: no://op  # Специальный URI для "ничего не делать"

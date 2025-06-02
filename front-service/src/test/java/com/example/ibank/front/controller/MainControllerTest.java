@@ -423,4 +423,43 @@ public class MainControllerTest extends ControllerTest {
                 )
         ;
     }
+
+    @Test
+    void cashAction_block() throws Exception {
+        final String login = CASH_USER_LOGIN;
+        final String password = CASH_USER_PASSWORD;
+
+        final String currency = "RUB";
+        final String putAmount = "1000000.91";
+
+        String sessionCookie = checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/cash",login)
+                .cookie("SESSION", sessionCookie)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "currency", currency)
+                        .with( "value", putAmount)
+                        .with( "action", "PUT")
+                )
+                .exchange()
+                .expectStatus().isSeeOther()
+                .expectHeader().location( MAIN_URL)
+        //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        wtc.get().uri( MAIN_URL)
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", sessionCookie)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                //.consumeWith( System.out::println) // вывод запроса и ответа
+                .xpath( ERROR_XPF.formatted( "cash")).isEqualTo(
+                    "Сумма по операции не должна превышать 10000 RUB"
+                )
+        ;
+    }
 }
