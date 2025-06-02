@@ -42,6 +42,21 @@ from
         '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
         'Любитель Кэша',
         DATE '1988-03-11'
+    union all select
+        'transferUser',
+        '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
+        'Любитель Переводов',
+        DATE '1980-03-11'
+    union all select
+        'transferUser2',
+        '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
+        'Любитель Переводов2',
+        DATE '1980-03-12'
+    union all select
+        'toTransferUser',
+        '$2a$10$fkvOpBEpZEUj5qA/xWsSSeVFwjnBBKOqUIGTMmquMtD9rsLAu5DN2',
+        'Получатель Переводов',
+        DATE '1990-04-11'
     ) s
 ;
 
@@ -64,6 +79,12 @@ from
     union all select 'deletedUser', 'EUR', 0.0
     union all select 'cashUser', 'RUB', 0.0
     union all select 'cashUser', 'USD', 200.01
+    union all select 'transferUser', 'RUB', 1000.0
+    union all select 'transferUser', 'USD', 0.0
+    union all select 'transferUser2', 'RUB', 1000.0
+    union all select 'transferUser2', 'USD', 0.0
+    union all select 'toTransferUser', 'RUB', 0.0
+    union all select 'toTransferUser', 'EUR', 0.0
     ) s
 ;
 

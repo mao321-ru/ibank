@@ -172,7 +172,7 @@
                     <td class="getUsersError" style="color:red;" th:text="${getUsersError}"/>
                 </tr>
                 <tr th:if="${transferOtherErrors!=null}" th:each="transferOtherError : ${transferOtherErrors}">
-                    <td style="color:red;" th:text="${transferOtherError}"/>
+                    <td class="transferOtherError" style="color:red;" th:text="${transferOtherError}"/>
                 </tr>
                 <tr>
                     <td style="font-weight:bold;">Перевод другому</td>

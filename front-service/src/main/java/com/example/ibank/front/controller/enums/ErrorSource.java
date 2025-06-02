@@ -9,7 +9,9 @@ public enum ErrorSource {
     DeleteUser ( "deleteUserErrors"),
     Password ( "passwordErrors"),
     UserAccounts ( "userAccountsErrors"),
-    CashAction ( "cashErrors");
+    CashAction ( "cashErrors"),
+    Transfer ( "transferErrors"),
+    TransferOther ( "transferOtherErrors");
 
     private final String paramName;
 }

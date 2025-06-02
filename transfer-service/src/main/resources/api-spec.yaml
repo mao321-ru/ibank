@@ -1,24 +1,23 @@
 openapi: 3.0.3
 info:
-  title: Cash service API
-  description: API для операций с наличными
+  title: Transfer service API
+  description: API для переводов
   version: 1.0.0
 tags:
-  - name: Cash
-    description: API для операций с наличными
+  - name: Transfer
 paths:
-  /cash/deposit:
+  /transfer:
     post:
       tags:
-        - Cash
-      operationId: deposit
+        - Transfer
+      operationId: transfer
       summary: Внесение наличных
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CashOperationRequest'
+              $ref: '#/components/schemas/TransferRequest'
       responses:
         '204':
           description: Успешное зачисление
@@ -33,54 +32,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /cash/withdraw:
-    post:
-      tags:
-        - Cash
-      operationId: withdraw
-      summary: Снятие наличных
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CashOperationRequest'
-      responses:
-        '204':
-          description: Успешное снятие
-        '400':
-          description: Неверный запрос
-        '401':
-          description: Не авторизован
-        '409':
-          description: Недостаточно средств
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
 components:
   schemas:
-    CashOperationRequest:
+    TransferRequest:
       type: object
       properties:
         login:
           type: string
           description: Логин пользователя
-        amount:
-          type: number
-          format: decimal
-          minimum: 0.01
-          description: Сумма с двумя знаками после запятой
         currency:
           type: string
           pattern: '^[A-Z]{3}$'
           example: "USD"
           description: Валюта (ISO 4217)
+        amount:
+          type: number
+          format: decimal
+          minimum: 0.01
+          description: Сумма с двумя знаками после запятой
+        toLogin:
+          type: string
+          description: Логин получателя
+        toCurrency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          example: "USD"
+          description: Валюта получения (ISO 4217)
       required:
         - login
-        - amount
         - currency
+        - amount
+        - toLogin
+        - toCurrency
     ErrorResponse:
       type: object
       properties:

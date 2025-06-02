@@ -6,7 +6,8 @@ import com.example.ibank.front.controller.enums.ErrorSource;
 import com.example.ibank.front.dto.CashOperationDto;
 import com.example.ibank.front.dto.EditPasswordDto;
 import com.example.ibank.front.dto.EditUserAccountsDto;
-import com.example.ibank.front.service.CashService;
+import com.example.ibank.front.dto.TransferDto;
+import com.example.ibank.front.service.MoneyService;
 import com.example.ibank.front.service.UserService;
 import com.example.ibank.front.security.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ import java.util.List;
 public class MainController {
 
     private final UserService userService;
-    private final CashService cashService;
+    private final MoneyService moneyService;
 
     @GetMapping("/")
     public Mono<String> redirectRoot() {
@@ -214,7 +215,7 @@ public class MainController {
                 .flatMap( login -> {
                     log.debug("login: {}", login);
                     log.debug("dto: {}", dto);
-                    return cashService.cashOperation( login, dto);
+                    return moneyService.cashOperation( login, dto);
                 })
                 .onErrorResume( e -> exchange.getSession()
                         .doOnNext( ss -> {
@@ -224,6 +225,42 @@ public class MainController {
                         })
                         .then( Mono.empty())
                 )
+                .thenReturn( "redirect:/main");
+    }
+
+    @PostMapping( "/user/{login}/transfer")
+    Mono<String> transfer(
+            TransferDto dto,
+            ServerWebExchange exchange,
+            Model model
+    ) {
+        return exchange.getPrincipal()
+                .map( Principal::getName)
+                .flatMap( login -> {
+                    log.debug("transfer: login: {}, dto: {}", login, dto);
+                    boolean isToOther =  ! login.equals( dto.getToLogin());
+                    return Mono.just( login)
+                        .flatMap( v -> {
+                            String errorMessage =
+                                ! isToOther && dto.getFromCurrency().equals( dto.getToCurrency())
+                                    ? "Для перевода между своими счетами нужно указать различные валюты"
+                                    : null
+                            ;
+                            if (errorMessage != null) throw new IllegalArgumentException( errorMessage);
+                            return moneyService.transfer( login, dto);
+                        })
+                        .onErrorResume( e -> exchange.getSession()
+                            .doOnNext( ss -> {
+                                String paramName = ! isToOther
+                                    ? ErrorSource.Transfer.getParamName()
+                                    : ErrorSource.TransferOther.getParamName()
+                                ;
+                                log.debug( "save errors: {}: {}", paramName, e.getMessage());
+                                ss.getAttributes().put( paramName, List.of( e.getMessage()));
+                            })
+                            .then( Mono.empty())
+                        );
+                })
                 .thenReturn( "redirect:/main");
     }
 

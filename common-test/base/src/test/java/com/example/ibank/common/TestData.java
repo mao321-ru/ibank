@@ -27,6 +27,16 @@ interface TestData {
     String CASH_USER_RUB_AMOUNT = "0";
     String CASH_USER_USD_AMOUNT = "200.01";
 
+    // Тестирование переводов (открыты счета 1000 RUB и 0 USD)
+    String TRANSFER_USER_LOGIN = "transferUser";
+    String TRANSFER_USER_PASSWORD = EDITED_USER_PASSWORD;
+    String TRANSFER2_USER_LOGIN = "transferUser2";
+    String TRANSFER2_USER_PASSWORD = EDITED_USER_PASSWORD;
+
+    // Тестирование переводов (открыты нулевые счета RUB и EUR)
+    String TO_TRANSFER_USER_LOGIN = "toTransferUser";
+    String TO_TRANSFER_USER_PASSWORD = EDITED_USER_PASSWORD;
+
     // Число валют
     int CURRENCIES_COUNT = 3;
     String CURRENCY_RUB_CODE = "RUB";

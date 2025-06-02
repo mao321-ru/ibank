@@ -32,4 +32,30 @@ public class TransactionControllerTest extends ControllerTest {
         ;
     }
 
+    @Test
+    void createTransferTransaction_ok() throws Exception {
+        final String login = TRANSFER_USER_LOGIN;
+        final String toLogin = TO_TRANSFER_USER_LOGIN;
+
+        wtc.post().uri( "/transactions/transfer")
+                .headers( headers -> headers.setBearerAuth( getAccessToken( "transfer-service")))
+                .contentType( MediaType.APPLICATION_JSON)
+                .bodyValue(
+                        """
+                        {
+                            "login": "%s",
+                            "amount": "50.01",
+                            "currency": "RUB",
+                            "toLogin": "%s",
+                            "toAmount": "1.01",
+                            "toCurrency": "EUR"
+                        }
+                        """.formatted( login, toLogin)
+                )
+                .exchange()
+                .expectStatus().isNoContent()
+        //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+    }
+
 }

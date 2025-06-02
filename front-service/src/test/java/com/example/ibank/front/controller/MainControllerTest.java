@@ -462,4 +462,90 @@ public class MainControllerTest extends ControllerTest {
                 )
         ;
     }
+
+    @Test
+    void transfer_ok() throws Exception {
+        final String login = TRANSFER_USER_LOGIN;
+        final String password = TRANSFER_USER_PASSWORD;
+
+        final String fromCurrency = "RUB";
+        final String toCurrency = "USD";
+        final String amount = "400";
+        final String restAmount = "600.00";
+
+        String sessionCookie = checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/transfer",login)
+                .cookie("SESSION", sessionCookie)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "from_currency", fromCurrency)
+                        .with( "to_currency", toCurrency)
+                        .with( "value", amount)
+                        .with( "to_login", login)
+                )
+                .exchange()
+                .expectStatus().isSeeOther()
+                .expectHeader().location( MAIN_URL)
+        //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        wtc.get().uri( MAIN_URL)
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", sessionCookie)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                .consumeWith( System.out::println) // вывод запроса и ответа
+                //.xpath( ERROR_XPF.formatted( "transferOther")).nodeCount( 0)
+                .xpath( ERROR_XPF.formatted( "transfer")).string( Matchers.blankOrNullString())
+                .xpath( ERROR_XPF.formatted( "transferOther")).string( Matchers.blankOrNullString())
+                .xpath( ACCOUNT_VALUE_RUB_TEXT_XPATH).isEqualTo("%s %s".formatted( restAmount, fromCurrency))
+        ;
+    }
+
+    @Test
+    void transfer_toOther() throws Exception {
+        final String login = TRANSFER2_USER_LOGIN;
+        final String password = TRANSFER2_USER_PASSWORD;
+
+        final String toLogin = TO_TRANSFER_USER_LOGIN;
+        final String currency = "RUB";
+        final String amount = "300";
+        final String restAmount = "700.00";
+
+        String sessionCookie = checkLoginOk( login, password);
+
+        wtc.mutateWith( csrf())
+                .post().uri( "/user/{login}/transfer",login)
+                .cookie("SESSION", sessionCookie)
+                .contentType( MediaType.APPLICATION_FORM_URLENCODED)
+                .body( BodyInserters
+                        .fromFormData( "from_currency", currency)
+                        .with( "to_currency", currency)
+                        .with( "value", amount)
+                        .with( "to_login", toLogin)
+                )
+                .exchange()
+                .expectStatus().isSeeOther()
+                .expectHeader().location( MAIN_URL)
+        //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
+        ;
+
+        wtc.get().uri( MAIN_URL)
+                // используем cookie из предыдущего запроса
+                .cookie("SESSION", sessionCookie)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType( "text/html;charset=UTF-8")
+                .expectBody()
+                .consumeWith( System.out::println) // вывод запроса и ответа
+                //.xpath( ERROR_XPF.formatted( "transferOther")).nodeCount( 0)
+                .xpath( ERROR_XPF.formatted( "transfer")).string( Matchers.blankOrNullString())
+                .xpath( ERROR_XPF.formatted( "transferOther")).string( Matchers.blankOrNullString())
+                .xpath( ACCOUNT_VALUE_RUB_TEXT_XPATH).isEqualTo("%s %s".formatted( restAmount, currency))
+        ;
+    }
 }

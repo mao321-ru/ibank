@@ -1,6 +1,7 @@
 package com.example.ibank.accounts.controller;
 
 import com.example.ibank.accounts.api.TrCashApi;
+import com.example.ibank.accounts.api.TrTransferApi;
 import com.example.ibank.accounts.api.UserApi;
 import com.example.ibank.accounts.model.*;
 import com.example.ibank.accounts.service.TransactionService;
@@ -18,7 +19,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class TransactionController implements TrCashApi {
+public class TransactionController implements TrCashApi, TrTransferApi {
 
     private final TransactionService srv;
 
@@ -32,5 +33,20 @@ public class TransactionController implements TrCashApi {
                 })
                 .thenReturn( ResponseEntity.noContent().build())
         ;
+    }
+
+    @PreAuthorize( "hasRole('TRANSFER')")
+    @Override
+    public Mono<ResponseEntity<Void>> createTransferTransaction(Mono<TransferTransactionRequest> transferTransactionRequest, ServerWebExchange exchange) {
+        return transferTransactionRequest
+                .flatMap( rq -> {
+                    log.debug( "createTransferTransaction: login: {}, amount: {} {} -> {}, {} {}",
+                            rq.getLogin(), rq.getAmount().toString(), rq.getCurrency(),
+                            rq.getToLogin(), rq.getToAmount().toString(), rq.getToCurrency()
+                    );
+                    return srv.createTransferTransaction( rq);
+                })
+                .thenReturn( ResponseEntity.noContent().build())
+                ;
     }
 }

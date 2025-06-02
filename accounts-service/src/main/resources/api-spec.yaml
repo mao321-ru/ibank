@@ -8,6 +8,8 @@ tags:
     description: API для управления пользователями
   - name: TrCash
     description: API для отражения операций с наличными
+  - name: TrTransfer
+    description: API для отражения денежных переводов
 paths:
   /transactions/cash:
     post:
@@ -21,6 +23,29 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CashTransactionRequest'
+      responses:
+        '204':
+          description: Транзакция выполнена
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+        '409':
+          description: Ошибка при выполнении транзакции
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /transactions/transfer:
+    post:
+      tags:
+        - TrTransfer
+      operationId: createTransferTransaction
+      summary: Создает транзакцию по денежному переводу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferTransactionRequest'
       responses:
         '204':
           description: Транзакция выполнена
@@ -210,6 +235,36 @@ components:
         - login
         - amount
         - currency
+    TransferTransactionRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+        amount:
+          type: number
+          format: decimal
+          description: Сумма с двумя знаками после запятой
+        currency:
+          type: string
+          description: Валюта (ISO 4217)
+        toLogin:
+          type: string
+          description: Логин получателя
+        toAmount:
+          type: number
+          format: decimal
+          description: Сумма получения
+        toCurrency:
+          type: string
+          description: Валюта получения (ISO 4217)
+      required:
+        - login
+        - amount
+        - currency
+        - toLogin
+        - toAmount
+        - toCurrency
     UserShort:
       type: object
       properties:

@@ -56,6 +56,13 @@ spring:
           filters:
             - StripPrefix=2
 
+        - id: transfer-route
+          uri: lb://transfer-service
+          predicates:
+            - Path=/api/transfer/**
+          filters:
+            - StripPrefix=2
+
         - id: blocker-route
           uri: lb://blocker-service
           predicates:

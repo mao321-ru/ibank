@@ -1,28 +1,24 @@
 package com.example.ibank.front.service;
 
-import com.example.ibank.front.accounts.api.UserApi;
-import com.example.ibank.front.accounts.model.*;
 import com.example.ibank.front.cash.api.CashApi;
 import com.example.ibank.front.cash.model.CashOperationRequest;
 import com.example.ibank.front.controller.enums.CashAction;
 import com.example.ibank.front.dto.CashOperationDto;
-import com.example.ibank.front.dto.EditUserAccountsDto;
-import com.example.ibank.front.dto.SignupDto;
+import com.example.ibank.front.dto.TransferDto;
+import com.example.ibank.front.transfer.api.TransferApi;
+import com.example.ibank.front.transfer.model.TransferRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CashServiceImpl implements CashService {
+public class MoneyServiceImpl implements MoneyService {
 
     private final CashApi cashApi;
+    private final TransferApi transferApi;
 
     @Override
     public Mono<Void> cashOperation(String login, CashOperationDto dto) {
@@ -37,5 +33,17 @@ public class CashServiceImpl implements CashService {
                 case CashAction.GET -> cashApi.withdraw( rq);
             }
         ;
+    }
+
+    @Override
+    public Mono<Void> transfer(String login, TransferDto dto) {
+        return
+            transferApi.transfer( new TransferRequest()
+                .login( login)
+                .amount( dto.getAmount())
+                .currency( dto.getFromCurrency())
+                .toLogin( dto.getToLogin())
+                .toCurrency( dto.getToCurrency())
+            );
     }
 }
