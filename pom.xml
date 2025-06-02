@@ -23,6 +23,7 @@
         <module>gateway</module>
         <module>notify-service</module>
         <module>accounts-service</module>
+        <module>blocker-service</module>
         <module>cash-service</module>
         <module>front-service</module>
     </modules>

@@ -1,0 +1,80 @@
+openapi: 3.0.3
+info:
+  title: Blocker service API
+  description: API проверки допустимости операций
+  version: 1.0.0
+tags:
+  - name: Check
+    description: API для проверки операций
+paths:
+  /operation/check:
+    post:
+      tags:
+        - Check
+      operationId: checkOperation
+      summary: Проверка допустимости операции
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckRequest'
+      responses:
+        '200':
+          description: Операция разрешена
+        '400':
+          description: Неверный запрос
+        '401':
+          description: Не авторизован
+        '409':
+          description:  Операция запрещена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CheckRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Логин пользователя
+        operationType:
+          type: string
+          enum:
+            - DEPOSIT
+            - WITHDRAWAL
+            - TRANSFER
+          description: |
+            Тип операции:
+            - DEPOSIT - Внесение средств
+            - WITHDRAWAL - Снятие средств
+            - TRANSFER - Перевод между счетами
+          example: DEPOSIT
+        amount:
+          type: number
+          format: decimal
+          description: Сумма с двумя знаками после запятой
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          example: "USD"
+          description: Валюта (ISO 4217)
+      required:
+        - login
+        - operationType
+        - amount
+        - currency
+    ErrorResponse:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          format: int32
+        error_message:
+          type: string
+      required:
+        - error_code
+        - error_message

@@ -8,12 +8,12 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>cash-service</artifactId>
-    <name>cash-service</name>
-    <description>Cash Service</description>
+    <artifactId>blocker-service</artifactId>
+    <name>blocker-service</name>
+    <description>Blocker Service</description>
 
     <properties>
-        <module.base.name>cash</module.base.name>
+        <module.base.name>blocker</module.base.name>
     </properties>
 
     <dependencies>
@@ -59,12 +59,6 @@
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!-- OAuth 2.0 client -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
 
         <!-- OAuth 2.0 resource server -->
@@ -122,12 +116,6 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-shared-client</id>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>add-shared-resourceserver</id>
                         <goals>
                             <goal>add-source</goal>
@@ -141,18 +129,6 @@
                 <executions>
                     <execution>
                         <id>spring-server-generator</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>accounts-client-generator</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>notify-client-generator</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>

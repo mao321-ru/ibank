@@ -1,4 +1,4 @@
-package com.example.ibank.cash.config;
+package com.example.ibank.blocker.config;
 
 import com.example.ibank.shared.resourceserver.security.KeycloakJwtGrantedAuthoritiesConverter;
 

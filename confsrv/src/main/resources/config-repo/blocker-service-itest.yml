@@ -1,0 +1,5 @@
+# Лимит суммы для операции с наличными
+operation.cash.limit: 10000
+
+# Лимит суммы для перевода
+operation.transfer.limit: 50000
