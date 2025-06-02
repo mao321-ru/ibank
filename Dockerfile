@@ -25,14 +25,12 @@ COPY ${USAGE_MODULE}/src/main/resources/*.yaml ${USAGE_MODULE}/src/main/resource
 COPY ${USAGE_MODULE2}/src/main/resources/*.yaml ${USAGE_MODULE2}/src/main/resources/
 COPY ${USAGE_MODULE3}/src/main/resources/*.yaml ${USAGE_MODULE3}/src/main/resources/
 
-# кэширование зависимостей
-WORKDIR /app/${MODULE_NAME}
-RUN /app/mvnw dependency:go-offline -B
-
 # сборка
+WORKDIR /app/${MODULE_NAME}
 COPY shared ../shared
 COPY ${MODULE_NAME}/src src
-RUN /app/mvnw package -am -Dmaven.test.skip=true
+# кэширование зависимостей между сборками за счет --mount=type=cache
+RUN --mount=type=cache,target=/root/.m2 /app/mvnw package -am -Dmaven.test.skip=true
 
 # Этап 2 - Образ для запуска приложения
 FROM eclipse-temurin:21-jre-jammy
