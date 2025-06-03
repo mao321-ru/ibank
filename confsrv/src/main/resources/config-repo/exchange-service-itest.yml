@@ -1,0 +1,8 @@
+# Настройки для интеграционных тестов
+# (используются при тестах самого сервиса и при тестах других сервисов с запущенным сервисом)
+
+spring:
+  sql.init:
+    data-locations:
+      - classpath:/db/initial-data.sql
+      - classpath:/itest/db/test-data.sql

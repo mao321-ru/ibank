@@ -108,7 +108,12 @@ public class UserServiceImpl implements UserService {
                     .source( "accounts-service")
                     .eventType( "createUser")
                     .userLogin( u.getLogin())
-                    .message( "Зарегистрирован пользователь [%s] с логином [%s]".formatted( u.getLogin(), u.getName()))
+                    .message(
+                        "Зарегистрирован пользователь [%s] с логином [%s]".formatted(
+                            u.getName(),
+                            u.getLogin()
+                        )
+                    )
                 )
                 .doOnError( e -> log.error( "Notification failed: {}", e.getMessage()))
                 .onErrorResume( e -> Mono.empty())

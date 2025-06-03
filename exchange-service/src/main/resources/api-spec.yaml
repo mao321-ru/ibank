@@ -1,0 +1,81 @@
+openapi: 3.0.3
+info:
+  title: Exchange service API
+  description: API сервиса конвертации валют
+  version: 1.0.0
+tags:
+  - name: Exchange
+    description: API для конвертации валюты
+paths:
+  /exchange:
+    post:
+      tags:
+        - Exchange
+      operationId: exchange
+      summary: Выполняет конвертацию валюты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExchangeRequest'
+      responses:
+        '200':
+          description: Конвертация выполнена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExchangeResponse'
+        '400':
+          description: Неверный запрос (валидация не пройдена)
+        '409':
+          description: Ошибка при выполнении операции
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ExchangeRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: decimal
+          description: Сумма с двумя знаками после запятой
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          example: "USD"
+          description: Валюта (ISO 4217)
+        toCurrency:
+          type: string
+          description: Валюта конвертации
+      required:
+        - amount
+        - currency
+        - toCurrency
+    ExchangeResponse:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: decimal
+          description: Сумма с двумя знаками после запятой
+        currency:
+          type: string
+          description: Валюта (ISO 4217)
+      required:
+        - amount
+        - currency
+    ErrorResponse:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          format: int32
+        error_message:
+          type: string
+      required:
+        - error_code
+        - error_message
