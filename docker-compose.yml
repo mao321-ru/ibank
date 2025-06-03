@@ -128,6 +128,7 @@ services:
         USAGE_MODULE: accounts-service
         USAGE_MODULE2: cash-service
         USAGE_MODULE3: transfer-service
+        USAGE_MODULE4: exchange-service
     ports:
       - "8961:8080"
     environment:

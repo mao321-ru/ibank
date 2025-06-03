@@ -378,6 +378,15 @@
       "front-service": [],
       "exchange-service": [
         {
+          "id": "781af367-bced-42ec-8d5e-4fa42c28f7bf",
+          "name": "rate_api",
+          "description": "",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "66927075-0a7f-41bb-ad24-a7abe88078bb",
+          "attributes": {}
+        },
+        {
           "id": "13860f7d-c13d-41d3-963a-480eb6c2300c",
           "name": "exchange_api",
           "description": "",
@@ -668,6 +677,9 @@
         "default-roles-ibank"
       ],
       "clientRoles": {
+        "exchange-service": [
+          "rate_api"
+        ],
         "cash-service": [
           "cash_api"
         ],
@@ -2255,14 +2267,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-address-mapper",
-            "saml-user-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-usermodel-attribute-mapper",
             "oidc-full-name-mapper",
             "oidc-usermodel-property-mapper",
             "saml-role-list-mapper",
             "saml-user-property-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-attribute-mapper"
+            "saml-user-attribute-mapper",
+            "oidc-address-mapper"
           ]
         }
       },
@@ -2322,9 +2334,9 @@
             "oidc-address-mapper",
             "oidc-usermodel-property-mapper",
             "saml-user-property-mapper",
-            "oidc-full-name-mapper",
             "saml-user-attribute-mapper",
-            "oidc-usermodel-attribute-mapper"
+            "oidc-usermodel-attribute-mapper",
+            "oidc-full-name-mapper"
           ]
         }
       },

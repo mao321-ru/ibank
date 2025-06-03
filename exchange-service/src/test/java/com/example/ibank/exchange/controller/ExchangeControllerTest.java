@@ -35,4 +35,22 @@ public class ExchangeControllerTest extends ControllerTest {
         ;
     }
 
+    @Test
+    void getRates_ok() throws Exception {
+        wtc.get().uri( "/rates")
+            .headers( headers -> headers.setBearerAuth( getAccessToken( "front-service")))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .json(
+                    """
+                    [
+                        { "currencyCode": "USD", "currencyName": "Доллар США", "rate": 50},
+                        { "currencyCode": "EUR", "currencyName": "Евро", "rate": 55}
+                    ]
+                    """
+            )
+        ;
+    }
+
 }

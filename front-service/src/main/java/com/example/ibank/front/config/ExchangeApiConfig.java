@@ -1,0 +1,40 @@
+package com.example.ibank.front.config;
+
+import com.example.ibank.front.exchange.api.ExchangeApi;
+import com.example.ibank.front.exchange.api.RateApi;
+import com.example.ibank.front.exchange.invoker.ApiClient;
+import com.example.ibank.front.exchange.model.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@Configuration
+@Slf4j
+public class ExchangeApiConfig {
+
+    @Bean
+    ApiClient exchangeApiClient( WebClient authWebClient) {
+        ApiClient apiClient = new ApiClient(
+            authWebClient.mutate()
+                .defaultStatusHandler(
+                    status -> status == HttpStatus.CONFLICT,
+                    resp ->  resp.bodyToMono( ErrorResponse.class)
+                        .flatMap( e ->
+                                Mono.error( new IllegalStateException( e.getErrorMessage()))
+                        )
+                )
+                .build()
+        );
+        apiClient.setBasePath( "exchange");
+        return apiClient;
+    }
+
+    @Bean
+    RateApi rateApi( ApiClient apiClient) {
+        return new RateApi( apiClient);
+    }
+
+}

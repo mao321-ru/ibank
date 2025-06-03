@@ -4,9 +4,26 @@ info:
   description: API сервиса конвертации валют
   version: 1.0.0
 tags:
+  - name: Rate
+    description: API получения текущих курсов валют
   - name: Exchange
     description: API для конвертации валюты
 paths:
+  /rates:
+    get:
+      tags:
+        - Rate
+      operationId: getRates
+      summary: Получить текущие курсы валют к рублю
+      responses:
+        200:
+          description: Текущие курсы валют к рублю
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrentRate'
   /exchange:
     post:
       tags:
@@ -36,6 +53,25 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    CurrentRate:
+      type: object
+      properties:
+        currencyCode:
+          type: string
+          example: "USD"
+          description: Код валюты (ISO 4217)
+        currencyName:
+          type: string
+          example: "Доллар США"
+          description: Название валюты
+        rate:
+          type: number
+          format: decimal
+          description: Курс к рублю
+      required:
+        - currencyCode
+        - currencyName
+        - rate
     ExchangeRequest:
       type: object
       properties:

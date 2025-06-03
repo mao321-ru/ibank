@@ -1,6 +1,7 @@
 package com.example.ibank.exchange.service;
 
 
+import com.example.ibank.exchange.model.CurrentRate;
 import com.example.ibank.exchange.model.ExchangeRequest;
 import com.example.ibank.exchange.model.ExchangeResponse;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -22,7 +24,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     private final R2dbcEntityTemplate etm;
 
     @Override
-    @Transactional
+    @Transactional( readOnly = true)
     public Mono<ExchangeResponse> exchange(ExchangeRequest rq) {
         return etm.getDatabaseClient()
             .sql(
@@ -60,6 +62,36 @@ public class ExchangeServiceImpl implements ExchangeService {
                     return new ExchangeResponse().amount( amount).currency( rq.getToCurrency());
                 })
                 .one()
+        ;
+    }
+
+    @Override
+    @Transactional( readOnly = true)
+    public Flux<CurrentRate> getRates() {
+        return etm.getDatabaseClient()
+            .sql(
+                """
+                select
+                    cr.currency_code,
+                    c.currency_name,
+                    cr.rate
+                from
+                    currency_rates cr
+                    join currencies c
+                        on c.currency_code = cr.currency_code
+                where
+                    cr.valid_to is null
+                    and cr.currency_code != 'RUB'
+                order by
+                    c.currency_name
+                """
+            )
+            .map( row -> new CurrentRate()
+                .currencyCode( row.get( "currency_code", String.class))
+                .currencyName( row.get( "currency_name", String.class))
+                .rate( row.get( "rate", BigDecimal.class))
+            )
+            .all()
         ;
     }
 
