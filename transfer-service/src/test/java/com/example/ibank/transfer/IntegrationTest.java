@@ -15,6 +15,7 @@ public abstract class IntegrationTest extends IntegrationTestBase {
             Container.GATEWAY,
             Container.ACCOUNTS_SERVICE,
             Container.BLOCKER_SERVICE,
+            Container.EXCHANGE_SERVICE,
             Container.NOTIFY_SERVICE
         ));
     }

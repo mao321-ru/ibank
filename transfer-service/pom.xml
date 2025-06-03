@@ -152,6 +152,12 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>exchange-client-generator</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>blocker-client-generator</id>
                         <goals>
                             <goal>generate</goal>

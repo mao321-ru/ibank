@@ -1,5 +1,6 @@
 package com.example.ibank.exchange.controller;
 
+import com.example.ibank.exchange.model.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,18 @@ public class GlobalExceptionHandler {
         log.error( "HTTP 500 response: %s".formatted( msg));
         log.error( "Error stack:", e);
         return Mono.just( ResponseEntity.internalServerError().body( msg));
+    }
+
+    // Ошибка согласно спецификации OpenAPI
+    @ExceptionHandler( IllegalStateException.class)
+    public Mono<ResponseEntity<ErrorResponse>> handleException(IllegalStateException e) {
+        return Mono.just( ResponseEntity
+                .status( HttpStatus.CONFLICT)
+                .body( new ErrorResponse()
+                        .errorCode( HttpStatus.CONFLICT.value())
+                        .errorMessage( e.getMessage())
+                )
+        );
     }
 
 }

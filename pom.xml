@@ -340,6 +340,21 @@
                             </configuration>
                         </execution>
                         <execution>
+                            <id>exchange-client-generator</id>
+                            <configuration>
+                                <generatorName>java</generatorName>
+                                <library>webclient</library>
+                                <output>${project.build.directory}/generated-sources</output>
+                                <configOptions>
+                                    <java8>true</java8>
+                                </configOptions>
+                                <inputSpec>${project.basedir}/../exchange-service/${openapi.spec.path}</inputSpec>
+                                <apiPackage>${module.base.package}.exchange.api</apiPackage>
+                                <modelPackage>${module.base.package}.exchange.model</modelPackage>
+                                <invokerPackage>${module.base.package}.exchange.invoker</invokerPackage>
+                            </configuration>
+                        </execution>
+                        <execution>
                             <id>blocker-client-generator</id>
                             <configuration>
                                 <generatorName>java</generatorName>

@@ -63,6 +63,13 @@ spring:
           filters:
             - StripPrefix=2
 
+        - id: exchange-route
+          uri: lb://exchange-service
+          predicates:
+            - Path=/api/exchange/**
+          filters:
+            - StripPrefix=2
+
         - id: blocker-route
           uri: lb://blocker-service
           predicates:

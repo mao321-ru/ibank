@@ -216,7 +216,8 @@ services:
         MODULE_NAME: transfer-service
         USAGE_MODULE: accounts-service
         USAGE_MODULE2: blocker-service
-        USAGE_MODULE3: notify-service
+        USAGE_MODULE3: exchange-service
+        USAGE_MODULE4: notify-service
     ports:
       - "8964:8080"
     environment:

@@ -4,6 +4,9 @@ import com.example.ibank.transfer.accounts.api.TrTransferApi;
 import com.example.ibank.transfer.accounts.model.TransferTransactionRequest;
 import com.example.ibank.transfer.blocker.api.CheckApi;
 import com.example.ibank.transfer.blocker.model.CheckRequest;
+import com.example.ibank.transfer.exchange.api.ExchangeApi;
+import com.example.ibank.transfer.exchange.model.ExchangeRequest;
+import com.example.ibank.transfer.exchange.model.ExchangeResponse;
 import com.example.ibank.transfer.model.*;
 import com.example.ibank.transfer.notify.api.EventApi;
 import com.example.ibank.transfer.notify.model.EventCreate;
@@ -25,31 +28,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransferServiceImpl implements TransferService {
 
+    private final ExchangeApi exchangeApi;
     private final CheckApi checkApi;
     private final TrTransferApi trTransferApi;
     private final EventApi eventApi;
 
     @Override
     public Mono<Void> transfer( TransferRequest req) {
-        BigDecimal toAmount = req.getAmount();
-        if( ! req.getCurrency().equals( req.getToCurrency())) {
-            throw new IllegalStateException( "Exchange not implemented");
-        }
         return
-            checkApi.checkOperation( new CheckRequest()
-                .login( req.getLogin())
-                .operationType( CheckRequest.OperationTypeEnum.TRANSFER)
-                .amount( req.getAmount())
-                .currency( req.getCurrency())
+            ( req.getCurrency().equals( req.getToCurrency())
+                ? Mono.just( req.getAmount())
+                : exchangeApi.exchange( new ExchangeRequest()
+                        .amount( req.getAmount())
+                        .currency( req.getCurrency())
+                        .toCurrency( req.getToCurrency())
+                    )
+                    .map( ExchangeResponse::getAmount)
             )
-            .then(
-                trTransferApi.createTransferTransaction( new TransferTransactionRequest()
+            .flatMap( toAmount ->
+                checkApi.checkOperation( new CheckRequest()
                     .login( req.getLogin())
+                    .operationType( CheckRequest.OperationTypeEnum.TRANSFER)
                     .amount( req.getAmount())
                     .currency( req.getCurrency())
-                    .toLogin( req.getToLogin())
-                    .toAmount( toAmount)
-                    .toCurrency( req.getToCurrency())
+                )
+                .then(
+                    trTransferApi.createTransferTransaction( new TransferTransactionRequest()
+                        .login( req.getLogin())
+                        .amount( req.getAmount())
+                        .currency( req.getCurrency())
+                        .toLogin( req.getToLogin())
+                        .toAmount( toAmount)
+                        .toCurrency( req.getToCurrency())
+                    )
                 )
             )
             .then(

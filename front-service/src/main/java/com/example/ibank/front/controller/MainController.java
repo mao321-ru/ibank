@@ -244,7 +244,9 @@ public class MainController {
                             String errorMessage =
                                 ! isToOther && dto.getFromCurrency().equals( dto.getToCurrency())
                                     ? "Для перевода между своими счетами нужно указать различные валюты"
-                                    : null
+                                : StringUtils.isEmpty( dto.getToLogin())
+                                    ? "Нужно указать получателя платежа"
+                                : null
                             ;
                             if (errorMessage != null) throw new IllegalArgumentException( errorMessage);
                             return moneyService.transfer( login, dto);
