@@ -4,6 +4,7 @@ package com.example.ibank.exchange.service;
 import com.example.ibank.exchange.model.CurrentRate;
 import com.example.ibank.exchange.model.ExchangeRequest;
 import com.example.ibank.exchange.model.ExchangeResponse;
+import com.example.ibank.exchange.model.RateShort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -93,6 +94,112 @@ public class ExchangeServiceImpl implements ExchangeService {
             )
             .all()
         ;
+    }
+
+    @Override
+    @Transactional
+    public Mono<Void> setRates(List<RateShort> rq) {
+        return etm.getDatabaseClient()
+            .sql(
+                """
+                with
+                    param_q as
+                        (
+                        select
+                            unnest( :currency_codes) currency_code,
+                            unnest( :rates) rate
+                        ),
+                    validate_errors_q as
+                        (
+                        select
+                            'Unknown currency code [' || p.currency_code || ']' as error_message
+                        from
+                            param_q p
+                            left join currencies cr
+                                on cr.currency_code = p.currency_code
+                        where
+                            cr.currency_code is null
+                        order by
+                            p.currency_code
+                        fetch first 1 row only
+                        ),
+                    rates_q as
+                        (
+                        select
+                            p.*,
+                            current_timestamp as valid_from,
+                            rt.rate_id
+                        from
+                            param_q p
+                            left join currency_rates rt
+                                on rt.currency_code = p.currency_code
+                                    and rt.valid_to is null
+                        where
+                            -- только при отсутствии ошибок
+                            not exists (select null from validate_errors_q)
+                            -- игнорируем если курс не изменился
+                            and rt.rate is distinct from p.rate
+                        ),
+                    merge_rates_q as
+                        (
+                        merge into
+                            currency_rates d
+                        using
+                            (
+                            -- записи для update перед insert чтобы не нарушить уникальность
+                            select
+                                t.currency_code,
+                                t.rate,
+                                t.valid_from,
+                                t.rate_id
+                            from
+                                rates_q t
+                            where
+                                t.rate_id is not null
+                            union all
+                            select
+                                t.currency_code,
+                                t.rate,
+                                t.valid_from,
+                                null as rate_id
+                            from
+                                rates_q t
+                            ) s
+                        on
+                            d.rate_id = s.rate_id
+                        when matched then
+                            update set
+                                valid_to = s.valid_from
+                        when not matched then
+                            insert
+                            (
+                                currency_code,
+                                rate,
+                                valid_from
+                            )
+                            values
+                            (
+                                s.currency_code,
+                                s.rate,
+                                s.valid_from
+                            )
+                        )
+                select
+                    max( e.error_message) as error_message
+                from
+                    validate_errors_q e
+                """
+            )
+                .bind( "currency_codes", rq.stream().map( RateShort::getCurrencyCode).toArray( String[]::new))
+                .bind( "rates", rq.stream().map( RateShort::getRate).toArray( BigDecimal[]::new))
+                .map( row -> {
+                    var errorMessage = row.get( "error_message", String.class);
+                    if( errorMessage != null) throw new IllegalStateException( errorMessage);
+                    return true;
+                })
+            .one()
+            .then()
+       ;
     }
 
 }

@@ -197,8 +197,6 @@ services:
         condition: service_healthy
       eureka:
         condition: service_healthy
-      postgres:
-        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
@@ -228,8 +226,6 @@ services:
       confsrv:
         condition: service_healthy
       eureka:
-        condition: service_healthy
-      postgres:
         condition: service_healthy
     healthcheck:
       test: >
@@ -269,6 +265,33 @@ services:
       timeout: 5s
       retries: 10
 
+  exrate-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        MODULE_NAME: exrate-service
+        USAGE_MODULE: exchange-service
+    ports:
+      - "8966:8080"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      confsrv:
+        condition: service_healthy
+      eureka:
+        condition: service_healthy
+    healthcheck:
+      test: >
+        sh -c '
+          curl -sf http://localhost:8080/actuator/health |
+          grep -q '"'"'"status":"UP"'"'"' || exit 1
+        '
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   blocker-service:
     build:
       context: .
@@ -284,8 +307,6 @@ services:
       confsrv:
         condition: service_healthy
       eureka:
-        condition: service_healthy
-      postgres:
         condition: service_healthy
     healthcheck:
       test: >
@@ -341,6 +362,8 @@ services:
       transfer-service:
         condition: service_healthy
       exchange-service:
+        condition: service_healthy
+      exrate-service:
         condition: service_healthy
       blocker-service:
         condition: service_healthy

@@ -26,6 +26,7 @@
         <module>blocker-service</module>
         <module>cash-service</module>
         <module>exchange-service</module>
+        <module>exrate-service</module>
         <module>transfer-service</module>
         <module>front-service</module>
     </modules>

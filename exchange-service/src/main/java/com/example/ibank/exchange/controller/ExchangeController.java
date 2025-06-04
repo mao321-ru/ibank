@@ -2,9 +2,11 @@ package com.example.ibank.exchange.controller;
 
 import com.example.ibank.exchange.api.ExchangeApi;
 import com.example.ibank.exchange.api.RateApi;
+import com.example.ibank.exchange.api.SetRateApi;
 import com.example.ibank.exchange.model.CurrentRate;
 import com.example.ibank.exchange.model.ExchangeRequest;
 import com.example.ibank.exchange.model.ExchangeResponse;
+import com.example.ibank.exchange.model.RateShort;
 import com.example.ibank.exchange.service.ExchangeService;
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +24,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class ExchangeController implements ExchangeApi, RateApi {
+public class ExchangeController implements ExchangeApi, RateApi, SetRateApi {
 
     private final ExchangeService srv;
 
@@ -43,5 +45,18 @@ public class ExchangeController implements ExchangeApi, RateApi {
     public Mono<ResponseEntity<Flux<CurrentRate>>> getRates(ServerWebExchange exchange) {
         log.trace( "getRates: ...");
         return Mono.just( ResponseEntity.ok( srv.getRates()));
+    }
+
+    @PreAuthorize( "hasRole('SETRATE_API')")
+    @Override
+    public Mono<ResponseEntity<Void>> setRates(Flux<RateShort> rateShort, ServerWebExchange exchange) {
+        return rateShort
+            .collectList()
+            .flatMap( rq -> {
+                log.trace( "setRates: {}", rq);
+                return srv.setRates( rq);
+            })
+            .thenReturn( ResponseEntity.noContent().build())
+        ;
     }
 }

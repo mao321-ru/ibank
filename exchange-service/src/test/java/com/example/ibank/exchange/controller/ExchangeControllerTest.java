@@ -53,4 +53,22 @@ public class ExchangeControllerTest extends ControllerTest {
         ;
     }
 
+    @Test
+    void setRates_ok() throws Exception {
+        wtc.post().uri( "/rates")
+            .headers( headers -> headers.setBearerAuth( getAccessToken( "exrate-service")))
+            .contentType( MediaType.APPLICATION_JSON)
+            .bodyValue(
+                """
+                [
+                    { "currencyCode": "USD", "rate": 50 },
+                    { "currencyCode": "EUR", "rate": 55 }
+                ]
+                """
+            )
+            .exchange()
+            .expectStatus().isNoContent()
+        ;
+    }
+
 }
