@@ -1,7 +1,6 @@
-package com.example.ibank.front.config;
+package com.example.ibank.shared.client.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
@@ -35,17 +34,16 @@ public class OAuth2ClientConfig {
         return manager;
     }
 
-    @Bean( "authWebClient")
-    WebClient webClient(
-        ReactiveOAuth2AuthorizedClientManager clientRegistrations,
-        @Qualifier("gatewayWebClientBuilder") WebClient.Builder builder
+    @Bean( "authWebClientBuilder")
+    WebClient.Builder authWebClientBuilder(
+            ReactiveOAuth2AuthorizedClientManager clientRegistrations,
+            @Qualifier("gatewayWebClientBuilder") WebClient.Builder builder
     ) {
         ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
                 new ServerOAuth2AuthorizedClientExchangeFilterFunction( clientRegistrations);
         oauth.setDefaultClientRegistrationId( clientRegistrationId);
         return builder
-                .filter(oauth)
-                .build();
+                .filter(oauth);
     }
 
 }

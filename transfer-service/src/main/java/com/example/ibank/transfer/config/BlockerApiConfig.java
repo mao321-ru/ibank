@@ -15,9 +15,9 @@ import reactor.core.publisher.Mono;
 public class BlockerApiConfig {
 
     @Bean
-    ApiClient blockerApiClient( WebClient authWebClient) {
+    ApiClient blockerApiClient( WebClient serviceWebClient) {
         ApiClient apiClient = new ApiClient(
-            authWebClient.mutate()
+            serviceWebClient.mutate()
                 .defaultStatusHandler(
                     status -> status == HttpStatus.CONFLICT,
                     resp ->  resp.bodyToMono( ErrorResponse.class)

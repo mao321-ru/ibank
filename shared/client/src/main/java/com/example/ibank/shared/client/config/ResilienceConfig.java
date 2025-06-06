@@ -1,22 +1,20 @@
-package com.example.ibank.exrate.config;
+package com.example.ibank.shared.client.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
-import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+
 import java.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-
 import java.util.concurrent.TimeoutException;
 
 

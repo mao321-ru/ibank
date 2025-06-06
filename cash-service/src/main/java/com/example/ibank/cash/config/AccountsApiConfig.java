@@ -16,9 +16,9 @@ import reactor.core.publisher.Mono;
 public class AccountsApiConfig {
 
     @Bean
-    ApiClient accountsApiClient( WebClient authWebClient) {
+    ApiClient accountsApiClient( WebClient serviceWebClient) {
         ApiClient apiClient = new ApiClient(
-            authWebClient.mutate()
+            serviceWebClient.mutate()
                 .defaultStatusHandler(
                     status -> status == HttpStatus.CONFLICT,
                     resp ->  resp.bodyToMono( ErrorResponse.class)
