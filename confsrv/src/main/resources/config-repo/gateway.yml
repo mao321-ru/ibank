@@ -19,6 +19,13 @@ management:
     readiness-state:
       enabled: true    # Активирует проверку readiness состояния приложения
 
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s  # критично: до добавления (было 1s?) приходила HTTP 503 с fallback
+        cancel-running-future: false # не прерывать запросы при превышении таймаута
+
 spring:
   cloud:
     loadbalancer:
@@ -31,6 +38,12 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+      default-filters:
+        - name: CircuitBreaker
+          args:
+            name: global-cb
+            fallbackUri: forward:/default-fallback  # Единая точка для всех сервисов
+            statusCodes: SERVICE_UNAVAILABLE,GATEWAY_TIMEOUT
       routes:
         # перенаправление на keycloak для тестирования
         # (способ получения токенов в тестах, обеспечивающий стабильный iss токена)

@@ -16,3 +16,34 @@ spring:
             client-id: ${spring.application.name}
             client-secret: ${spring.application.name}-Secret
             clientAuthenticationMethod: client_secret_post
+
+# для уменьшения задержки между регистрацией сервиса в eureka и началом его использования
+# другими сервисами
+eureka:
+  client:
+    # Запрашивать обновления каждую секунду
+    registry-fetch-interval-seconds: 1
+    # Отправлять heartbeat каждую секунду
+    lease-renewal-interval-in-seconds: 1
+    # Быстрее исключать неактивные сервисы
+    lease-expiration-duration-in-seconds: 2
+
+# типовые настройки (возможно нужно уточнять)
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s  # Был 1 секунда - не хватало в тесте
+        cancel-running-future: false
+  circuitbreaker:
+    configs:
+      default:
+        failure-rate-threshold: 50
+        register-health-indicator: true
+        minimum-number-of-calls: 5
+        wait-duration-in-open-state: 5s
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 500ms

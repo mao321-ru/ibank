@@ -2,6 +2,9 @@ package com.example.ibank.exrate.service;
 
 public interface ExrateService {
 
-    Boolean refreshRates();
+    void refreshRates();
+
+    // для проверки результата refreshRates в тесте
+    Boolean isLastRefreshOk();
 
 }

@@ -67,16 +67,6 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                 .waitingFor( Wait.forHttp("/actuator/health"))
         );
         containers.get( cntType).start();
-
-        // для исключения ошибка вида: Gateway not available при нотификации
-        // (вероятно больше связана с задержкой обновления данных в eureka или в клиенте eureka в notify-service,
-        // возникает в com.example.ibank.shared.client.config.GatewayWebClientBuilderConfig)
-        log.info( "waiting after start Gateway (for prevent error: Gateway not available) ...");
-        try {
-            Thread.sleep( 20 * 1000);
-        } catch (InterruptedException e) {
-            log.info( "waiting interrupted: {}" + e.getMessage());
-        }
     }
 
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited

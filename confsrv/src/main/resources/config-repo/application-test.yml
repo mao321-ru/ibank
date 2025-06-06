@@ -4,3 +4,6 @@ logging:
     #org.springframework.r2dbc.core.DefaultDatabaseClient: DEBUG # логирование SQL-запросов
     #org.springframework: DEBUG
     #io.r2dbc: DEBUG # и добавим больше деталей (не включать в настоящем приложении)
+
+  service:
+    #http: true # логирование HTTP-запросов (без тела) и ответов сервисов

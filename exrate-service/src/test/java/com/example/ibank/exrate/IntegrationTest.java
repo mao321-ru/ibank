@@ -7,9 +7,9 @@ import java.util.List;
 
 // Общие настройки для всех интеграционных тестов модуля
 @TestPropertySource( properties = "spring.config.import=configserver:http://localhost:8926")
-// отключаем автозапуск обновления курсов по расписанию за счет настройки в SchedulingConfig
+// для явного вызова в тестах отключаем автозапуск обновления курсов по расписанию за счет настройки в SchedulingConfig
 // иначе возможно одновременное изменение и ошибка в одном из запусков (по расписанию и в тесте) из-за нарушения UK в БД
-@TestPropertySource( properties = "scheduling.enabled=false")
+//@TestPropertySource( properties = "scheduling.enabled=false")
 public abstract class IntegrationTest extends IntegrationTestBase {
 
     static {

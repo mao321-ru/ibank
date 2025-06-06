@@ -282,6 +282,10 @@ services:
         condition: service_healthy
       eureka:
         condition: service_healthy
+      gateway:
+        condition: service_healthy
+      exchange-service:
+        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
