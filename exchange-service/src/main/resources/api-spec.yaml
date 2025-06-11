@@ -3,6 +3,8 @@ info:
   title: Exchange service API
   description: API сервиса конвертации валют
   version: 1.0.0
+servers:
+  - url: http://exchange-service:8080
 tags:
   - name: Rate
     description: API получения текущих курсов валют

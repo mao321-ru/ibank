@@ -3,6 +3,8 @@ info:
   title: Cash service API
   description: API для операций с наличными
   version: 1.0.0
+servers:
+  - url: http://cash-service:8080
 tags:
   - name: Cash
     description: API для операций с наличными

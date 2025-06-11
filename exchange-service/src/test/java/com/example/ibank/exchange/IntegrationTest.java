@@ -12,8 +12,6 @@ public abstract class IntegrationTest extends IntegrationTestPostgres {
 
     static {
         startContainers( 8925, List.of(
-            Container.EUREKA,
-            Container.GATEWAY,
             Container.POSTGRES
         ));
     }

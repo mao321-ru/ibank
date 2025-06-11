@@ -1,7 +1,5 @@
 # Настройки для запуска сервисов вне docker
 
-gateway.url: http://localhost:8880
-
 keycloak.url: http://localhost:8954
 
 # Значение в поле iss для проверки токена (фиксируется за счет KC_HOSTNAME в docker-compose.yml,

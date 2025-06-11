@@ -5,6 +5,7 @@ import com.example.ibank.cash.accounts.api.TrCashApi;
 import com.example.ibank.cash.accounts.invoker.ApiClient;
 import com.example.ibank.cash.accounts.model.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,9 @@ import reactor.core.publisher.Mono;
 @Configuration
 @Slf4j
 public class AccountsApiConfig {
+
+    @Value( "${accounts.url:}")
+    private String baseUrl;
 
     @Bean
     ApiClient accountsApiClient( WebClient serviceWebClient) {
@@ -28,7 +32,9 @@ public class AccountsApiConfig {
                 )
                 .build()
         );
-        apiClient.setBasePath( "accounts");
+        if( baseUrl != null && !baseUrl.isEmpty()) {
+            apiClient.setBasePath( baseUrl);
+        }
         return apiClient;
     }
 

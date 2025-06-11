@@ -3,6 +3,8 @@ info:
   title: Notify service API
   description: API сервиса нотификации
   version: 1.0.0
+servers:
+  - url: http://notify-service:8080
 tags:
   - name: Event
     description: API для добавления событий

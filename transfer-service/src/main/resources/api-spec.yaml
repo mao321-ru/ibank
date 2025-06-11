@@ -3,6 +3,8 @@ info:
   title: Transfer service API
   description: API для переводов
   version: 1.0.0
+servers:
+  - url: http://transfer-service:8080
 tags:
   - name: Transfer
 paths:

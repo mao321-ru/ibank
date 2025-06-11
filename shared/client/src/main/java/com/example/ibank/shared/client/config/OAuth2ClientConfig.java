@@ -36,13 +36,12 @@ public class OAuth2ClientConfig {
 
     @Bean( "authWebClientBuilder")
     WebClient.Builder authWebClientBuilder(
-            ReactiveOAuth2AuthorizedClientManager clientRegistrations,
-            @Qualifier("gatewayWebClientBuilder") WebClient.Builder builder
+            ReactiveOAuth2AuthorizedClientManager clientRegistrations
     ) {
         ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
                 new ServerOAuth2AuthorizedClientExchangeFilterFunction( clientRegistrations);
         oauth.setDefaultClientRegistrationId( clientRegistrationId);
-        return builder
+        return WebClient.builder()
                 .filter(oauth);
     }
 

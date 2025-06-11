@@ -1,9 +1,3 @@
-# Дефолтная настройка для большинства сервисов (кроме confsrv и eureka)
-eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka/
-
-# URL к Gateway для запросов из сервисов (если не задан, то определяется по регистрации gateway в eureka)
-gateway.url:
-
 # realm с настройками авторизации сервисов (импортируется через KC_IMPORT в docker-compose.yml)
 keycloak.realm: ibank
 

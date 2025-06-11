@@ -14,8 +14,6 @@ public abstract class IntegrationTest extends IntegrationTestBase {
 
     static {
         startContainers( 8926, List.of(
-            Container.EUREKA,
-            Container.GATEWAY,
             Container.POSTGRES,
             Container.EXCHANGE_SERVICE
         ));

@@ -3,6 +3,8 @@ info:
   title: Blocker service API
   description: API проверки допустимости операций
   version: 1.0.0
+servers:
+  - url: http://blocker-service:8080
 tags:
   - name: Check
     description: API для проверки операций

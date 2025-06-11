@@ -4,6 +4,7 @@ import com.example.ibank.cash.blocker.model.ErrorResponse;
 import com.example.ibank.cash.blocker.api.CheckApi;
 import com.example.ibank.cash.blocker.invoker.ApiClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,9 @@ import reactor.core.publisher.Mono;
 @Configuration
 @Slf4j
 public class BlockerApiConfig {
+
+    @Value( "${blocker.url:}")
+    private String baseUrl;
 
     @Bean
     ApiClient blockerApiClient( WebClient serviceWebClient) {
@@ -27,7 +31,9 @@ public class BlockerApiConfig {
                 )
                 .build()
         );
-        apiClient.setBasePath( "blocker");
+        if( baseUrl != null && !baseUrl.isEmpty()) {
+            apiClient.setBasePath( baseUrl);
+        }
         return apiClient;
     }
 

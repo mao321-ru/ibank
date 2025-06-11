@@ -19,64 +19,6 @@ services:
       timeout: 5s
       retries: 10
 
-  eureka:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        MODULE_NAME: eureka
-        EXPOSE_PORT: 8761
-    ports:
-      - "8761:8761"
-    environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
-      SPRING_PROFILES_ACTIVE: docker
-    depends_on:
-      confsrv:
-        condition: service_healthy
-    healthcheck:
-      test: >
-        sh -c '
-          curl -sf http://localhost:8761/actuator/health |
-          grep -q '"'"'"status":"UP"'"'"' || exit 1
-        '
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  gateway:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        MODULE_NAME: gateway
-        EXPOSE_PORT: 8880
-    ports:
-      - "8880:8880"
-    environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
-      SPRING_PROFILES_ACTIVE: docker
-    depends_on:
-      confsrv:
-        condition: service_healthy
-      eureka:
-        condition: service_healthy
-      # была ситуация когда в упор не видел front-service с сообщением
-      # o.s.c.l.core.RoundRobinLoadBalancer      : No servers available for service: front-service
-      # хотя в eureka front-service был, разрешилось перезапуском gateway, поэтому добавил
-      # зависимость
-      front-service:
-        condition: service_healthy
-    healthcheck:
-      test: >
-        sh -c '
-          curl -sf http://localhost:8880/actuator/health |
-          grep -q '"'"'"status":"UP"'"'"' || exit 1
-        '
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   keycloak:
     image: quay.io/keycloak/keycloak:26.1.3
     environment:
@@ -130,14 +72,14 @@ services:
         USAGE_MODULE3: transfer-service
         USAGE_MODULE4: exchange-service
     ports:
-      - "8961:8080"
+      - "8880:8080"
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
       confsrv:
         condition: service_healthy
-      eureka:
+      accounts-service:
         condition: service_healthy
     healthcheck:
       test: >
@@ -163,8 +105,6 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
       confsrv:
-        condition: service_healthy
-      eureka:
         condition: service_healthy
       postgres:
         condition: service_healthy
@@ -195,8 +135,6 @@ services:
     depends_on:
       confsrv:
         condition: service_healthy
-      eureka:
-        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
@@ -225,8 +163,6 @@ services:
     depends_on:
       confsrv:
         condition: service_healthy
-      eureka:
-        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
@@ -250,8 +186,6 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
       confsrv:
-        condition: service_healthy
-      eureka:
         condition: service_healthy
       postgres:
         condition: service_healthy
@@ -280,10 +214,6 @@ services:
     depends_on:
       confsrv:
         condition: service_healthy
-      eureka:
-        condition: service_healthy
-      gateway:
-        condition: service_healthy
       exchange-service:
         condition: service_healthy
     healthcheck:
@@ -310,8 +240,6 @@ services:
     depends_on:
       confsrv:
         condition: service_healthy
-      eureka:
-        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
@@ -336,8 +264,6 @@ services:
     depends_on:
       confsrv:
         condition: service_healthy
-      eureka:
-        condition: service_healthy
       postgres:
         condition: service_healthy
     healthcheck:
@@ -355,8 +281,6 @@ services:
     image: alpine
     command: sh -c "exit 0"  # Ничего не делает, просто завершается
     depends_on:
-      gateway:
-        condition: service_healthy
       front-service:
         condition: service_healthy
       accounts-service:

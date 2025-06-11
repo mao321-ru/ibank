@@ -31,8 +31,6 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     private static final Logger log = LoggerFactory.getLogger( IntegrationTestBase.class);
 
     protected enum Container {
-        EUREKA,
-        GATEWAY,
         POSTGRES,
         ACCOUNTS_SERVICE,
         CASH_SERVICE,
@@ -48,25 +46,40 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
     protected static KeycloakContainer keycloak;
     protected static String  keycloakUrl;
     protected static String  keycloakIssuerUrl;
+    protected static GenericContainer<?> keycloakProxy;
 
     protected static PostgreSQLContainer postgres;
 
-    private static void startGateway() {
-        var cntType = Container.GATEWAY;
-        int port = 8880;
-        String cntName = cntType.toString().toLowerCase();
-        containers.put(
-            cntType,
-            new GenericContainer<>( "local/ibank-%s:test".formatted( cntName))
-                .withExposedPorts( port)
+    private static void startKeycloak() {
+        keycloak = new KeycloakContainer( "quay.io/keycloak/keycloak:26.1.3")
                 .withNetwork(network)
-                .withNetworkAliases( cntName)
-                .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
-                .withEnv( "SPRING_PROFILES_ACTIVE", profilesActive)
-                .withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger("TC-GATEWAY")))
-                .waitingFor( Wait.forHttp("/actuator/health"))
-        );
-        containers.get( cntType).start();
+                // явно задаем порт запуска keycloak в контейнере вместо 8080
+                .withEnv( "KC_HTTP_PORT", Integer.toString( keycloakKcHttpPort))
+                // открываем явно заданный порт вместо 8080 + стандартный порт healthcheck
+                .withExposedPorts( keycloakKcHttpPort, 9000)
+                .withNetworkAliases( "keycloak")
+                .withRealmImportFile( "/keycloak/" + keycloakTestRealm + ".realm.json")
+        ;
+        keycloak.start();
+        keycloakIssuerUrl = "http://keycloak:8954";
+        log.info( "keycloakIssuerUrl: {}", keycloakIssuerUrl);
+        // получаем токен не напрямую из keycloak через localhost, а запросом к прокси, который обратится
+        // к keycloak по сети докера через url "http://keycloak:8954", и этот url попадет в iss возвращаемого
+        // от keycloak токена. В результате iss токена будет совпадать с ожидаемымым (указанным keycloakIssuerUrl)
+        // и авторизация пройдет успешно
+        keycloakProxy = new GenericContainer<>("nginx:1.28.0-alpine3.21")
+            .withNetwork(network)
+            .withNetworkAliases("keycloak-proxy")
+            .withExposedPorts(8080)
+            .withCopyFileToContainer(
+                MountableFile.forClasspathResource("/keycloak/nginx.conf"), // Конфиг Nginx
+                "/etc/nginx/nginx.conf"
+            )
+            .waitingFor( Wait.forHttp("/realms/" + keycloakTestRealm).forPort(8080))
+        ;
+        keycloakProxy.start();
+        keycloakUrl = "http://localhost:%s".formatted( keycloakProxy.getMappedPort( 8080).toString());
+        log.info( "keycloakUrl: {}", keycloakUrl);
     }
 
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
@@ -77,21 +90,8 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
         // сервис конфигов всегда создаем, не нужно указывать в addonContainers
         startConfsrv( confsrvExposedPort);
 
-        // всегда создаем keycloak если есть Gateway
-        if( addonContainers.contains( Container.GATEWAY)) {
-            keycloak = new KeycloakContainer( "quay.io/keycloak/keycloak:26.1.3")
-                .withNetwork(network)
-                // явно задаем порт запуска keycloak в контейнере вместо 8080
-                .withEnv( "KC_HTTP_PORT", Integer.toString( keycloakKcHttpPort))
-                // открываем явно заданный порт вместо 8080 + стандартный порт healthcheck
-                .withExposedPorts( keycloakKcHttpPort, 9000)
-                .withNetworkAliases( "keycloak")
-                .withRealmImportFile( "/keycloak/" + keycloakTestRealm + ".realm.json")
-            ;
-            keycloak.start();
-            keycloakIssuerUrl = "http://keycloak:8954";
-            log.info( "keycloakIssuerUrl: {}", keycloakIssuerUrl);
-        }
+        // всегда создаем keycloak
+        startKeycloak();
 
         // всегда создаем postgres если указан явно либо есть использующие его сервисы
         if(
@@ -134,14 +134,12 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                         .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
                         .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
                         .withEnv( "SPRING_PROFILES_ACTIVE", profilesActive)
-                        .withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger("TC-LOGS")))
+                        .withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger("TC-" + cntName)))
                         .waitingFor( Wait.forHttp("/actuator/health"))
                 );
                 containers.get( cntType).start();
             }
         };
-
-        startIfUsed.accept( Container.EUREKA, 8761);
 
         startIfUsed.accept( Container.NOTIFY_SERVICE, 8080);
         startIfUsed.accept( Container.ACCOUNTS_SERVICE, 8080);
@@ -149,21 +147,6 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
         startIfUsed.accept( Container.CASH_SERVICE, 8080);
         startIfUsed.accept( Container.EXCHANGE_SERVICE, 8080);
         startIfUsed.accept( Container.TRANSFER_SERVICE, 8080);
-
-        // старт после запуска всех сервисов, иначе могут быть ошибки вида
-        // [gateway] o.s.c.l.core.RoundRobinLoadBalancer : No servers available for service: accounts-service
-        if( addonContainers.contains( Container.GATEWAY)) {
-            startGateway();
-            // получаем токен не напрямую из keycloak через localhost, а запросом через gateway, который обратится
-            // к keycloak через сеть докера через url "http://keycloak:8954", который попадет в iss возвращаемого
-            // от keycloak токена. В результате iss токена будет совпадать с ожидаемымым (указанным keycloakIssuerUrl)
-            // и авторизация пройдет успешно
-            keycloakUrl = "http://localhost:%s/api/keycloak".formatted(
-                containers.get( Container.GATEWAY).getMappedPort( 8880).toString()
-            );
-            log.info( "keycloakUrl: {}", keycloakUrl);
-        }
-
     }
 
     @DynamicPropertySource
@@ -173,20 +156,17 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
             registry.add("keycloak.url", () -> keycloakUrl);
             registry.add("keycloak.issuer.url", () -> keycloakIssuerUrl);
         }
-        if( containers.containsKey( Container.EUREKA)) {
-            registry.add("eureka.client.serviceUrl.defaultZone", () ->
-                "http://localhost:%d/eureka/".formatted(
-                        containers.get( Container.EUREKA).getMappedPort(8761)
-                )
-            );
-        }
-        if( containers.containsKey( Container.GATEWAY)) {
-            registry.add("gateway.url", () ->
-                "http://localhost:%d".formatted(
-                    containers.get( Container.GATEWAY).getMappedPort(8880)
-                )
-            );
-        }
+        containers.forEach( ( cntType, cnt) -> {
+            switch( cntType) {
+                case Container.POSTGRES:
+                    break;
+                default:
+                    registry.add(
+                        cntType.toString().toLowerCase().replaceFirst( "_.+", ".url"),
+                        () -> "http://localhost:%d".formatted( cnt.getFirstMappedPort())
+                    );
+            }
+        });
     }
 
     protected String getAccessToken( String clientId) {

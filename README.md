@@ -5,10 +5,8 @@
 
 Общие сервисы:
 1. Externalized/Distributed Config: Spring Cloud Config (конфиги в локальном каталоге) (confsrv)
-2. Service Discovery: Eureka (eureka)
-3. Gateway API: Spring Cloud Gateway (gateway)
-4. Сервер авторизации микросервисов по OAuth 2.0: Keycloak (keycloak)
-5. БД: PostgreSQL (одна БД, отдельные независимые схемы на каждый сервис) (postgres)
+2. Сервер авторизации микросервисов по OAuth 2.0: Keycloak (keycloak)
+3. БД: PostgreSQL (одна БД, отдельные независимые схемы на каждый сервис) (postgres)
 
 Прикладные микросервисы:
 1. фронта (Front UI) (front-service);
@@ -29,14 +27,6 @@
 - confsrv
 
 Сервис Spring Cloud Config, файлы настроек находятся в confsrv/src/main/resources/config-repo/.
-
-- eureka
-
-Service Discovery: Eureka
-
-- gateway
-
-Spring Cloud Gateway
 
 - keycloak
 
@@ -158,12 +148,6 @@ Spring Cloud Gateway
   ./mvnw spring-boot:run -pl confsrv
 ```
 
-- eureka:
-
-```cmd
-  ./mvnw spring-boot:run -pl eureka
-```
-
 Затем прикладные, например
 
 - front-service:
@@ -176,12 +160,4 @@ Spring Cloud Gateway
 
 ```cmd
   ./mvnw spring-boot:run -pl accounts-service
-```
-
-Последним запускается
-
-- gateway:
-
-```cmd
-  ./mvnw spring-boot:run -pl gateway
 ```

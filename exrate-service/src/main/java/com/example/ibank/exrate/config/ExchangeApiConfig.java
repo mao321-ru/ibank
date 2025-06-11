@@ -4,6 +4,7 @@ import com.example.ibank.exrate.exchange.api.SetRateApi;
 import com.example.ibank.exrate.exchange.invoker.ApiClient;
 import com.example.ibank.exrate.exchange.model.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,9 @@ import reactor.core.publisher.Mono;
 @Configuration
 @Slf4j
 public class ExchangeApiConfig {
+
+    @Value( "${exchange.url:}")
+    private String baseUrl;
 
     @Bean
     ApiClient exchangeApiClient( WebClient serviceWebClient) {
@@ -27,7 +31,9 @@ public class ExchangeApiConfig {
                 )
                 .build()
         );
-        apiClient.setBasePath( "exchange");
+        if( baseUrl != null && !baseUrl.isEmpty()) {
+            apiClient.setBasePath( baseUrl);
+        }
         return apiClient;
     }
 

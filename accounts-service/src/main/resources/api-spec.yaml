@@ -3,6 +3,8 @@ info:
   title: Accounts service API
   description: API сервиса аккаунтов
   version: 1.0.0
+servers:
+  - url: http://accounts-service:8080
 tags:
   - name: User
     description: API для управления пользователями

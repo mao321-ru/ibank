@@ -19,8 +19,6 @@
 
     <modules>
         <module>confsrv</module>
-        <module>eureka</module>
-        <module>gateway</module>
         <module>notify-service</module>
         <module>accounts-service</module>
         <module>blocker-service</module>

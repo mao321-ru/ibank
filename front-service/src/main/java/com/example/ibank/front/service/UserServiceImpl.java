@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
     public Mono<UserInfo> authenticate(String login, String password) {
         log.debug( "authenticate: login: {}", login);
         return usersApi.validate( login, new ValidateRequest().password( password))
+            .doOnError( e -> log.trace( "authenticate error: ", e))
             .onErrorResume( e -> Mono.error( new BadCredentialsException( e.getMessage())));
     }
 
