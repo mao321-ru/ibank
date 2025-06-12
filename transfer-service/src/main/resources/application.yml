@@ -1,10 +1,50 @@
 service.basename: transfer
-spring.application.name: ${service.basename}-service
-spring.profiles.active: dev
 
-# настраиваемые профили согласно функционалу сервиса (из Spring Cloud Config)
+spring.application.name: ${service.basename}-service
+spring.profiles.active: local
+config.dir: ./../config
+
+# настраиваемые профили согласно функционалу сервиса
 spring:
-  profiles:
-    include:
-      - client
-      - resourceserver
+  config:
+    import:
+      - "file:${config.dir}/application.yml"
+      - "file:${config.dir}/application-client.yml"
+      - "file:${config.dir}/application-resourceserver.yml"
+      - "optional:file:${config.dir}/${spring.application.name}.yml"
+
+---
+spring.config.activate.on-profile: local
+
+spring:
+  config:
+    import:
+      - "optional:file:${config.dir}/application-local.yml"
+      - "optional:file:${config.dir}/${spring.application.name}-local.yml"
+
+---
+spring.config.activate.on-profile: docker
+
+spring:
+  config:
+    import:
+      - "optional:file:${config.dir}/application-docker.yml"
+      - "optional:file:${config.dir}/${spring.application.name}-docker.yml"
+
+---
+spring.config.activate.on-profile: itest
+
+spring:
+  config:
+    import:
+      - "optional:file:${config.dir}/application-itest.yml"
+      - "optional:file:${config.dir}/${spring.application.name}-itest.yml"
+
+---
+spring.config.activate.on-profile: test
+
+spring:
+  config:
+    import:
+      - "optional:file:${config.dir}/application-test.yml"
+      - "optional:file:${config.dir}/${spring.application.name}-test.yml"

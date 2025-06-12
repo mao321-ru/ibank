@@ -1,13 +1,15 @@
 package com.example.ibank.common;
 
-import com.example.ibank.common.confsrv.IntegrationTestBaseConfsrv;
-
 import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.MountableFile;
@@ -16,13 +18,16 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 
-import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+// Общие настройки интеграционных тестов во всех модулях
+@SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles( { "itest", "test" })
+@AutoConfigureWebTestClient
 // использование @AutoConfigureWebTestClient приводит к ошибке в getAccessToken (см. ниже)
-public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv implements TestData {
+public abstract class IntegrationTestBase implements TestData {
 
     static final String profilesActive = "docker,itest";
     static final String keycloakTestRealm = "ibank";
@@ -39,6 +44,8 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
         BLOCKER_SERVICE,
         NOTIFY_SERVICE
     };
+
+    protected static final Network network = Network.newNetwork();
 
     protected static EnumMap<Container,GenericContainer<?>> containers = new EnumMap<>( Container.class);
 
@@ -84,11 +91,8 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
 
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
     protected static void startContainers(
-        int confsrvExposedPort,
         List<Container> addonContainers
     ) {
-        // сервис конфигов всегда создаем, не нужно указывать в addonContainers
-        startConfsrv( confsrvExposedPort);
 
         // всегда создаем keycloak
         startKeycloak();
@@ -131,9 +135,12 @@ public abstract class IntegrationTestBase extends IntegrationTestBaseConfsrv imp
                         .withExposedPorts( port)
                         .withNetwork(network)
                         .withNetworkAliases( cntName)
+                        .withCopyFileToContainer(
+                            MountableFile.forHostPath( "../config/"), "/app.config/"
+                        )
                         .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
-                        .withEnv( "SPRING_CONFIG_IMPORT", "configserver:http://confsrv:8888")
                         .withEnv( "SPRING_PROFILES_ACTIVE", profilesActive)
+                        .withEnv( "CONFIG_DIR", "/app.config")
                         .withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger("TC-" + cntName)))
                         .waitingFor( Wait.forHttp("/actuator/health"))
                 );

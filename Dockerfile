@@ -40,8 +40,9 @@ FROM eclipse-temurin:21-jre-jammy
 
 ARG MODULE_NAME
 ARG EXPOSE_PORT=8080
-WORKDIR /app
+WORKDIR /app/${MODULE_NAME}
 COPY --from=builder /app/${MODULE_NAME}/target/${MODULE_NAME}-*.jar app.jar
+COPY config ../config
 
 EXPOSE ${EXPOSE_PORT}
 ENTRYPOINT ["java", "-jar", "app.jar"]

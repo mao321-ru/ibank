@@ -18,7 +18,6 @@
     <description>Bank Demo</description>
 
     <modules>
-        <module>confsrv</module>
         <module>notify-service</module>
         <module>accounts-service</module>
         <module>blocker-service</module>

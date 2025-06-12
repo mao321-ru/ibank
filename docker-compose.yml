@@ -1,24 +1,5 @@
 name: ibank
 services:
-  confsrv:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        MODULE_NAME: confsrv
-        EXPOSE_PORT: 8888
-    ports:
-      - "8888:8888"
-    healthcheck:
-      test: >
-        sh -c '
-          curl -sf http://localhost:8888/actuator/health |
-          grep -q '"'"'"status":"UP"'"'"' || exit 1
-        '
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   keycloak:
     image: quay.io/keycloak/keycloak:26.1.3
     environment:
@@ -74,11 +55,8 @@ services:
     ports:
       - "8880:8080"
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      confsrv:
-        condition: service_healthy
       accounts-service:
         condition: service_healthy
     healthcheck:
@@ -101,11 +79,8 @@ services:
     ports:
       - "8962:8080"
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      confsrv:
-        condition: service_healthy
       postgres:
         condition: service_healthy
     healthcheck:
@@ -130,11 +105,7 @@ services:
     ports:
       - "8963:8080"
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
-    depends_on:
-      confsrv:
-        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
@@ -158,11 +129,7 @@ services:
     ports:
       - "8964:8080"
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
-    depends_on:
-      confsrv:
-        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
@@ -182,11 +149,8 @@ services:
     ports:
       - "8965:8080"
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      confsrv:
-        condition: service_healthy
       postgres:
         condition: service_healthy
     healthcheck:
@@ -209,11 +173,8 @@ services:
     ports:
       - "8966:8080"
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      confsrv:
-        condition: service_healthy
       exchange-service:
         condition: service_healthy
     healthcheck:
@@ -235,11 +196,7 @@ services:
     ports:
       - "8967:8080"
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
-    depends_on:
-      confsrv:
-        condition: service_healthy
     healthcheck:
       test: >
         sh -c '
@@ -259,11 +216,8 @@ services:
     ports:
       - "8968:8080"
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://confsrv:8888
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
-      confsrv:
-        condition: service_healthy
       postgres:
         condition: service_healthy
     healthcheck:
