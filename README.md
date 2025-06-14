@@ -139,3 +139,18 @@
 ```cmd
   ./mvnw spring-boot:run -pl accounts-service
 ```
+
+## Установка в локальный Kubernetes (в составе Docker Desktop)
+
+Предварительные требования:
+
+- установка Ingress-контроллер NGINX для маршрутизации внешних запросов к сервисам
+
+Команда для установки (согласно [Ingress NGINX Controller: Installation Guide](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start))
+
+```
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+```
+
