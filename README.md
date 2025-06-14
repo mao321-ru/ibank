@@ -154,3 +154,28 @@ helm upgrade --install ingress-nginx ingress-nginx \
   --namespace ingress-nginx --create-namespace
 ```
 
+Если порт 80 занят на localhost можно настроить маршрутизацию на другом порту, отредактировав командой
+
+```
+kubectl edit -n ingress-nginx service ingress-nginx-controller
+```
+
+значение spec.ports.port (заменить 80 например на 8180)
+
+Отменить установку можно командой:
+
+```
+helm uninstall ingress-nginx -n ingress-nginx
+```
+
+Для установки приложения в Kubernetes нужно выполнить команду:
+
+```
+helm dependency update ./chart &&  helm install ibank ./chart
+```
+
+Для отмены установки нужно выполнить команду:
+
+```
+helm uninstall ibank
+```
