@@ -52,6 +52,7 @@ services:
         USAGE_MODULE2: cash-service
         USAGE_MODULE3: transfer-service
         USAGE_MODULE4: exchange-service
+    image: ibank-front-service:${TAG:-latest}
     ports:
       - "8880:8080"
     environment:

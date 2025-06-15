@@ -2,6 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Для переопределения в chart/values.yaml уровня проекта
+global:
+  domain: "latest.local"
+  image:
+    tag: "latest"
+
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
@@ -10,8 +16,8 @@ image:
   repository: ibank-front-service
   # This sets the pull policy for images.
   pullPolicy: Never
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  # Overrides the image tag whose default is ( global.image.tag | "latest" ).
+  tag: ""
 
 env:
   - name: SPRING_PROFILES_ACTIVE
@@ -68,7 +74,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: ibank-manual.local
+    - host: ""
       paths:
         - path: /
           pathType: ImplementationSpecific
