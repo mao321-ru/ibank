@@ -18,14 +18,17 @@ pipeline {
     stages {
         stage('Init') {
             steps {
-                echo "Run pipeline for service of ${PROJECT_NAME}: ${SERVICE_NAME}"
-                echo "BUILD_TAG: ${BUILD_TAG}"
-                echo "BUILD_NUMBER: ${BUILD_NUMBER}"
-                echo "JOB_NAME: ${JOB_NAME}"
-                echo "GIT_BRANCH: ${GIT_BRANCH}"
-                echo "GIT_COMMIT: ${GIT_COMMIT}"
-                echo "ENV_NAME: ${ENV_NAME}"
-                echo "IMAGE_TAG: ${IMAGE_TAG}"
+                echo """
+                    Run pipeline for service of ${PROJECT_NAME}: ${SERVICE_NAME}
+                    BUILD_TAG: ${BUILD_TAG}
+                    BUILD_NUMBER: ${BUILD_NUMBER}
+                    JOB_NAME: ${JOB_NAME}
+                    GIT_BRANCH: ${GIT_BRANCH}
+                    GIT_COMMIT: ${GIT_COMMIT}
+
+                    ENV_NAME: ${ENV_NAME}
+                    IMAGE_TAG: ${IMAGE_TAG}
+                """
                 //sh 'printenv | sort'
             }
         }
@@ -45,7 +48,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh """
-                helm upgrade --install ibank ./${SERVICE_NAME}/chart \\
+                helm upgrade --install ibank-${SERVICE_NAME} ./${SERVICE_NAME}/chart \\
                   --set global.image.tag=${IMAGE_TAG} \\
                   --set global.domain=${ENV_NAME}.local \\
                   --wait \\

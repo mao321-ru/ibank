@@ -1,0 +1,13 @@
+# Настройки для запуска сервисов в Kubernetes
+
+domain: latest.local
+
+# URL по которому keycloak доступен (по сети) сервисам в docker
+keycloak.url: http://ibank-keycloak:8154
+
+# совпадает с заданным KC_HOSTNAME, которое попадает в поле iss токена
+keycloak.issuer.url: http://ibank-keycloak.${domain}:8154
+
+# Хост и порт для подключения к PostgreSQL
+postgres_host: ibank-postgres
+postgres_port: 5432

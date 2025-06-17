@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ibank-realm
+  labels:
+    app: keycloak
+# путь относительно каталога с Chart.yaml (не получается загрузить с уровня выше например)
+data:
+  ibank.realm.json: |-
+{{ .Files.Get "import/ibank.realm.json" | indent 4 }}

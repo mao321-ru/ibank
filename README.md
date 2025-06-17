@@ -174,6 +174,13 @@ helm uninstall ingress-nginx -n ingress-nginx
 helm dependency update ./chart &&  helm install ibank ./chart
 ```
 
+Для обращения снаружи (через ingress) нужно добавить записи в /etc/hosts (для Windows в "C:\Windows\System32\drivers\etc")
+
+```
+127.0.0.1 ibank.latest.local
+127.0.0.1 ibank-keycloak.latest.local
+```
+
 Для отмены установки нужно выполнить команду:
 
 ```
@@ -194,14 +201,14 @@ Jenkins установлен локально, установлены реком
 - в тексте скрипта задать значения basePath и gitRepoUrl согласно фактическому пути к git-checkout проекта (в случае Windows нужно экранировать "\\" как "\\\\" либо просто использовать "/");
 - выполнить скрипт, при этом должны быть созданы основной пайплайн IBank и отдельные пайплайны для каждого микросервиса;
 
-Также нужно добавить записи в /etc/hosts (для Windows в "C:\Windows\System32\drivers\etc")
+Для обращения снаружи (через ingress) нужно добавить записи в /etc/hosts (для Windows в "C:\Windows\System32\drivers\etc")
 
 ```
-127.0.0.1 ibank.latest.local
 127.0.0.1 ibank.dev.local
-127.0.0.1 ibank.test.local
-127.0.0.1 ibank.prod.local
+127.0.0.1 ibank-keycloak.dev.local
 ```
+
+(приведено для dev, аналогично можно добавить для test и prod)
 
 Схема работы CI/CD:
 

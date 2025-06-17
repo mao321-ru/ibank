@@ -9,14 +9,20 @@ def basePath = "C:/Users/Alexey/home/mao/java/ibank"
 // Абсолютный путь к git-репозитарию для использования с консольным git
 def gitRepoUrl = "file:///cygdrive/c/Users/Alexey/home/user/java/ibank/.git"
 
-// Список базовых имен сервисов для создания джобов (пустая строка для корневого job)
-def serviceSuffixes = ["", "front"]
+// Список модулей (подкаталогов) сервисов для создания джобов (пустая строка для корневого job)
+def serviceSuffixes = [
+    "front-service",
+    "keycloak",
+    ""
+]
+
 def oldGitRepoUrl = "file:///cygdrive/c/Users/Alexey/home/user/java/ibank/.git"
 
 serviceSuffixes.each { suffix ->
-    def jobName = suffix ? "IBank_${suffix}" : "IBank"
+    def baseName = suffix.replace( "-service", "")
+    def jobName = baseName ? "IBank_${baseName}" : "IBank"
     def configPath = suffix ?
-        "${basePath}/${suffix}-service/jenkins.job.xml" :
+        "${basePath}/${suffix}/jenkins.job.xml" :
         "${basePath}/jenkins.job.xml"
 
     def xml = new File(configPath).text
