@@ -13,6 +13,7 @@ def gitRepoUrl = "file:///cygdrive/c/Users/Alexey/home/user/java/ibank/.git"
 def serviceSuffixes = [
     "keycloak",
     "postgres",
+    "accounts-service",
     "front-service",
     ""
 ]

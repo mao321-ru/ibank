@@ -11,3 +11,12 @@ keycloak.issuer.url: http://ibank-keycloak.${domain}:8154
 # Хост и порт для подключения к PostgreSQL
 postgres_host: ibank-postgres
 postgres_port: 5432
+
+# URL прикладных сервисов для обращения из других прикладных сервисов
+accounts.url: http://ibank-accounts-service:8080
+cash.url: http://ibank-cash-service:8080
+transfer.url: http://ibank-transfer-service:8080
+exchange.url: http://ibank-exchange-service:8080
+exrate.url: http://ibank-exrate-service:8080
+blocker.url: http://ibank-blocker-service:8080
+notify.url: http://ibank-notify-service:8080
