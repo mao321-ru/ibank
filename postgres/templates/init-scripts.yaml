@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "chart.fullname" . }}-init-scripts
+  labels:
+    app: postgres
+# путь относительно каталога с Chart.yaml (не получается загрузить с уровня выше например)
+stringData:
+  {{- $files := .Files.Glob "init/*.sql" }}
+  {{- range $path, $_ := $files }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}

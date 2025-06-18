@@ -3,5 +3,3 @@
 # negation (prefixed with !). Only one pattern per line.
 Jenkinsfile
 jenkins.job.xml
-export-clients.sh
-import/ibank.export.json

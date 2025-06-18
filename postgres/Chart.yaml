@@ -1,6 +1,6 @@
 apiVersion: v2
-name: ibank
-description: Umbrella chart for IBank microservices
+name: postgres
+description: A Helm chart for PostgreSQL
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -21,15 +21,4 @@ version: 0.1.0
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "2.0.0"
-
-dependencies:
-  - name: keycloak
-    version: "0.1.0"
-    repository: "file://../keycloak"
-  - name: postgres
-    version: "0.1.0"
-    repository: "file://../postgres"
-  - name: front-service
-    version: "0.1.0"
-    repository: "file://../front-service/chart"
+appVersion: "17.2-alpine3.20"
