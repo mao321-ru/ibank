@@ -42,7 +42,7 @@ ARG MODULE_NAME
 ARG EXPOSE_PORT=8080
 WORKDIR /app/${MODULE_NAME}
 COPY --from=builder /app/${MODULE_NAME}/target/${MODULE_NAME}-*.jar app.jar
-COPY config ../config
+COPY config/data ../config/data
 
 EXPOSE ${EXPOSE_PORT}
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -136,7 +136,7 @@ public abstract class IntegrationTestBase implements TestData {
                         .withNetwork(network)
                         .withNetworkAliases( cntName)
                         .withCopyFileToContainer(
-                            MountableFile.forHostPath( "../config/"), "/app.config/"
+                            MountableFile.forHostPath( "../config/data"), "/app.config/"
                         )
                         .withEnv( "KEYCLOAK_ISSUER_URL", keycloakIssuerUrl)
                         .withEnv( "SPRING_PROFILES_ACTIVE", profilesActive)

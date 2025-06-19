@@ -2,7 +2,7 @@ service.basename: exchange
 
 spring.application.name: ${service.basename}-service
 spring.profiles.active: local
-config.dir: ./../config
+config.dir: ./../config/data
 
 # настраиваемые профили согласно функционалу сервиса
 spring:
