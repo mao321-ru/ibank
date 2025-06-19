@@ -168,23 +168,35 @@ kubectl edit -n ingress-nginx service ingress-nginx-controller
 helm uninstall ingress-nginx -n ingress-nginx
 ```
 
-Для установки приложения в Kubernetes нужно выполнить команду:
-
-```
-helm dependency update ./chart &&  helm install ibank ./chart
-```
-
-Для обращения снаружи (через ingress) нужно добавить записи в /etc/hosts (для Windows в "C:\Windows\System32\drivers\etc")
+Для обращения снаружи через ingress-nginx нужно добавить записи в /etc/hosts (для Windows в "C:\Windows\System32\drivers\etc")
 
 ```
 127.0.0.1 ibank.latest.local
 127.0.0.1 ibank-keycloak.latest.local
 ```
 
+Для установки/обновления приложения в Kubernetes нужно выполнить команду:
+
+```
+helm upgrade --install --dependency-update --take-ownership ibank ./chart
+```
+
+Для обновления отдельного микросервиса можно использовать команду (на примере front-service):
+
+```
+helm upgrade --install --dependency-update --take-ownership ibank-front-service ./front-service/chart
+```
+
 Для отмены установки нужно выполнить команду:
 
 ```
 helm uninstall ibank
+```
+
+Для удаления данных приложения (по умолчанию сохраняются при отмене установки) нужно выполнить:
+
+```
+kubectl delete pvc postgres-data-ibank-postgres-0
 ```
 
 ## Использование CI/CD Jenkins для установки в локальный Kubernetes

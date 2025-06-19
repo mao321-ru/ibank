@@ -1,6 +1,0 @@
-dependencies:
-- name: front-service
-  repository: file://../front-service/chart
-  version: 0.1.0
-digest: sha256:a02b2362496f5c2448dd8c6dd378586f63f644b68c77bd19c686636318c950fd
-generated: "2025-06-15T03:14:37.5052419+04:00"

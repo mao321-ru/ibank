@@ -43,6 +43,7 @@ pipeline {
             steps {
                 sh """
                 helm upgrade --install ibank-${SERVICE_NAME} ./${SERVICE_CHART} \\
+                  --take-ownership \\
                   --set global.domain=${ENV_NAME}.local \\
                   --wait \\
 

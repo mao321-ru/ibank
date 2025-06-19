@@ -59,6 +59,7 @@ pipeline {
             steps {
                 sh """
                 helm upgrade --install ibank ./chart \\
+                  --take-ownership \\
                   --namespace ${ENV_NAME} --create-namespace \\
                   --set global.image.tag=${IMAGE_TAG} \\
                   --set global.domain=${ENV_NAME}.local \\

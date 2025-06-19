@@ -47,7 +47,7 @@ Selector labels
 */}}
 {{- define "srv.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "srv.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/instance: {{ include "srv.fullname" . }}
 {{- end }}
 
 {{/*
