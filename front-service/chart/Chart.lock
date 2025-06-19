@@ -1,0 +1,6 @@
+dependencies:
+- name: srv
+  repository: file://../../chart/charts/srv
+  version: 0.1.0
+digest: sha256:50785bb8d2215bc4a9ede77c03d838ea8a54f5e64274bb95f8753720600f4ad8
+generated: "2025-06-19T16:05:53.8118519+04:00"
