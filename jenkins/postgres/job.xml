@@ -54,7 +54,7 @@
       <submoduleCfg class="empty-list"/>
       <extensions/>
     </scm>
-    <scriptPath>postgres/Jenkinsfile</scriptPath>
+    <scriptPath>jenkins/postgres/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

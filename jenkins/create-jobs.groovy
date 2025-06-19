@@ -23,12 +23,18 @@ def oldGitRepoUrl = "file:///cygdrive/c/Users/Alexey/home/user/java/ibank/.git"
 serviceSuffixes.each { suffix ->
     def baseName = suffix.replace( "-service", "")
     def jobName = baseName ? "IBank_${baseName}" : "IBank"
-    def configPath = suffix ?
-        "${basePath}/${suffix}/jenkins.job.xml" :
-        "${basePath}/jenkins.job.xml"
+    def isBuilded = suffix != baseName
+    def configPath =
+        isBuilded ?  "${basePath}/jenkins/builded-service/job.xml" :
+        suffix ? "${basePath}/jenkins/${suffix}/job.xml" :
+        "${basePath}/jenkins/job.xml"
 
     def xml = new File(configPath).text
     xml = xml.replace(oldGitRepoUrl, gitRepoUrl)
+
+    if( isBuilded) {
+        xml = xml.replace( " Front ", " " + baseName.capitalize() + " ")
+    }
 
     if ( Jenkins.instance.getItem(jobName) != null) {
         println "Job '${jobName}' already exists. Skipping creation."

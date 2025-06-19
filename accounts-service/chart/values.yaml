@@ -20,6 +20,8 @@ image:
   tag: ""
 
 env:
+  - name: CONFIG_DIR
+    value: "/opt/ibank/config"
   - name: SPRING_PROFILES_ACTIVE
     value: "k8s"
   - name: DOMAIN
@@ -119,17 +121,16 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+volumes:
+  - name: config-dir
+    configMap:
+      name: ibank-config
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+volumeMounts:
+  - name: config-dir
+    mountPath: "/opt/ibank/config"
+    readOnly: true
 
 nodeSelector: {}
 

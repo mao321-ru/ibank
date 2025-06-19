@@ -13,7 +13,7 @@
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
   <description/>
-  <displayName>IBank Accounts Service (latest)</displayName>
+  <displayName>IBank Front Service (latest)</displayName>
   <keepDependencies>false</keepDependencies>
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty>
@@ -54,7 +54,7 @@
       <submoduleCfg class="empty-list"/>
       <extensions/>
     </scm>
-    <scriptPath>accounts-service/Jenkinsfile</scriptPath>
+    <scriptPath>jenkins/builded-service/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

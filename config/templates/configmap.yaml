@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ibank-config
+  labels:
+    app: ibank-services
+data:
+  {{- $files := .Files.Glob "data/*.yml" }}
+  {{- range $path, $_ := $files }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}

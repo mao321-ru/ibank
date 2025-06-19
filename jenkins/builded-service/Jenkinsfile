@@ -39,6 +39,28 @@ pipeline {
             }
         }
 
+        stage('Deploy config') {
+            steps {
+                sh """
+                for ((i=1; i<=10; i++)); do
+                    if helm upgrade --install ibank-config ./config \
+                                --take-ownership \
+                                --set global.domain=${ENV_NAME}.local \
+                                --wait \
+                            ; then
+                        echo "Deploy succeeded"
+                        exit 0
+                    fi
+                    echo "Retrying in 3 seconds..."
+                    sleep 3
+                done
+
+                echo "ERROR: All attempts failed!"
+                exit 1
+                """
+            }
+        }
+
         stage('Helm dependency update') {
             steps {
                 sh 'helm dependency update ./${SERVICE_NAME}/chart'

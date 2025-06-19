@@ -1,6 +1,6 @@
 apiVersion: v2
-name: ibank
-description: Umbrella chart for IBank microservices
+name: config
+description: Chart for configuration files for IBank
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -22,24 +22,3 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "2.0.0"
-
-dependencies:
-  - name: config
-    version: "0.1.0"
-    repository: "file://../config"
-  - name: keycloak
-    version: "0.1.0"
-    repository: "file://../keycloak"
-  - name: postgres
-    version: "0.1.0"
-    repository: "file://../postgres"
-  - name: accounts-service
-    version: "0.1.0"
-    repository: "file://../accounts-service/chart"
-  - name: front-service
-    version: "0.1.0"
-    repository: "file://../front-service/chart"
-  # используется в *-service
-  - name: srv
-    version: "0.1.0"
-    repository: "file://./charts/srv"

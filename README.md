@@ -191,6 +191,8 @@ helm upgrade --install --dependency-update --take-ownership ibank-front-service 
 
 ```
 helm uninstall ibank
+
+helm uninstall $(helm list -q | grep '^ibank-')
 ```
 
 Для удаления данных приложения (по умолчанию сохраняются при отмене установки) нужно выполнить:
@@ -209,7 +211,7 @@ Jenkins установлен локально, установлены реком
 
 В Jenkins нужно создать пайплайны (jobs) проекта. Для этого нужно:
 - пейти в интерфейсе Jenkins (допустим, доступен по http://localhost:9090) в раздел "Script Console" (можно по ссылке [/script](http://localhost:9090/script));
-- вставить текст скрипта из файла [jenkins.create-jobs.groovy](./jenkins.create-jobs.groovy);
+- вставить текст скрипта из файла [jenkins/create-jobs.groovy](./jenkins/create-jobs.groovy);
 - в тексте скрипта задать значения basePath и gitRepoUrl согласно фактическому пути к git-checkout проекта (в случае Windows нужно экранировать "\\" как "\\\\" либо просто использовать "/");
 - выполнить скрипт, при этом должны быть созданы основной пайплайн IBank и отдельные пайплайны для каждого микросервиса;
 
@@ -228,3 +230,5 @@ Jenkins установлен локально, установлены реком
 
 - После изменения по git-ветке dev/test/prod пайплайн IBank выполняет установку соответственно в разработческую/тестовую/продукционную среду (в локальный Kubernetes, в namespace по имени git-ветки, хост для запросов снаружи http://ibank.{gitBranch}.local). Установка выполняется только в случае успешного прохождения интеграционных тестов.
 
+Отмена установки:
+- перейти в интерфейсе Jenkins в раздел "Script Console" и удалить пайплайны с помощью скрипта [jenkins/delete-jobs.groovy](./jenkins/delete-jobs.groovy);
