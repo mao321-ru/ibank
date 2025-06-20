@@ -36,9 +36,27 @@ dependencies:
   - name: accounts-service
     version: "0.1.0"
     repository: "file://../accounts-service/chart"
+  - name: blocker-service
+    version: "0.1.0"
+    repository: "file://../blocker-service/chart"
+  - name: cash-service
+    version: "0.1.0"
+    repository: "file://../cash-service/chart"
+  - name: exchange-service
+    version: "0.1.0"
+    repository: "file://../exchange-service/chart"
+  - name: exrate-service
+    version: "0.1.0"
+    repository: "file://../exrate-service/chart"
   - name: front-service
     version: "0.1.0"
     repository: "file://../front-service/chart"
+  - name: notify-service
+    version: "0.1.0"
+    repository: "file://../notify-service/chart"
+  - name: transfer-service
+    version: "0.1.0"
+    repository: "file://../transfer-service/chart"
   # используется в *-service
   - name: srv
     version: "0.1.0"

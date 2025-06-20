@@ -9,12 +9,18 @@ def basePath = "C:/Users/Alexey/home/mao/java/ibank"
 // Абсолютный путь к git-репозитарию для использования с консольным git
 def gitRepoUrl = "file:///cygdrive/c/Users/Alexey/home/user/java/ibank/.git"
 
-// Список модулей (подкаталогов) сервисов для создания джобов (пустая строка для корневого job)
+// Список модулей (подкаталогов) сервисов (пустая строка для корневого job)
 def serviceSuffixes = [
     "keycloak",
     "postgres",
     "accounts-service",
+    "blocker-service",
+    "cash-service",
+    "exchange-service",
+    "exrate-service",
     "front-service",
+    "notify-service",
+    "transfer-service",
     ""
 ]
 

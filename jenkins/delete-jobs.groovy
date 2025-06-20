@@ -1,12 +1,18 @@
 // Удаляет пайплайны проекта в Jenkins
 // Скрипт выполняется в Script Console (путь "/script" в интерфейсе)
 
-// Список модулей (подкаталогов) сервисов для создания джобов (пустая строка для корневого job)
+// Список модулей (подкаталогов) сервисов (пустая строка для корневого job)
 def serviceSuffixes = [
     "keycloak",
     "postgres",
     "accounts-service",
+    "blocker-service",
+    "cash-service",
+    "exchange-service",
+    "exrate-service",
     "front-service",
+    "notify-service",
+    "transfer-service",
     ""
 ]
 

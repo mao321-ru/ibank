@@ -27,6 +27,10 @@
 
 Каталог с настройками сервисов
 
+- jenkins
+
+Настройки для Jenkins CI/CD
+
 - keycloak
 
 Настройки realm для сервера Keycloak находятся в keycloak/import/ibank.realm.json.
