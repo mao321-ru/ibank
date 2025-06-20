@@ -38,8 +38,8 @@ public class ResilienceConfig {
         ReactiveCircuitBreakerFactory cbFactory
     ) {
         return (request, next) ->
-           // используем дефолнтные настройки, но можно было выделить указать имя сервиса вместо global-cb
-            cbFactory.create( "global-cb")
+            // Создаём уникальное имя для CircuitBreaker на основе хоста
+            cbFactory.create( "cb-" + request.url().getHost())
             .run(
                 next.exchange( request),
                 throwable -> {
