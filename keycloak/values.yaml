@@ -23,7 +23,7 @@ env:
   - name: KC_BOOTSTRAP_ADMIN_PASSWORD
     value: "admin"
   - name: KC_HOSTNAME
-    value: "ibank-keycloak.latest.local"
+    value: "ibank-keycloak.{{ .Values.global.domain }}"
   - name: KC_HTTP_PORT
     value: "8154"
   - name: KC_IMPORT
