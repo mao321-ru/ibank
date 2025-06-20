@@ -19,6 +19,10 @@
 
 ### Структура проекта
 
+- chart
+
+Настройки зонтичного Helm-чарта
+
 - common-test
 
 Общие классы и настройки, применяемые при тестировании модулей.
@@ -144,7 +148,9 @@
   ./mvnw spring-boot:run -pl accounts-service
 ```
 
-## Установка в локальный Kubernetes (в составе Docker Desktop)
+## Установка в локальный Kubernetes
+
+При разработки использовался Kubernetes из состава Docker Desktop.
 
 Предварительные требования:
 
@@ -166,7 +172,7 @@ kubectl edit -n ingress-nginx service ingress-nginx-controller
 
 значение spec.ports.port (заменить 80 например на 8180)
 
-Отменить установку можно командой:
+Отменить установку ingress-nginx можно командой:
 
 ```
 helm uninstall ingress-nginx -n ingress-nginx
@@ -209,6 +215,8 @@ kubectl delete pvc postgres-data-ibank-postgres-0
 
 Предварительные требования:
 
+- настройки согласно [Установка в локальный Kubernetes](#Установка-в-локальный-Kubernetes), чарты вручную можно не устанавливать;
+
 - Jenkins 2.504.2
 
 Jenkins установлен локально, установлены рекомендуемые плагины. Проверялось в указанной версии, но вероятно работает и в других версиях.
@@ -226,13 +234,32 @@ Jenkins установлен локально, установлены реком
 127.0.0.1 ibank-keycloak.dev.local
 ```
 
-(приведено для dev, аналогично можно добавить для test и prod)
+(приведено для dev, аналогично можно добавить для test и prod, а также для latest как в разделе выше про )
 
 Схема работы CI/CD:
 
-- После изменения по git-ветке dev пайплайны микросервисов выполняют установку в локальный Kubernetes в дефолтный namespace, хост для запросов снаружи http://ibank.latest.local (либо например http://ibank.latest.local:8010 если ingress-nginx был настроен на порту 8010). Установка выполняется без проверки интеграционных тестов.
+- После изменения по git-ветке dev пайплайны микросервисов выполняют установку в локальный Kubernetes в дефолтный namespace, хост для запросов снаружи http://ibank.latest.local (либо например http://ibank.latest.local:8180 если ingress-nginx был настроен на порту 8180). Установка выполняется без проверки интеграционных тестов.
 
-- После изменения по git-ветке dev/test/prod пайплайн IBank выполняет установку соответственно в разработческую/тестовую/продукционную среду (в локальный Kubernetes, в namespace по имени git-ветки, хост для запросов снаружи http://ibank.{gitBranch}.local). Установка выполняется только в случае успешного прохождения интеграционных тестов.
+- После изменения по git-ветке dev/test/prod пайплайн IBank выполняет установку соответственно в разработческую/тестовую/продукционную среду (в локальный Kubernetes, в namespace по имени git-ветки, хост для запросов снаружи http://ibank.{gitBranch}.local, например http://ibank.dev.local или http://ibank.dev.local:8180 для dev-среды). Установка выполняется только в случае успешного прохождения интеграционных тестов.
 
 Отмена установки:
+
 - перейти в интерфейсе Jenkins в раздел "Script Console" и удалить пайплайны с помощью скрипта [jenkins/delete-jobs.groovy](./jenkins/delete-jobs.groovy);
+
+- удалить helm-релизы и другие ресурсы
+
+Удаление latest-релизом микросервисов, а также релизов в используемых средах (на примере dev)
+
+```
+helm uninstall ibank -n dev
+helm uninstall $(helm list -q | grep '^ibank-')
+
+kubectl delete pvc postgres-data-ibank-postgres-0
+kubectl delete pvc postgres-data-ibank-postgres-0 -n dev
+```
+
+Тестовые поды можно удалить с помощью глобальной очистка всех завершённых подов
+
+```
+kubectl delete pods --field-selector=status.phase==Succeeded --all-namespaces
+```

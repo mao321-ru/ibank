@@ -80,6 +80,15 @@ pipeline {
             }
         }
 
+        stage('Test connection') {
+            steps {
+                sh """
+                helm test ibank-${SERVICE_NAME} \\
+                  --logs \\
+
+                """
+            }
+        }
     }
 
     post {

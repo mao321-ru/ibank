@@ -63,11 +63,22 @@ pipeline {
                   --namespace ${ENV_NAME} --create-namespace \\
                   --set global.image.tag=${IMAGE_TAG} \\
                   --set global.domain=${ENV_NAME}.local \\
+                  --wait \\
 
                 """
             }
         }
 
+        stage('Test connection') {
+            steps {
+                sh """
+                helm test ibank \\
+                  --namespace ${ENV_NAME} \\
+                  --logs \\
+
+                """
+            }
+        }
     }
 
     post {
