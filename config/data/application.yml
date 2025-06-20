@@ -4,3 +4,18 @@ keycloak.realm: ibank
 logging:
   level:
     com.example.ibank: DEBUG
+
+# открытие liveness/readiness дополнительно к health (используется в k8s)
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState
+
+# доступность через http
+management.endpoints.web.exposure.include: health,liveness,readiness

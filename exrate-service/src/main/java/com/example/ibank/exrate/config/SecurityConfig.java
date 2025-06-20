@@ -18,7 +18,10 @@ public class SecurityConfig {
     ) {
         return http
             .authorizeExchange( exchanges -> exchanges
-                .pathMatchers( "/actuator/health").permitAll()
+                .pathMatchers(
+                    "/actuator/health",
+                    "/actuator/health/*"
+                ).permitAll()
                 .anyExchange().denyAll()
             )
             .build();
