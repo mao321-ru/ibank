@@ -39,7 +39,7 @@ public class ResilienceConfig {
     ) {
         return (request, next) ->
             // Создаём уникальное имя для CircuitBreaker на основе хоста
-            cbFactory.create( "cb-" + request.url().getHost())
+            cbFactory.create( "cb-%s:%d".formatted( request.url().getHost(), request.url().getPort()))
             .run(
                 next.exchange( request),
                 throwable -> {
