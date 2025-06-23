@@ -42,4 +42,6 @@ interface TestData {
     String CURRENCY_RUB_CODE = "RUB";
     String CURRENCY_RUB_NAME = "Российский рубль";
 
+    String INITIAL_USD_RATE = "50.0";
+
 }

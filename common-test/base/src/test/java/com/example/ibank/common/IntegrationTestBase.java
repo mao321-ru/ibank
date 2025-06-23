@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.MountableFile;
 import reactor.core.publisher.Mono;
 import org.testcontainers.containers.GenericContainer;
@@ -37,6 +38,7 @@ public abstract class IntegrationTestBase implements TestData {
 
     protected enum Container {
         POSTGRES,
+        KAFKA,
         ACCOUNTS_SERVICE,
         CASH_SERVICE,
         TRANSFER_SERVICE,
@@ -56,6 +58,8 @@ public abstract class IntegrationTestBase implements TestData {
     protected static GenericContainer<?> keycloakProxy;
 
     protected static PostgreSQLContainer postgres;
+
+    protected static KafkaContainer kafka;
 
     private static void startKeycloak() {
         keycloak = new KeycloakContainer( "quay.io/keycloak/keycloak:26.1.3")
@@ -89,6 +93,18 @@ public abstract class IntegrationTestBase implements TestData {
         log.info( "keycloakUrl: {}", keycloakUrl);
     }
 
+    private static void startKafka() {
+        kafka = new KafkaContainer( "apache/kafka:4.0.0")
+            .withNetwork(network)
+            .withNetworkAliases( "kafka")
+            .withEnv( "KAFKA_CFG_PROCESS_ROLES", "controller,broker")  // Включаем KRaft
+            .withEnv( "KAFKA_CFG_NODE_ID", "1")
+            .withEnv( "KAFKA_CFG_CONTROLLER_QUORUM_VOTERS", "1@localhost:9093");
+        ;
+        kafka.start();
+        log.info( "kafka bootstrap servers: {}", kafka.getBootstrapServers());
+    }
+
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
     protected static void startContainers(
         List<Container> addonContainers
@@ -96,6 +112,10 @@ public abstract class IntegrationTestBase implements TestData {
 
         // всегда создаем keycloak
         startKeycloak();
+
+        if( addonContainers.contains( Container.KAFKA)) {
+            startKafka();
+        }
 
         // всегда создаем postgres если указан явно либо есть использующие его сервисы
         if(
@@ -162,6 +182,9 @@ public abstract class IntegrationTestBase implements TestData {
             registry.add("keycloak.realm", () -> keycloakTestRealm);
             registry.add("keycloak.url", () -> keycloakUrl);
             registry.add("keycloak.issuer.url", () -> keycloakIssuerUrl);
+        }
+        if( kafka != null) {
+            registry.add( "kafka_servers", () -> kafka.getBootstrapServers());
         }
         containers.forEach( ( cntType, cnt) -> {
             switch( cntType) {

@@ -20,16 +20,13 @@ public class ExrateServiceTest extends IntegrationTest {
 
         // не вызываем явно - вызов должен произойти за счет настроек шедулера
         if( schedulingEnabled) {
-            // подождем: на старте могут быть ошибки из-за параллельного запуска обновлений
-            Thread.sleep(5 * 1000);
+            // подождем чтобы точно выполнилось
+            Thread.sleep(3 * 1000);
         }
         // нужно вызывать явно если отключен шедулер настройкой scheduling.enabled=false
         else {
             srv.refreshRates();
         }
-
-        // ждем не более 5 секунд появления асинхронного результата
-        for (int i = 0; i < 5 && srv.isLastRefreshOk() == null; i++) Thread.sleep(1 * 1000);
 
         // проверяем успешность последнего обновления
         assertThat( srv.isLastRefreshOk()).as( "Bad execution result").isTrue();

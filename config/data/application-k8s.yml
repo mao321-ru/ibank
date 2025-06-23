@@ -8,6 +8,9 @@ keycloak.url: http://ibank-keycloak:8154
 # совпадает с заданным KC_HOSTNAME, которое попадает в поле iss токена
 keycloak.issuer.url: http://ibank-keycloak.${domain}:8154
 
+# bootstrap-servers для Apache Kafka
+kafka_servers: ibank-kafka:9092
+
 # Хост и порт для подключения к PostgreSQL
 postgres_host: ibank-postgres
 postgres_port: 5432

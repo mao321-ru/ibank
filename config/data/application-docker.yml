@@ -6,6 +6,9 @@ keycloak.url: http://keycloak:8954
 # совпадает с заданным KC_HOSTNAME в docker-compose.yml, которое попадает в поле iss токена
 keycloak.issuer.url: http://host.docker.internal:8954
 
+# bootstrap-servers для Apache Kafka
+kafka_servers: kafka:9092
+
 # Хост и порт для подключения к PostgreSQL
 postgres_host: postgres
 postgres_port: 5432

@@ -1,16 +1,15 @@
 package com.example.ibank.exrate.service;
 
-import com.example.ibank.exrate.exchange.api.SetRateApi;
-import com.example.ibank.exrate.exchange.model.RateShort;
+import org.springframework.kafka.core.KafkaTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -18,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class ExrateServiceImpl implements ExrateService {
 
-    private final SetRateApi setRateApi;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     private volatile Boolean lastRefreshOk = null;
 
@@ -34,32 +33,22 @@ public class ExrateServiceImpl implements ExrateService {
     public void refreshRates() {
         var newUsd = BigDecimal.valueOf( ThreadLocalRandom.current().nextDouble(49.00, 51.00))
                 .setScale( 2, RoundingMode.HALF_UP);
+        var newEuro = BigDecimal.valueOf( ThreadLocalRandom.current().nextDouble(54.00, 56.00))
+                .setScale( 2, RoundingMode.HALF_UP);
         String usdRate = "USD " + newUsd;
         log.debug( "refreshRates: {}", usdRate);
-        setRateApi.setRates( List.of(
-                new RateShort().currencyCode( "USD").rate( newUsd),
-                new RateShort().currencyCode( "EUR").rate(
-                    BigDecimal.valueOf( ThreadLocalRandom.current().nextDouble(54.00, 56.00))
-                            .setScale( 2, RoundingMode.HALF_UP)
-                )
-            ))
-            .doOnSuccess( v -> {
-                lastRefreshOk = Boolean.TRUE;
-                log.debug( "refreshRates: {}: finished OK", usdRate);
-            })
-            .doOnError( e -> {
-                lastRefreshOk = Boolean.FALSE;
-                log.debug( "refreshRate: {}: error: {}", usdRate, e.getMessage());
-            })
-            .onErrorComplete()
-            // использовал subscribeOn/subscribe вместо .block() чтобы сохранить асинхронность
-            // использовал single() вместо текущего immeidate() чтобы не возникала ситуация запуска второго потока
-            // до завершения первого, но не помогло - все равно проблема возникает (и второй заврешатся с ошибкой
-            // из-за нарушения уникальности БД)
-            .subscribeOn( Schedulers.single())
-            //.subscribeOn( Schedulers.immediate())
-            .subscribe()
-        ;
+
+        try {
+            kafkaTemplate.send("current-rates", "USD", newUsd.toString());
+            kafkaTemplate.send("current-rates", "EUR", newEuro.toString());
+            lastRefreshOk = Boolean.TRUE;
+            log.debug( "refreshRates: {}: finished OK", usdRate);
+        }
+        catch ( Throwable e) {
+            lastRefreshOk = Boolean.FALSE;
+            log.debug( "refreshRate: {}: error: {}", usdRate, e.getMessage());
+            throw e;
+        }
     }
 
 }
