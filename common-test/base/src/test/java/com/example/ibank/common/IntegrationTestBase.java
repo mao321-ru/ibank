@@ -100,9 +100,9 @@ public abstract class IntegrationTestBase implements TestData {
             .withNetworkAliases( "kafka")
             // этот внешний адрес сообщается сервером и используется клиентом после переподключения например
             .withListener( "kafka:19092")
-            .withEnv( "KAFKA_CFG_PROCESS_ROLES", "controller,broker")  // Включаем KRaft
-            .withEnv( "KAFKA_CFG_NODE_ID", "1")
-            .withEnv( "KAFKA_CFG_CONTROLLER_QUORUM_VOTERS", "1@localhost:9093")
+            .withCopyFileToContainer(
+                MountableFile.forHostPath( "../kafka/config/"), "/mnt/shared/config/"
+            )
         ;
         kafka.start();
         log.info( "kafka bootstrap servers: {}", kafka.getBootstrapServers());

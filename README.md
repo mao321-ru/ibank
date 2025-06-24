@@ -36,6 +36,10 @@
 
 Настройки для Jenkins CI/CD
 
+- kafka
+
+Настройки для Apache Kafka в файле kafka/config/server.properties
+
 - keycloak
 
 Настройки realm для сервера Keycloak находятся в keycloak/import/ibank.realm.json.
