@@ -30,6 +30,9 @@ dependencies:
   - name: keycloak
     version: "0.1.0"
     repository: "file://../keycloak"
+  - name: kafka
+    version: "0.1.0"
+    repository: "file://../kafka"
   - name: postgres
     version: "0.1.0"
     repository: "file://../postgres"

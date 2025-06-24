@@ -12,6 +12,7 @@ def gitRepoUrl = "file:///cygdrive/c/Users/Alexey/home/user/java/ibank/.git"
 // Список модулей (подкаталогов) сервисов (пустая строка для корневого job)
 def serviceSuffixes = [
     "keycloak",
+    "kafka",
     "postgres",
     "accounts-service",
     "blocker-service",

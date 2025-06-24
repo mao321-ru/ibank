@@ -4,6 +4,7 @@
 // Список модулей (подкаталогов) сервисов (пустая строка для корневого job)
 def serviceSuffixes = [
     "keycloak",
+    "kafka",
     "postgres",
     "accounts-service",
     "blocker-service",

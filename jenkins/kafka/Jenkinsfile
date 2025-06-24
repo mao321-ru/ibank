@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    environment {
+        PROJECT_NAME = 'ibank'
+        ENV_NAME = "latest"
+
+        SERVICE_NAME = "${JOB_NAME.replace('IBank_', '')}"
+        SERVICE_CHART = "${SERVICE_NAME}"
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
+        timestamps()
+    }
+
+    stages {
+        stage('Init') {
+            steps {
+                echo """
+                    Run pipeline for service of ${PROJECT_NAME}: ${SERVICE_NAME}
+                    BUILD_TAG: ${BUILD_TAG}
+                    BUILD_NUMBER: ${BUILD_NUMBER}
+                    JOB_NAME: ${JOB_NAME}
+                    GIT_BRANCH: ${GIT_BRANCH}
+                    GIT_COMMIT: ${GIT_COMMIT}
+
+                    ENV_NAME: ${ENV_NAME}
+                    SERVICE_CHART: ${SERVICE_CHART}
+                """
+                //sh 'printenv | sort'
+            }
+        }
+
+        stage('Helm dependency update') {
+            steps {
+                sh 'helm dependency update ./${SERVICE_CHART}'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh """
+                helm upgrade --install ibank-${SERVICE_NAME} ./${SERVICE_CHART} \\
+                  --take-ownership \\
+                  --set global.domain=${ENV_NAME}.local \\
+                  --wait \\
+
+                """
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "Finished OK"
+        }
+        failure {
+            echo "Finished with ERROR"
+        }
+    }
+}

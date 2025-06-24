@@ -202,6 +202,12 @@ helm upgrade --install --dependency-update --take-ownership ibank ./chart
 helm upgrade --install --dependency-update --take-ownership ibank-front-service ./front-service/chart
 ```
 
+Для kafka/keycloak/postgres команда будет иметь вид (на примере kafka):
+
+```
+helm upgrade --install --dependency-update --take-ownership ibank-kafka ./kafka
+```
+
 Для отмены установки нужно выполнить команду:
 
 ```

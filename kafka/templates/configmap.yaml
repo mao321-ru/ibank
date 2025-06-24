@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ibank-kafka-config
+  labels:
+    app: kafka
+# путь относительно каталога с Chart.yaml (не получается загрузить с уровня выше например)
+data:
+  server.properties: |-
+{{ .Files.Get "config/server.properties" | indent 4 }}
