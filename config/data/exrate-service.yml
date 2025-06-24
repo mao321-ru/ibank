@@ -3,3 +3,5 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # включаем явно для Доставка «максимум один раз» (at most once) (было включено по умолчанию)
+      enable-idempotence: true

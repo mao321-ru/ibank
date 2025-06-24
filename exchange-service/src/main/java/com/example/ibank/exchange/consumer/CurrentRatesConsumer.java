@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.math.BigDecimal;
@@ -18,10 +19,11 @@ public class CurrentRatesConsumer {
 
     private final ExchangeService srv;
 
-    @KafkaListener(topics = "${kafka.topic.current-rates}")
-    public void consume( ConsumerRecord<String, String> rec) {
+    @KafkaListener( topics = "${kafka.topic.current-rates}")
+    public Mono<Void> consume(ConsumerRecord<String, String> rec) {
         log.debug( "rate {}: {}", rec.key(), rec.value());
-        srv.setRates(
+        return
+            srv.setRates(
                 List.of( new ExchangeService.RateShort( rec.key(), new BigDecimal( rec.value())))
             )
             .doOnSuccess( v -> {
@@ -30,9 +32,6 @@ public class CurrentRatesConsumer {
             .doOnError( e -> {
                 log.debug( "consume rate {}: {} - error: {}", rec.key(), rec.value(), e.getMessage());
             })
-            .onErrorComplete()
-            .subscribeOn( Schedulers.single())
-            .subscribe()
         ;
     }
 
