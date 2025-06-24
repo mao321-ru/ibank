@@ -1,5 +1,6 @@
 package com.example.ibank.front.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -19,15 +20,21 @@ public class RateControllerTest extends ControllerTest {
             .expectStatus().isOk()
             .expectHeader().contentType( MediaType.APPLICATION_JSON)
             .expectBody()
-            //.consumeWith( System.out::println) // вывод запроса и ответа
-            .json(
-                    """
-                    [
-                        { "currencyCode": "USD", "currencyName": "Доллар США", "rate": 50.000000},
-                        { "currencyCode": "EUR", "currencyName": "Евро", "rate": 55.000000}
-                    ]
-                    """
-            )
+            .consumeWith( System.out::println) // вывод запроса и ответа
+            .jsonPath("$[?(@.currencyCode == 'USD')].rate")
+                .value( rates -> {
+                    var ra = rates instanceof net.minidev.json.JSONArray ? (net.minidev.json.JSONArray) rates : null;
+                    assertThat( ra)
+                        .withFailMessage("Unexpected JSON parse class type: " + rates.getClass().getName())
+                        .isNotNull();
+                    assertThat( ra.size()).withFailMessage("Incorrect rates count for USD").isEqualTo( 1);
+                    String rateStr = ra.getFirst().toString();
+                    Double rate = Double.valueOf( rateStr);
+                    assertThat( rate)
+                        .withFailMessage("Initial USD rate received: %s", rateStr)
+                        .isNotEqualTo( Double.valueOf( INITIAL_USD_RATE))
+                   ;
+                })
         ;
     }
 

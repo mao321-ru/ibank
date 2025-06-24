@@ -4,7 +4,6 @@ package com.example.ibank.exchange.service;
 import com.example.ibank.exchange.model.CurrentRate;
 import com.example.ibank.exchange.model.ExchangeRequest;
 import com.example.ibank.exchange.model.ExchangeResponse;
-import com.example.ibank.exchange.model.RateShort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -190,8 +189,8 @@ public class ExchangeServiceImpl implements ExchangeService {
                     validate_errors_q e
                 """
             )
-                .bind( "currency_codes", rq.stream().map( RateShort::getCurrencyCode).toArray( String[]::new))
-                .bind( "rates", rq.stream().map( RateShort::getRate).toArray( BigDecimal[]::new))
+                .bind( "currency_codes", rq.stream().map( RateShort::currencyCode).toArray( String[]::new))
+                .bind( "rates", rq.stream().map( RateShort::rate).toArray( BigDecimal[]::new))
                 .map( row -> {
                     var errorMessage = row.get( "error_message", String.class);
                     if( errorMessage != null) throw new IllegalStateException( errorMessage);

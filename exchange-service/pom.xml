@@ -69,6 +69,12 @@
             <artifactId>springdoc-openapi-starter-webflux-api</artifactId>
         </dependency>
 
+        <!-- Kafka used -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
         <!-- PostgreSQL with Testcontainers support -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

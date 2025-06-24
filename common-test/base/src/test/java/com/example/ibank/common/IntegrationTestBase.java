@@ -43,6 +43,7 @@ public abstract class IntegrationTestBase implements TestData {
         CASH_SERVICE,
         TRANSFER_SERVICE,
         EXCHANGE_SERVICE,
+        EXRATE_SERVICE,
         BLOCKER_SERVICE,
         NOTIFY_SERVICE
     };
@@ -97,9 +98,11 @@ public abstract class IntegrationTestBase implements TestData {
         kafka = new KafkaContainer( "apache/kafka:4.0.0")
             .withNetwork(network)
             .withNetworkAliases( "kafka")
+            // этот внешний адрес сообщается сервером и используется клиентом после переподключения например
+            .withListener( "kafka:19092")
             .withEnv( "KAFKA_CFG_PROCESS_ROLES", "controller,broker")  // Включаем KRaft
             .withEnv( "KAFKA_CFG_NODE_ID", "1")
-            .withEnv( "KAFKA_CFG_CONTROLLER_QUORUM_VOTERS", "1@localhost:9093");
+            .withEnv( "KAFKA_CFG_CONTROLLER_QUORUM_VOTERS", "1@localhost:9093")
         ;
         kafka.start();
         log.info( "kafka bootstrap servers: {}", kafka.getBootstrapServers());
@@ -113,7 +116,11 @@ public abstract class IntegrationTestBase implements TestData {
         // всегда создаем keycloak
         startKeycloak();
 
-        if( addonContainers.contains( Container.KAFKA)) {
+        // создаем контейнер если указан явно либо есть использующие его сервисы
+        if(
+            addonContainers.contains( Container.KAFKA)
+            || addonContainers.contains( Container.EXCHANGE_SERVICE)
+        ) {
             startKafka();
         }
 
@@ -121,6 +128,8 @@ public abstract class IntegrationTestBase implements TestData {
         if(
             addonContainers.contains( Container.POSTGRES)
             || addonContainers.contains( Container.ACCOUNTS_SERVICE)
+            || addonContainers.contains( Container.EXCHANGE_SERVICE)
+            || addonContainers.contains( Container.NOTIFY_SERVICE)
         ) {
             postgres = (PostgreSQLContainer)
                 new PostgreSQLContainer( "postgres:17.2-alpine3.20")
@@ -171,8 +180,9 @@ public abstract class IntegrationTestBase implements TestData {
         startIfUsed.accept( Container.NOTIFY_SERVICE, 8080);
         startIfUsed.accept( Container.ACCOUNTS_SERVICE, 8080);
         startIfUsed.accept( Container.BLOCKER_SERVICE, 8080);
-        startIfUsed.accept( Container.CASH_SERVICE, 8080);
         startIfUsed.accept( Container.EXCHANGE_SERVICE, 8080);
+        startIfUsed.accept( Container.EXRATE_SERVICE, 8080);
+        startIfUsed.accept( Container.CASH_SERVICE, 8080);
         startIfUsed.accept( Container.TRANSFER_SERVICE, 8080);
     }
 

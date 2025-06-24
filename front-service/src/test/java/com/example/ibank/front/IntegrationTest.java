@@ -15,6 +15,7 @@ public abstract class IntegrationTest extends IntegrationTestBase {
             Container.ACCOUNTS_SERVICE,
             Container.CASH_SERVICE,
             Container.EXCHANGE_SERVICE,
+            Container.EXRATE_SERVICE,
             Container.TRANSFER_SERVICE,
             Container.BLOCKER_SERVICE,
             Container.NOTIFY_SERVICE

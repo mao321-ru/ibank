@@ -1,5 +1,6 @@
 package com.example.ibank.exrate.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,9 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 @RequiredArgsConstructor
 public class ExrateServiceImpl implements ExrateService {
+
+    @Value( "${kafka.topic.current-rates}")
+    String currentRatesTopic;
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
@@ -39,8 +43,8 @@ public class ExrateServiceImpl implements ExrateService {
         log.debug( "refreshRates: {}", usdRate);
 
         try {
-            kafkaTemplate.send("current-rates", "USD", newUsd.toString());
-            kafkaTemplate.send("current-rates", "EUR", newEuro.toString());
+            kafkaTemplate.send( currentRatesTopic, "USD", newUsd.toString());
+            kafkaTemplate.send( currentRatesTopic, "EUR", newEuro.toString());
             lastRefreshOk = Boolean.TRUE;
             log.debug( "refreshRates: {}: finished OK", usdRate);
         }

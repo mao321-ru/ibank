@@ -12,8 +12,6 @@ public abstract class IntegrationTest extends IntegrationTestBase {
 
     static {
         startContainers( List.of(
-            Container.POSTGRES,
-            Container.KAFKA,
             Container.EXCHANGE_SERVICE
         ));
     }

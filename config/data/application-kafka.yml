@@ -1,0 +1,15 @@
+# Настройки для сервисов, использующих Apache Kafka
+
+# Используемые топики
+kafka:
+  topic:
+    current-rates: "current-rates"
+
+
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: ${kafka_servers}
+    producer:
+      bootstrap-servers: ${kafka_servers}
+

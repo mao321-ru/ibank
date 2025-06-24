@@ -8,8 +8,6 @@ servers:
 tags:
   - name: Rate
     description: API получения текущих курсов валют
-  - name: SetRate
-    description: API установки текущих курсов валют
   - name: Exchange
     description: API для конвертации валюты
 paths:
@@ -28,30 +26,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CurrentRate'
-    post:
-      tags:
-        - SetRate
-      operationId: setRates
-      summary: Установить текущие курсы валют к рублю
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/RateShort'
-      responses:
-        '204':
-          description: Операция выполнена
-        '400':
-          description: Неверный запрос (валидация не пройдена)
-        '409':
-          description: Ошибка при выполнении операции
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
   /exchange:
     post:
       tags:
@@ -99,20 +73,6 @@ components:
       required:
         - currencyCode
         - currencyName
-        - rate
-    RateShort:
-      type: object
-      properties:
-        currencyCode:
-          type: string
-          example: "USD"
-          description: Код валюты (ISO 4217)
-        rate:
-          type: number
-          format: decimal
-          description: Курс к рублю
-      required:
-        - currencyCode
         - rate
     ExchangeRequest:
       type: object
