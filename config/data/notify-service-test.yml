@@ -1,0 +1,9 @@
+# Настройки для тестирования Notify Service
+
+# настройки для отправки сообщений в тестах через KafkaTemplate
+spring:
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+

@@ -2,11 +2,13 @@ package com.example.ibank.accounts.controller;
 
 import com.example.ibank.accounts.model.UserAccounts;
 import com.example.ibank.accounts.model.UserShort;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@Slf4j
 public class UserControllerTest extends ControllerTest {
 
     @Test
@@ -150,6 +152,8 @@ public class UserControllerTest extends ControllerTest {
                 .expectStatus().isNoContent()
                 //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
         ;
+        log.info( "waiting 0.5 seconds after send event ...");
+        Thread.sleep( 500);
     }
 
     @Test

@@ -9,6 +9,7 @@ public abstract class IntegrationTest extends IntegrationTestPostgres {
 
     static {
         startContainers( List.of(
+            Container.KEYCLOAK,
             Container.POSTGRES,
             Container.NOTIFY_SERVICE
         ));

@@ -8,7 +8,7 @@ import java.util.List;
 public abstract class IntegrationTest extends IntegrationTestBase {
 
     static {
-        startContainers( List.of());
+        startContainers( List.of( Container.KEYCLOAK));
     }
 
 }

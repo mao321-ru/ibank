@@ -1,8 +1,10 @@
 package com.example.ibank.cash.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
+@Slf4j
 public class CashControllerTest extends ControllerTest {
 
     @Test
@@ -23,6 +25,8 @@ public class CashControllerTest extends ControllerTest {
                 .expectStatus().isNoContent()
                 //.expectBody().consumeWith( System.out::println) // вывод запроса и ответа
         ;
+        log.info( "waiting 0.5 seconds after send event ...");
+        Thread.sleep( 500);
     }
 
 }

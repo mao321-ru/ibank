@@ -1,6 +1,7 @@
 package com.example.ibank.notify.service;
 
 import com.example.ibank.notify.model.*;
+import com.example.ibank.shared.notification.EventCreate;
 import com.example.ibank.notify.repository.EventRepository;
 
 import lombok.RequiredArgsConstructor;

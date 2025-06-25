@@ -4,6 +4,7 @@
 kafka:
   topic:
     current-rates: "current-rates"
+    notify-events: "notify-events"
 
 
 spring:

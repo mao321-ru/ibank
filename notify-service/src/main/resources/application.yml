@@ -9,7 +9,7 @@ spring:
   config:
     import:
       - "file:${config.dir}/application.yml"
-      - "file:${config.dir}/application-resourceserver.yml"
+      - "file:${config.dir}/application-kafka.yml"
       - "file:${config.dir}/application-postgres.yml"
       - "optional:file:${config.dir}/${spring.application.name}.yml"
 

@@ -1,5 +1,7 @@
 package com.example.ibank.transfer.service;
 
+import com.example.ibank.shared.notification.EventCreate;
+import com.example.ibank.shared.notification.EventApi;
 import com.example.ibank.transfer.accounts.api.TrTransferApi;
 import com.example.ibank.transfer.accounts.model.TransferTransactionRequest;
 import com.example.ibank.transfer.blocker.api.CheckApi;
@@ -8,8 +10,6 @@ import com.example.ibank.transfer.exchange.api.ExchangeApi;
 import com.example.ibank.transfer.exchange.model.ExchangeRequest;
 import com.example.ibank.transfer.exchange.model.ExchangeResponse;
 import com.example.ibank.transfer.model.*;
-import com.example.ibank.transfer.notify.api.EventApi;
-import com.example.ibank.transfer.notify.model.EventCreate;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +57,7 @@ public class TransferServiceImpl implements TransferService {
                 )
             )
             .then(
-                eventApi.createEvent( new EventCreate()
+                eventApi.createEvent( EventCreate.builder()
                     .source( "transfer-service")
                     .eventType( "transfer")
                     .userLogin( req.getLogin())
@@ -68,6 +68,7 @@ public class TransferServiceImpl implements TransferService {
                                 : " пользователю [%s]".formatted( req.getToLogin())
                         )
                     )
+                    .build()
                 )
                 .doOnError( e -> log.error( "Notification failed: {}", e.getMessage()))
                 .onErrorResume( e -> Mono.empty())

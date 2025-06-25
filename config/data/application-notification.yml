@@ -1,7 +1,10 @@
+# Настройки для отправки нотификации по событиям в Notification Service через Apache Kafka
+
 spring:
   kafka:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       # включаем явно для Доставка «точно один раз» (exactly once delivery) (было включено по умолчанию)
       enable-idempotence: true
+

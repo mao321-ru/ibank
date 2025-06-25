@@ -37,6 +37,7 @@ public abstract class IntegrationTestBase implements TestData {
     private static final Logger log = LoggerFactory.getLogger( IntegrationTestBase.class);
 
     protected enum Container {
+        KEYCLOAK,
         POSTGRES,
         KAFKA,
         ACCOUNTS_SERVICE,
@@ -113,13 +114,22 @@ public abstract class IntegrationTestBase implements TestData {
         List<Container> addonContainers
     ) {
 
-        // всегда создаем keycloak
-        startKeycloak();
+        // создаем если есть кроме перечисленных (которым не нужен keycloak)
+        if(
+            addonContainers.stream().anyMatch( cn ->
+                cn != Container.KAFKA
+                && cn != Container.POSTGRES
+                && cn != Container.NOTIFY_SERVICE
+            )
+        ) {
+            startKeycloak();
+        }
 
         // создаем контейнер если указан явно либо есть использующие его сервисы
         if(
             addonContainers.contains( Container.KAFKA)
             || addonContainers.contains( Container.EXCHANGE_SERVICE)
+            || addonContainers.contains( Container.NOTIFY_SERVICE)
         ) {
             startKafka();
         }
@@ -197,15 +207,10 @@ public abstract class IntegrationTestBase implements TestData {
             registry.add( "kafka_servers", () -> kafka.getBootstrapServers());
         }
         containers.forEach( ( cntType, cnt) -> {
-            switch( cntType) {
-                case Container.POSTGRES:
-                    break;
-                default:
-                    registry.add(
-                        cntType.toString().toLowerCase().replaceFirst( "_.+", ".url"),
-                        () -> "http://localhost:%d".formatted( cnt.getFirstMappedPort())
-                    );
-            }
+            registry.add(
+                cntType.toString().toLowerCase().replaceFirst( "_.+", ".url"),
+                () -> "http://localhost:%d".formatted( cnt.getFirstMappedPort())
+            );
         });
     }
 

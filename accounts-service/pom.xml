@@ -53,16 +53,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- OAuth 2.0 client -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
-        </dependency>
-
         <!-- OAuth 2.0 resource server -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,6 +67,12 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webflux-api</artifactId>
+        </dependency>
+
+        <!-- Kafka used -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <!-- PostgreSQL with Testcontainers support -->
@@ -140,13 +136,13 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-shared-client</id>
+                        <id>add-shared-resourceserver</id>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>add-shared-resourceserver</id>
+                        <id>add-shared-notification</id>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
@@ -171,12 +167,6 @@
                 <executions>
                     <execution>
                         <id>spring-server-generator</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>notify-client-generator</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>

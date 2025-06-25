@@ -9,6 +9,7 @@ public abstract class IntegrationTest extends IntegrationTestPostgres {
 
     static {
         startContainers( List.of(
+            Container.KAFKA,
             Container.POSTGRES
         ));
     }

@@ -233,6 +233,21 @@
                                 </sources>
                             </configuration>
                         </execution>
+                        <!-- Нотификация по событиям -->
+                        <execution>
+                            <id>add-shared-notification</id>
+                            <phase>generate-sources</phase>
+                            <!-- для подключения в модуле нужно указать goal
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            -->
+                            <configuration>
+                                <sources>
+                                    <source>${project.basedir}/../shared/notification/src/main/java</source>
+                                </sources>
+                            </configuration>
+                        </execution>
                     </executions>
                 </plugin>
 

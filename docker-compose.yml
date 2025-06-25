@@ -89,7 +89,6 @@ services:
       dockerfile: ./Dockerfile
       args:
         MODULE_NAME: accounts-service
-        USAGE_MODULE: notify-service
     image: ibank-accounts-service:${TAG:-latest}
     ports:
       - "8962:8080"
@@ -116,7 +115,6 @@ services:
         MODULE_NAME: cash-service
         USAGE_MODULE: accounts-service
         USAGE_MODULE2: blocker-service
-        USAGE_MODULE3: notify-service
     image: ibank-cash-service:${TAG:-latest}
     ports:
       - "8963:8080"
@@ -141,7 +139,6 @@ services:
         USAGE_MODULE: accounts-service
         USAGE_MODULE2: blocker-service
         USAGE_MODULE3: exchange-service
-        USAGE_MODULE4: notify-service
     image: ibank-transfer-service:${TAG:-latest}
     ports:
       - "8964:8080"

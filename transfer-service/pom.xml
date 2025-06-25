@@ -79,6 +79,12 @@
             <artifactId>springdoc-openapi-starter-webflux-api</artifactId>
         </dependency>
 
+        <!-- Kafka used -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -129,6 +135,12 @@
                             <goal>add-source</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>add-shared-notification</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -155,12 +167,6 @@
                     </execution>
                     <execution>
                         <id>blocker-client-generator</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>notify-client-generator</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>

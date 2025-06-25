@@ -1,15 +1,13 @@
 package com.example.ibank.accounts.service;
 
+import com.example.ibank.shared.notification.EventCreate;
+import com.example.ibank.shared.notification.EventApi;
 import com.example.ibank.accounts.model.*;
-import com.example.ibank.accounts.notify.api.EventApi;
-import com.example.ibank.accounts.notify.model.EventCreate;
 import com.example.ibank.accounts.repository.UserRepository;
 
-import io.r2dbc.spi.Parameters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
-import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +18,6 @@ import org.springframework.r2dbc.core.Parameter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -104,7 +101,7 @@ public class UserServiceImpl implements UserService {
                         })
                         .one()
             .flatMap( u ->
-                eventApi.createEvent( new EventCreate()
+                eventApi.createEvent( EventCreate.builder()
                     .source( "accounts-service")
                     .eventType( "createUser")
                     .userLogin( u.getLogin())
@@ -114,6 +111,7 @@ public class UserServiceImpl implements UserService {
                             u.getLogin()
                         )
                     )
+                    .build()
                 )
                 .doOnError( e -> log.error( "Notification failed: {}", e.getMessage()))
                 .onErrorResume( e -> Mono.empty())
@@ -233,11 +231,12 @@ public class UserServiceImpl implements UserService {
             .doOnNext( rowCount -> log.debug( "changePassword: updated rows: {}", rowCount))
             .map( rowCount -> rowCount > 0)
             .flatMap( isOk -> isOk
-                ? eventApi.createEvent( new EventCreate()
+                ? eventApi.createEvent( EventCreate.builder()
                         .source( "accounts-service")
                         .eventType( "changePassword")
                         .userLogin( login)
                         .message( "Пароль пользователя с логином [%s] изменен".formatted( login))
+                        .build()
                     )
                     .doOnError( e -> log.error( "Notification failed: {}", e.getMessage()))
                     .onErrorResume( e -> Mono.empty())
