@@ -7,6 +7,7 @@ metadata:
     {{- include "srv.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded  # удаление перед созданием нового и после успеха
 spec:
   containers:
     - name: wget
