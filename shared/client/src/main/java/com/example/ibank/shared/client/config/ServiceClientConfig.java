@@ -21,7 +21,7 @@ public class ServiceClientConfig {
 
     @Bean( "serviceWebClient")
     WebClient serviceWebClient(
-        @Qualifier( "resilientWebClientBuilder") WebClient.Builder builder
+        WebClient.Builder builder
     ) {
         return isLoggingHttp
             ? builder.filter( loggingFilter()).build()

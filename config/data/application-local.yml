@@ -1,5 +1,14 @@
 # Настройки для локального запуска сервисов
 
+logging:
+  level:
+    #com.example.ibank: TRACE
+    #org.springframework.r2dbc.core.DefaultDatabaseClient: DEBUG # логирование SQL-запросов
+    #org.springframework: DEBUG
+    #io.r2dbc: DEBUG # и добавим больше деталей (не включать в настоящем приложении)
+  service:
+    #http: true # логирование HTTP-запросов (без тела) и ответов сервисов
+
 keycloak.url: http://localhost:8954
 
 # Значение в поле iss для проверки токена (фиксируется за счет KC_HOSTNAME в docker-compose.yml,

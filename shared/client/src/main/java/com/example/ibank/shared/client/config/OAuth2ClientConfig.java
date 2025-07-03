@@ -1,6 +1,6 @@
 package com.example.ibank.shared.client.config;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
@@ -9,7 +9,6 @@ import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.WebClient;
 
 
 @Configuration
@@ -34,15 +33,14 @@ public class OAuth2ClientConfig {
         return manager;
     }
 
-    @Bean( "authWebClientBuilder")
-    WebClient.Builder authWebClientBuilder(
+    @Bean
+    WebClientCustomizer authWebClientCustomizer(
             ReactiveOAuth2AuthorizedClientManager clientRegistrations
     ) {
         ServerOAuth2AuthorizedClientExchangeFilterFunction oauth =
                 new ServerOAuth2AuthorizedClientExchangeFilterFunction( clientRegistrations);
         oauth.setDefaultClientRegistrationId( clientRegistrationId);
-        return WebClient.builder()
-                .filter(oauth);
+        return builder -> builder.filter(oauth);
     }
 
 }
