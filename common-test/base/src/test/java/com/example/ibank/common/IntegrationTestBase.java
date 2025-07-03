@@ -63,6 +63,8 @@ public abstract class IntegrationTestBase implements TestData {
 
     protected static KafkaContainer kafka;
 
+    protected static GenericContainer<?> zipkin;
+
     private static void startKeycloak() {
         keycloak = new KeycloakContainer( "quay.io/keycloak/keycloak:26.1.3")
                 .withNetwork(network)
@@ -109,10 +111,21 @@ public abstract class IntegrationTestBase implements TestData {
         log.info( "kafka bootstrap servers: {}", kafka.getBootstrapServers());
     }
 
+    private static void startZipkin() {
+        zipkin = new GenericContainer<>("openzipkin/zipkin-slim:3.5.1")
+            .withNetwork(network)
+            .withNetworkAliases("zipkin")
+            .withExposedPorts(9411)
+        ;
+        zipkin.start();
+    }
+
     // Start containers and uses Ryuk Container to remove containers when JVM process running the tests exited
     protected static void startContainers(
         List<Container> addonContainers
     ) {
+        // всегда используется
+        startZipkin();
 
         // создаем если есть кроме перечисленных (которым не нужен keycloak)
         if(
@@ -205,6 +218,9 @@ public abstract class IntegrationTestBase implements TestData {
         }
         if( kafka != null) {
             registry.add( "kafka_servers", () -> kafka.getBootstrapServers());
+        }
+        if( zipkin != null) {
+            registry.add( "zipkin_server", () -> "localhost:%d".formatted( zipkin.getFirstMappedPort()));
         }
         containers.forEach( ( cntType, cnt) -> {
             registry.add(

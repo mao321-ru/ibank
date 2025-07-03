@@ -12,3 +12,6 @@ kafka_servers: kafka:9092
 # Хост и порт для подключения к PostgreSQL
 postgres_host: postgres
 postgres_port: 5432
+
+# Сервер Zipkin (хост:порт) для сбора трейсов
+zipkin_server: zipkin:9411

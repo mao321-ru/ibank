@@ -15,6 +15,9 @@ kafka_servers: ibank-kafka:9092
 postgres_host: ibank-postgres
 postgres_port: 5432
 
+# Сервер Zipkin (хост:порт) для сбора трейсов
+zipkin_server: ibank-zipkin:9411
+
 # URL прикладных сервисов для обращения из других прикладных сервисов
 accounts.url: http://ibank-accounts-service:8080
 cash.url: http://ibank-cash-service:8080

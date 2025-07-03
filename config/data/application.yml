@@ -16,6 +16,12 @@ management:
           include: livenessState
         readiness:
           include: readinessState
+  zipkin:
+    tracing:
+      endpoint: http://${zipkin_server}/api/v2/spans # Эндпоинт Zipkin для приёма спанов
+  tracing:
+    sampling:
+      probability: 1 # Сэмплируем все запросы
 
 # доступность через http
 management.endpoints.web.exposure.include: health,liveness,readiness

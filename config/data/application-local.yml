@@ -24,6 +24,10 @@ postgres_port: 8955
 # либо отдельную БД - стандартный порт
 #postgres_port: 5432
 
+# Сервер Zipkin (хост:порт) для сбора трейсов
+# (используем из docker-compose.yml)
+zipkin_server: localhost:8911
+
 # URL локально запущенных прикладных сервисов для обращения из других прикладных сервисов
 # (порты соответствуют настройкам server.port в *-service-local.yml)
 accounts.url: http://localhost:8062

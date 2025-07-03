@@ -55,6 +55,12 @@ services:
       timeout: 5s
       retries: 5
 
+  zipkin:
+    image: openzipkin/zipkin-slim:3.5.1
+    restart: unless-stopped
+    ports:
+      - "8911:9411"
+
   front-service:
     build:
       context: .

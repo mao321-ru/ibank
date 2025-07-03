@@ -404,13 +404,34 @@
     </build>
 
     <profiles>
-        <!-- автоподключение зависимостей для общих тестовых классов из common-test -->
+        <!-- автоподключение общих зависимостей для всех модулей -->
         <profile>
-            <id>common-test-deps</id>
+            <id>common-deps</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <dependencies>
+                <!-- Reactive + Actuator -->
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-webflux</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-actuator</artifactId>
+                </dependency>
+
+                <!-- трассировки в Zipkin -->
+                <dependency>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-tracing-bridge-brave</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>io.zipkin.reporter2</groupId>
+                    <artifactId>zipkin-reporter-brave</artifactId>
+                </dependency>
+
+                <!-- зависимости для общих тестовых классов из common-test -->
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-test</artifactId>
