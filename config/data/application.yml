@@ -5,8 +5,8 @@ logging:
   level:
     com.example.ibank: DEBUG
 
-# открытие liveness/readiness дополнительно к health (используется в k8s)
 management:
+  # открытие liveness/readiness дополнительно к health (используется в k8s)
   endpoint:
     health:
       probes:
@@ -16,12 +16,15 @@ management:
           include: livenessState
         readiness:
           include: readinessState
-  zipkin:
-    tracing:
-      endpoint: http://${zipkin_server}/api/v2/spans # Эндпоинт Zipkin для приёма спанов
+  observations:
+    annotations:
+      enabled: true # enable @Observed, @Timed, @Counted, @MeterTag and @NewSpan supported by Micrometer
   tracing:
     sampling:
       probability: 1 # Сэмплируем все запросы
+  zipkin:
+    tracing:
+      endpoint: http://${zipkin_server}/api/v2/spans # Эндпоинт Zipkin для приёма спанов
 
 # доступность через http
 management.endpoints.web.exposure.include: health,liveness,readiness

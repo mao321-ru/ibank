@@ -248,6 +248,19 @@
                                 </sources>
                             </configuration>
                         </execution>
+                        <!-- Настройки трассировки (подключается автоматически для всех сервисов) -->
+                        <execution>
+                            <id>add-shared-tracing</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>${project.basedir}/../shared/tracing/src/main/java</source>
+                                </sources>
+                            </configuration>
+                        </execution>
                     </executions>
                 </plugin>
 
@@ -419,6 +432,12 @@
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-actuator</artifactId>
+                </dependency>
+
+                <!-- нужно например для работы @NewSpan при управлении трассировкой в Zipkin -->
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-aop</artifactId>
                 </dependency>
 
                 <!-- трассировки в Zipkin -->

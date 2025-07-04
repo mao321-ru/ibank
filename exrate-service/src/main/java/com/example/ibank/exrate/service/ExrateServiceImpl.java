@@ -1,5 +1,7 @@
 package com.example.ibank.exrate.service;
 
+import io.micrometer.tracing.annotation.ContinueSpan;
+import io.micrometer.tracing.annotation.NewSpan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class ExrateServiceImpl implements ExrateService {
     // (даже интервал в 1 сек между запусками нестабильно обеспечивает)
     @Scheduled( fixedDelay = 1000)
     @Override
+    @NewSpan( "kafka-send")
     public void refreshRates() {
         var newUsd = BigDecimal.valueOf( ThreadLocalRandom.current().nextDouble(49.00, 51.00))
                 .setScale( 2, RoundingMode.HALF_UP);
