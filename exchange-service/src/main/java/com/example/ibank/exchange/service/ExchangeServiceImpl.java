@@ -4,6 +4,7 @@ package com.example.ibank.exchange.service;
 import com.example.ibank.exchange.model.CurrentRate;
 import com.example.ibank.exchange.model.ExchangeRequest;
 import com.example.ibank.exchange.model.ExchangeResponse;
+import io.micrometer.tracing.annotation.NewSpan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -24,6 +25,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     private final R2dbcEntityTemplate etm;
 
     @Override
+    @NewSpan( "db")
     @Transactional( readOnly = true)
     public Mono<ExchangeResponse> exchange(ExchangeRequest rq) {
         return etm.getDatabaseClient()
@@ -66,6 +68,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional( readOnly = true)
     public Flux<CurrentRate> getRates() {
         return etm.getDatabaseClient()
@@ -96,6 +99,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional
     public Mono<Void> setRates(List<RateShort> rq) {
         return etm.getDatabaseClient()

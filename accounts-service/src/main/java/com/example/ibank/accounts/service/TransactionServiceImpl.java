@@ -2,6 +2,7 @@ package com.example.ibank.accounts.service;
 
 import com.example.ibank.accounts.model.CashTransactionRequest;
 import com.example.ibank.accounts.model.TransferTransactionRequest;
+import io.micrometer.tracing.annotation.NewSpan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -17,6 +18,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final R2dbcEntityTemplate etm;
 
     @Override
+    @NewSpan( "db")
     @Transactional
     public Mono<Void> createCashTransaction(CashTransactionRequest rq) {
         return etm.getDatabaseClient()
@@ -97,6 +99,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional
     public Mono<Void> createTransferTransaction(TransferTransactionRequest rq) {
         return etm.getDatabaseClient()

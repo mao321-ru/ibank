@@ -4,6 +4,7 @@ import com.example.ibank.notify.model.*;
 import com.example.ibank.shared.notification.EventCreate;
 import com.example.ibank.notify.repository.EventRepository;
 
+import io.micrometer.tracing.annotation.NewSpan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository repo;
 
     @Override
+    @NewSpan( "db")
     @Transactional
     public Mono<Void> createEvent( EventCreate rq) {
         return repo

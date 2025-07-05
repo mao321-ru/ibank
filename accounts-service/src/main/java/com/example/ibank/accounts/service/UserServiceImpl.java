@@ -5,6 +5,7 @@ import com.example.ibank.shared.notification.EventApi;
 import com.example.ibank.accounts.model.*;
 import com.example.ibank.accounts.repository.UserRepository;
 
+import io.micrometer.tracing.annotation.NewSpan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @NewSpan( "db")
     @Transactional( readOnly = true)
     public Flux<UserShort> getAllUsers() {
         return etm.getDatabaseClient().sql(
@@ -52,6 +54,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional
     public Mono<UserInfo> createUser( UserCreate rq) {
         log.debug( "createUser: login: {}", rq.getLogin());
@@ -121,6 +124,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional
     public Mono<Boolean> deleteUser(String login) {
         final String notFoundMsg = "USER_NOT_FOUND";
@@ -198,6 +202,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional( readOnly = true)
     public Mono<UserInfo> validate( String login, String password) {
         return repo.findByLogin( login)
@@ -213,6 +218,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional
     public Mono<Boolean> changePassword(  String login, String password) {
         return etm.getDatabaseClient()
@@ -247,6 +253,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional( readOnly = true)
     public Mono<UserAccounts> getUserAccounts(String login) {
         return etm.getDatabaseClient()
@@ -302,6 +309,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @NewSpan( "db")
     @Transactional
     public Mono<Boolean> updateUserAccounts(String login, UserUpdateRequest rq) {
         log.debug( "updateUserAccounts: userName: {}", rq.getName());
