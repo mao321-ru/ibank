@@ -33,6 +33,8 @@ public class KafkaConfig {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory( consumerFactory);
         factory.getContainerProperties().setConsumerRebalanceListener(rebalanceListener());
+        // включаем использование контекста трассировки из заголовка traceparent сообщения Kafka
+        factory.getContainerProperties().setObservationEnabled( true);
         return factory;
     }
 
