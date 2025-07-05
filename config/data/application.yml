@@ -28,3 +28,6 @@ management:
 
 # доступность через http
 management.endpoints.web.exposure.include: health,liveness,readiness
+
+# вместо вызова Hooks.enableAutomaticContextPropagation()
+spring.reactor.context-propagation: auto
