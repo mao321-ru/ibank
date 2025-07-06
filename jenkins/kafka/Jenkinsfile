@@ -39,7 +39,7 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy Kafka') {
             steps {
                 sh """
                 helm upgrade --install ibank-${SERVICE_NAME} ./${SERVICE_CHART} \\
@@ -48,6 +48,26 @@ pipeline {
                   --wait \\
 
                 """
+            }
+        }
+
+        stage('Deploy Zipkin') {
+            steps {
+                script {
+                    def addonService = 'zipkin'
+
+                    sh """
+                    helm dependency update ./${addonService}
+                    """
+
+                    sh """
+                    helm upgrade --install ibank-${addonService} ./${addonService} \\
+                      --take-ownership \\
+                      --set global.domain=${ENV_NAME}.local \\
+                      --wait \\
+
+                    """
+                }
             }
         }
 

@@ -53,6 +53,10 @@
 
 Общие классы и настройки, используемые в модулях.
 
+- zipkin
+
+Helm-чарт для Zipkin (устанавливается через [Jenkinsfile для Kafka](./jenkins/kafka/Jenkinsfile))
+
 - \*-service
 
 Прикладные микросервисы
@@ -189,6 +193,7 @@ helm uninstall ingress-nginx -n ingress-nginx
 ```
 127.0.0.1 ibank.latest.local
 127.0.0.1 ibank-keycloak.latest.local
+127.0.0.1 ibank-zipkin.latest.local
 ```
 
 Для установки/обновления приложения в Kubernetes нужно выполнить команду:
@@ -244,6 +249,7 @@ Jenkins установлен локально, установлены реком
 ```
 127.0.0.1 ibank.dev.local
 127.0.0.1 ibank-keycloak.dev.local
+127.0.0.1 ibank-zipkin.dev.local
 ```
 
 (приведено для dev, аналогично можно добавить для test и prod, а также для latest как в разделе выше про )

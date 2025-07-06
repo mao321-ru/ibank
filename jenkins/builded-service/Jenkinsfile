@@ -84,7 +84,6 @@ pipeline {
             steps {
                 sh """
                 helm test ibank-${SERVICE_NAME} \\
-                  --logs \\
 
                 """
             }

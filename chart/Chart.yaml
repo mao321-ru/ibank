@@ -36,6 +36,9 @@ dependencies:
   - name: postgres
     version: "0.1.0"
     repository: "file://../postgres"
+  - name: zipkin
+    version: "0.1.0"
+    repository: "file://../zipkin"
   - name: accounts-service
     version: "0.1.0"
     repository: "file://../accounts-service/chart"
