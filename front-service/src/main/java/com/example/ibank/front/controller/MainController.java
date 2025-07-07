@@ -10,6 +10,8 @@ import com.example.ibank.front.dto.TransferDto;
 import com.example.ibank.front.service.MoneyService;
 import com.example.ibank.front.service.UserService;
 import com.example.ibank.front.security.AuthUser;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +40,8 @@ public class MainController {
 
     private final UserService userService;
     private final MoneyService moneyService;
+
+    private final MeterRegistry meterRegistry;
 
     @GetMapping("/")
     public Mono<String> redirectRoot() {
@@ -249,7 +253,17 @@ public class MainController {
                                 : null
                             ;
                             if (errorMessage != null) throw new IllegalArgumentException( errorMessage);
-                            return moneyService.transfer( login, dto);
+                            return moneyService.transfer( login, dto)
+                                .doOnError( e ->
+                                    Counter.builder( "ibank_transfer_error")
+                                        .tag( "login", login)
+                                        .tag( "currency", dto.getFromCurrency())
+                                        .tag( "to_login", dto.getToLogin())
+                                        .tag( "to_currency", dto.getToCurrency())
+                                        .register( meterRegistry)
+                                        .increment()
+                                )
+                            ;
                         })
                         .onErrorResume( e -> exchange.getSession()
                             .doOnNext( ss -> {

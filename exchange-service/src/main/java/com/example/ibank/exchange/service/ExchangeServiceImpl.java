@@ -14,7 +14,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,6 +22,7 @@ import java.util.List;
 public class ExchangeServiceImpl implements ExchangeService {
 
     private final R2dbcEntityTemplate etm;
+    private final CurrencyUpdateMetrics currencyUpdateMetrics;
 
     @Override
     @NewSpan( "db")
@@ -198,6 +198,7 @@ public class ExchangeServiceImpl implements ExchangeService {
                 .map( row -> {
                     var errorMessage = row.get( "error_message", String.class);
                     if( errorMessage != null) throw new IllegalStateException( errorMessage);
+                    rq.stream().forEach( r -> currencyUpdateMetrics.recordCurrencyUpdate( r.currencyCode()));
                     return true;
                 })
             .one()

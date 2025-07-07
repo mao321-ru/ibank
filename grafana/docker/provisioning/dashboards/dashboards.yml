@@ -7,3 +7,9 @@ providers:
     options:
       path: /etc/grafana/provisioning/dashboards/spring-boot  # Путь внутри контейнера
       foldersFromFilesStructure: true  # Создать папки по структуре файлов
+  - name: 'IBank Dashboards'
+    type: file
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/provisioning/dashboards/ibank
+      foldersFromFilesStructure: true

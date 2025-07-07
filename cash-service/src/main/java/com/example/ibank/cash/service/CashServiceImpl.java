@@ -36,6 +36,8 @@ public class CashServiceImpl implements CashService {
                 )
                 .amount( req.getAmount())
                 .currency( req.getCurrency())
+                .toLogin( req.getLogin())
+                .toCurrency( req.getCurrency())
             )
             .then(
                 trCashApi.createCashTransaction( new CashTransactionRequest()

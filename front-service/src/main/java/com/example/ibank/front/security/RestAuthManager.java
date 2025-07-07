@@ -1,6 +1,8 @@
 package com.example.ibank.front.security;
 
 import com.example.ibank.front.service.UserService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.SignalType;
 
 import java.util.List;
 
@@ -18,6 +21,7 @@ import java.util.List;
 public class RestAuthManager implements ReactiveAuthenticationManager {
 
     private final UserService userService;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
@@ -33,6 +37,15 @@ public class RestAuthManager implements ReactiveAuthenticationManager {
                                 .build(),
                         null,
                         List.of()
-                ));
+                ))
+                .doFinally( signalType ->
+                    Counter.builder( "ibank_authenticate")
+                        .tag( "login", login)
+                        .tag( "result", signalType == SignalType.ON_COMPLETE ? "OK" : "ERROR")
+                        .register( meterRegistry)
+                        .increment()
+                )
+                .cast( Authentication.class)
+        ;
     }
 }

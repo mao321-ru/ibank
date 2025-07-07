@@ -1,0 +1,567 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
+        "datasource": "${DS_PROMETHEUS}",
+        "enable": true,
+        "expr": "resets(process_uptime_seconds{application=\"$application\", instance=\"$instance\"}[1m]) > 0",
+        "hide": false,
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "name": "Restart Detection",
+        "showIn": 0,
+        "step": "1m",
+        "tagKeys": "restart-tag",
+        "textFormat": "uptime reset",
+        "titleFormat": "Restart"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.3",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "sum by (login, result) (\r\n  increase(ibank_authenticate_total{application=\"front-service\"}[$__range])\r\n)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "expr": "",
+          "hide": false,
+          "instant": false,
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Login",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.3",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "sum by (login, currency, to_login, to_currency) (\r\n  increase(ibank_transfer_error_total{application=\"front-service\"}[$__range])\r\n)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "expr": "",
+          "hide": false,
+          "instant": false,
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Неуспешные переводы",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.6.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "  floor((time() - ibank_currency_update_timestamp{app=\"ibank\", application=\"exchange-service\"})/60)",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Обновление курсов валют",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "currencyCode",
+                "Value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Time": 1,
+              "Value": 2,
+              "currencyCode": 0
+            },
+            "renameByName": {
+              "Value": "Минут после обновления",
+              "Value (min)": "Секунд после обновления",
+              "currencyCode": "Валюта"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.3",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "sum by (login, currency, to_login, to_currency) (\r\n  increase(ibank_operation_block_total{application=\"blocker-service\"}[$__range])\r\n)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "expr": "",
+          "hide": false,
+          "instant": false,
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Блокировка операций",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.3",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "expr": "sum by (login) (\r\n  increase(ibank_notify_error{application=\"notify-service\"}[$__range])\r\n)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "expr": "",
+          "hide": false,
+          "instant": false,
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Ошибка отправки уведомления",
+      "type": "timeseries"
+    }
+  ],
+  "preload": false,
+  "refresh": "auto",
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "Prometheus",
+          "value": "PBFA97CFB590B2093"
+        },
+        "hide": 1,
+        "label": "Data source",
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "IBank",
+  "uid": "fer95okcyh3wga",
+  "version": 5
+}

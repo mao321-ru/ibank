@@ -64,11 +64,21 @@ components:
           pattern: '^[A-Z]{3}$'
           example: "USD"
           description: Валюта (ISO 4217)
+        toLogin:
+          type: string
+          description: Логин получателя
+        toCurrency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          example: "USD"
+          description: Валюта получения (ISO 4217)
       required:
         - login
         - operationType
         - amount
         - currency
+        - toLogin
+        - toCurrency
     ErrorResponse:
       type: object
       properties:

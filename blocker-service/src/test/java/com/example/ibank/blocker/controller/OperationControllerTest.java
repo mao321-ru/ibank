@@ -17,9 +17,11 @@ public class OperationControllerTest extends ControllerTest {
                         "login": "%s",
                         "operationType": "DEPOSIT",
                         "amount": "100.05",
-                        "currency": "RUB"
+                        "currency": "RUB",
+                        "toLogin": "%s",
+                        "toCurrency": "RUB"
                     }
-                    """.formatted( EXISTS_USER_LOGIN)
+                    """.formatted( EXISTS_USER_LOGIN, EXISTS_USER_LOGIN)
                 )
                 .exchange()
                 .expectStatus().isNoContent()
@@ -38,9 +40,11 @@ public class OperationControllerTest extends ControllerTest {
                             "login": "%s",
                             "operationType": "DEPOSIT",
                             "amount": "1000000.05",
-                            "currency": "RUB"
+                            "currency": "RUB",
+                            "toLogin": "%s",
+                            "toCurrency": "RUB"
                         }
-                        """.formatted( EXISTS_USER_LOGIN)
+                        """.formatted( EXISTS_USER_LOGIN, EXISTS_USER_LOGIN)
                 )
                 .exchange()
                 .expectStatus().isEqualTo( HttpStatus.CONFLICT)

@@ -44,6 +44,8 @@ public class TransferServiceImpl implements TransferService {
                     .operationType( CheckRequest.OperationTypeEnum.TRANSFER)
                     .amount( req.getAmount())
                     .currency( req.getCurrency())
+                    .toLogin( req.getToLogin())
+                    .toCurrency( req.getToCurrency())
                 )
                 .then(
                     trTransferApi.createTransferTransaction( new TransferTransactionRequest()
