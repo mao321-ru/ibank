@@ -22,6 +22,9 @@ management:
         include:
           - health
           - prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name} # стандартный тег для фильтрации в dashboards Grafana
   observations:
     annotations:
       enabled: true # enable @Observed, @Timed, @Counted, @MeterTag and @NewSpan supported by Micrometer
