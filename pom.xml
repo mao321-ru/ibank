@@ -437,6 +437,12 @@
                     <artifactId>zipkin-reporter-brave</artifactId>
                 </dependency>
 
+                <!-- метрики для Prometheus -->
+                <dependency>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-registry-prometheus</artifactId>
+                </dependency>
+
                 <!-- зависимости для общих тестовых классов из common-test -->
                 <dependency>
                     <groupId>org.springframework.boot</groupId>

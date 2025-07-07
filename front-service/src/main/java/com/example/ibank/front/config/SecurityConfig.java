@@ -38,8 +38,7 @@ public class SecurityConfig {
         return http
             .authorizeExchange( exchanges -> exchanges
                 .pathMatchers(
-                    "/actuator/health",
-                    "/actuator/health/*",
+                    "/actuator/**",
                     "/favicon.ico",
                     "/login",
                     "/signup"

@@ -16,6 +16,12 @@ management:
           include: livenessState
         readiness:
           include: readinessState
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - prometheus
   observations:
     annotations:
       enabled: true # enable @Observed, @Timed, @Counted, @MeterTag and @NewSpan supported by Micrometer
@@ -25,9 +31,6 @@ management:
   zipkin:
     tracing:
       endpoint: http://${zipkin_server}/api/v2/spans # Эндпоинт Zipkin для приёма спанов
-
-# доступность через http
-management.endpoints.web.exposure.include: health,liveness,readiness
 
 # вместо вызова Hooks.enableAutomaticContextPropagation()
 spring.reactor.context-propagation: auto

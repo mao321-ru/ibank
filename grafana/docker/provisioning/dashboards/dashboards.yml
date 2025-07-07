@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: 'Spring Boot Dashboards'
+    type: file
+    updateIntervalSeconds: 30  # Как часто проверять обновления
+    options:
+      path: /etc/grafana/provisioning/dashboards/spring-boot  # Путь внутри контейнера
+      foldersFromFilesStructure: true  # Создать папки по структуре файлов

@@ -6,8 +6,10 @@
 Общие сервисы:
 1. Сервер авторизации микросервисов по OAuth 2.0: Keycloak (keycloak)
 2. Брокер сообщений Apache Kafka (kafka)
-3. БД: PostgreSQL (отдельные БД на каждый микросервис) (postgres)
+3. База данных PostgreSQL (отдельные БД на каждый микросервис) (postgres)
 4. Система распределённых трассировок Zipkin (zipkin)
+5. Система мониторинга Prometheus (prometheus)
+6. Система визуализации Grafana (grafana)
 
 Прикладные микросервисы:
 1. фронта (Front UI) (front-service);
