@@ -2829,6 +2829,13 @@
   "templating": {
     "list": [
       {
+        "hide": 1,
+        "label": "Data source",
+        "name": "DS_PROMETHEUS",
+        "query": "prometheus",
+        "type": "datasource"
+      },
+      {
         "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
