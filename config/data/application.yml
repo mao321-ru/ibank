@@ -23,6 +23,9 @@ management:
           - health
           - prometheus
   metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true            # гистограммы для персентилей для dashboards Grafana
     tags:
       application: ${spring.application.name} # стандартный тег для фильтрации в dashboards Grafana
   observations:
