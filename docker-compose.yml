@@ -61,7 +61,7 @@ services:
     ports:
       - "8990:9090"
     volumes:
-      - ./prometheus/docker/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/docker:/etc/prometheus
       - prometheus_data:/prometheus
 
   grafana:

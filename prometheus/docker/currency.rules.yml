@@ -1,0 +1,21 @@
+groups:
+- name: currency_update_alerts
+  interval: 15s
+  rules:
+  - alert: CurrencyUpdateDelay
+    expr: |
+      (
+        time() - ibank_currency_update_timestamp{
+          app="ibank",
+          application="exchange-service"
+        } > 60
+      )
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Курс {{ $labels.currencyCode }} не обновлялся более минуты"
+      description: |
+        Сервис: {{ $labels.application }}
+        Инстанс: {{ $labels.instance }}
+        Валюта: {{ $labels.currencyCode }}
