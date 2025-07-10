@@ -73,8 +73,10 @@ services:
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "true"  # вход без авторизации "на посмотреть"
     volumes:
-      - ./grafana/docker/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/docker/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/docker/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml
+      - ./grafana/docker/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./grafana/config/dashboards/ibank:/etc/grafana/provisioning/dashboards/ibank
+      - ./grafana/config/dashboards/spring-boot:/etc/grafana/provisioning/dashboards/spring-boot
       - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus

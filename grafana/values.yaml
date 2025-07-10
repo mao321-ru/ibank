@@ -1,0 +1,63 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Для переопределения в chart/values.yaml уровня проекта
+global:
+  domain: "latest.local"
+
+grafana-deps:
+  fullnameOverride: "ibank-grafana"
+
+  # используем тривиальный пароль для тестирования
+  adminUser: "admin"
+  adminPassword: "admin"
+
+  image:
+    tag: "11.6.3"
+
+  env:
+    GF_AUTH_ANONYMOUS_ENABLED: "true"
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://ibank-prometheus-server
+        access: proxy
+        isDefault: true
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'spring-boot'
+        type: file
+        disableDeletion: true
+        editable: false
+        options:
+          path: /var/lib/grafana/dashboards/spring-boot
+      - name: 'ibank'
+        type: file
+        disableDeletion: true
+        editable: false
+        options:
+          path: /var/lib/grafana/dashboards/ibank
+
+  extraConfigmapMounts:
+    - name: dashboards-spring-boot
+      mountPath: /var/lib/grafana/dashboards/spring-boot
+      configMap: ibank-grafana-dashboards-spring-boot
+      readOnly: true
+    - name: dashboards-ibank
+      mountPath: /var/lib/grafana/dashboards/ibank
+      configMap: ibank-grafana-dashboards-ibank
+      readOnly: true
+
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    hosts:
+      - "ibank-grafana.{{ .Values.global.domain }}"
