@@ -1,0 +1,111 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Для переопределения в chart/values.yaml уровня проекта
+global:
+  domain: "latest.local"
+
+prometheus:
+  alertmanager:
+    enabled: false
+  kube-state-metrics:
+    enabled: false
+  prometheus-node-exporter:
+    enabled: false
+  prometheus-pushgateway:
+    enabled: false
+
+  server:
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      hosts:
+        - "ibank-prometheus.{{ .Values.global.domain }}"
+
+    extraConfigmapMounts:
+      - name: prometheus-alerts
+        mountPath: /etc/prometheus-alerts
+        subPath: ""
+        configMap: ibank-prometheus-alerts
+        readOnly: true
+
+  serverFiles:
+    prometheus.yml:
+      rule_files:
+        - /etc/prometheus-alerts/currency.rules.yml
+      scrape_configs:
+        - job_name: prometheus
+          static_configs:
+            - targets:
+              - localhost:9090
+
+        # аналогично ./docker/prometheus.yml
+        - job_name: 'accounts-service'
+          metrics_path: '/actuator/prometheus'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['ibank-accounts-service:8080']
+              labels:
+                app: "ibank"
+
+        - job_name: 'blocker-service'
+          metrics_path: '/actuator/prometheus'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['ibank-blocker-service:8080']
+              labels:
+                app: "ibank"
+
+        - job_name: 'cash-service'
+          metrics_path: '/actuator/prometheus'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['ibank-cash-service:8080']
+              labels:
+                app: "ibank"
+
+        - job_name: 'exchange-service'
+          metrics_path: '/actuator/prometheus'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['ibank-exchange-service:8080']
+              labels:
+                app: "ibank"
+
+        - job_name: 'exrate-service'
+          metrics_path: '/actuator/prometheus'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['ibank-exrate-service:8080']
+              labels:
+                app: "ibank"
+
+        - job_name: 'front-service'
+          metrics_path: '/actuator/prometheus'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['ibank-front-service:8080']
+              labels:
+                app: "ibank"
+
+        - job_name: 'notify-service'
+          metrics_path: '/actuator/prometheus'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['ibank-notify-service:8080']
+              labels:
+                app: "ibank"
+
+        - job_name: 'transfer-service'
+          metrics_path: '/actuator/prometheus'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['ibank-transfer-service:8080']
+              labels:
+                app: "ibank"
+
+  configmapReload:
+    prometheus:
+      enabled: false
+

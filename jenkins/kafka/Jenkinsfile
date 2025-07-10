@@ -71,6 +71,26 @@ pipeline {
             }
         }
 
+        stage('Deploy Prometheus') {
+            steps {
+                script {
+                    def addonService = 'prometheus'
+
+                    sh """
+                    helm dependency update ./${addonService}
+                    """
+
+                    sh """
+                    helm upgrade --install ibank-${addonService} ./${addonService} \\
+                      --take-ownership \\
+                      --set global.domain=${ENV_NAME}.local \\
+                      --wait \\
+
+                    """
+                }
+            }
+        }
+
     }
 
     post {

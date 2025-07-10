@@ -36,6 +36,9 @@ dependencies:
   - name: postgres
     version: "0.1.0"
     repository: "file://../postgres"
+  - name: prometheus
+    version: "0.1.0"
+    repository: "file://../prometheus"
   - name: zipkin
     version: "0.1.0"
     repository: "file://../zipkin"
