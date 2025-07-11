@@ -20,9 +20,7 @@ keycloak.issuer.url: http://host.docker.internal:8954
 # keycloak.issuer.url: http://localhost:8954
 
 # bootstrap-servers для Apache Kafka
-# используем из docker-compose.yml
-#kafka_servers: localhost:8992
-# либо Kafka на стандартный порт
+# Kafka на стандартный порт (kafka из docker-compose.yml будет работать с ошибками)
 kafka_servers: localhost:9092
 
 # Хост и порт для подключения к PostgreSQL

@@ -1,0 +1,42 @@
+<configuration>
+    <!-- Подключаем стандартные настройки Spring Boot -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!-- поучаем bootstrap-servers для Apache Kafka из настроек -->
+    <springProperty name="bootstrapServers" source="kafka_servers"/>
+
+    <!-- Выводит в консоль неотправленные в Kafka сообщения -->
+    <appender name="kafkaFallbackConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[KAFKA FALLBACK] %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="kafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+
+        <topic>app-logs</topic>
+        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />
+
+        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
+
+        <!-- Максимальное время блокировки при недоступности логирования в Kafka -->
+        <producerConfig>max.block.ms=500</producerConfig>
+
+        <!-- bootstrap.servers is the only mandatory producerConfig -->
+        <producerConfig>bootstrap.servers=${bootstrapServers}</producerConfig>
+
+        <!-- this is the fallback appender if kafka is not available. -->
+        <appender-ref ref="kafkaFallbackConsole" />
+    </appender>
+
+    <root level="INFO">
+        <!-- Оставляем родной консольный аппендер Spring Boot -->
+        <appender-ref ref="CONSOLE" />
+        <!-- Добавляем отправку сообщений в Kafka -->
+        <appender-ref ref="kafkaAppender" />
+    </root>
+</configuration>
