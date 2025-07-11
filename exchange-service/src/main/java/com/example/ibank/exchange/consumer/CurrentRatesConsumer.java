@@ -24,13 +24,13 @@ public class CurrentRatesConsumer {
 
     @KafkaListener( topics = "${kafka.topic.current-rates}")
     public Mono<Void> consume(ConsumerRecord<String, String> rec) {
-        log.debug( "rate {}: {}", rec.key(), rec.value());
+        log.trace( "rate {}: {}", rec.key(), rec.value());
         return
             srv.setRates(
                 List.of( new ExchangeService.RateShort( rec.key(), new BigDecimal( rec.value())))
             )
             .doOnSuccess( v -> {
-                log.debug( "consume rate {}: {} - finished OK", rec.key(), rec.value());
+                log.trace( "consume rate {}: {} - finished OK", rec.key(), rec.value());
             })
             .doOnError( e -> {
                 log.debug( "consume rate {}: {} - error: {}", rec.key(), rec.value(), e.getMessage());

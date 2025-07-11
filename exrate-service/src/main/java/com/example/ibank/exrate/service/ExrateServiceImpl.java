@@ -43,13 +43,13 @@ public class ExrateServiceImpl implements ExrateService {
         var newEuro = BigDecimal.valueOf( ThreadLocalRandom.current().nextDouble(54.00, 56.00))
                 .setScale( 2, RoundingMode.HALF_UP);
         String usdRate = "USD " + newUsd;
-        log.debug( "refreshRates: {}", usdRate);
+        log.trace( "refreshRates: {}", usdRate);
 
         try {
             kafkaTemplate.send( currentRatesTopic, "USD", newUsd.toString());
             kafkaTemplate.send( currentRatesTopic, "EUR", newEuro.toString());
             lastRefreshOk = Boolean.TRUE;
-            log.debug( "refreshRates: {}: finished OK", usdRate);
+            log.trace( "refreshRates: {}: finished OK", usdRate);
         }
         catch ( Throwable e) {
             lastRefreshOk = Boolean.FALSE;

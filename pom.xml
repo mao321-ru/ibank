@@ -203,6 +203,21 @@
                                 </resources>
                             </configuration>
                         </execution>
+                        <!-- Подключение настроек отправки логов в Kafka -->
+                        <execution>
+                            <id>shared-kafkalogs-resources</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>add-resource</goal>
+                            </goals>
+                            <configuration>
+                                <resources>
+                                    <resource>
+                                        <directory>${project.basedir}/../shared/kafkalogs/src/main/resources</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
                         <!-- Сервис-клиент, выполняющий запросы к другим сервисам через Gateway -->
                         <execution>
                             <id>add-shared-client</id>
@@ -419,6 +434,18 @@
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-actuator</artifactId>
+                </dependency>
+
+                <!-- отпрвка логов в Kafka в формате JSON -->
+                <dependency>
+                    <groupId>com.github.danielwegener</groupId>
+                    <artifactId>logback-kafka-appender</artifactId>
+                    <version>0.2.0-RC2</version>
+                </dependency>
+                <dependency>
+                    <groupId>net.logstash.logback</groupId>
+                    <artifactId>logstash-logback-encoder</artifactId>
+                    <version>8.1</version>
                 </dependency>
 
                 <!-- нужно например для работы @NewSpan при управлении трассировкой в Zipkin -->
