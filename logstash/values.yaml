@@ -8,3 +8,5 @@ global:
 
 logstash-deps:
   fullnameOverride: "ibank-logstash"
+
+  existingConfiguration: "ibank-logstash-pipeline"

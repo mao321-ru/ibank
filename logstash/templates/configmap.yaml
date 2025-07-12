@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ibank-logstash-pipeline
+  labels:
+    app: logstash
+data:
+  {{- $files := .Files.Glob "config/*.conf" }}
+  {{- range $path, $_ := $files }}
+  {{ base $path }}: |-
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
