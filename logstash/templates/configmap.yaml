@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ibank-logstash-pipeline
+  name: ibank-logstash-config
   labels:
     app: logstash
 data:
