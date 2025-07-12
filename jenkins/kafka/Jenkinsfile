@@ -111,6 +111,66 @@ pipeline {
             }
         }
 
+        stage('Deploy Logstash') {
+            steps {
+                script {
+                    def addonService = 'logstash'
+
+                    sh """
+                    helm dependency update ./${addonService}
+                    """
+
+                    sh """
+                    helm upgrade --install ibank-${addonService} ./${addonService} \\
+                      --take-ownership \\
+                      --set global.domain=${ENV_NAME}.local \\
+                      --wait \\
+
+                    """
+                }
+            }
+        }
+
+        stage('Deploy Elasticsearch') {
+            steps {
+                script {
+                    def addonService = 'elasticsearch'
+
+                    sh """
+                    helm dependency update ./${addonService}
+                    """
+
+                    sh """
+                    helm upgrade --install ibank-${addonService} ./${addonService} \\
+                      --take-ownership \\
+                      --set global.domain=${ENV_NAME}.local \\
+                      --wait \\
+
+                    """
+                }
+            }
+        }
+
+        stage('Deploy Kibana') {
+            steps {
+                script {
+                    def addonService = 'kibana'
+
+                    sh """
+                    helm dependency update ./${addonService}
+                    """
+
+                    sh """
+                    helm upgrade --install ibank-${addonService} ./${addonService} \\
+                      --take-ownership \\
+                      --set global.domain=${ENV_NAME}.local \\
+                      --wait \\
+
+                    """
+                }
+            }
+        }
+
     }
 
     post {

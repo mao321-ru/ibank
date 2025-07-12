@@ -1,0 +1,10 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Для переопределения в chart/values.yaml уровня проекта
+global:
+  domain: "latest.local"
+
+kibana-deps:
+  fullnameOverride: "ibank-kibana"
