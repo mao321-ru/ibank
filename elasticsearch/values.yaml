@@ -8,3 +8,14 @@ global:
 
 elasticsearch-deps:
   fullnameOverride: "ibank-elasticsearch"
+
+  # deploy Elasticsearch as a "single-node" cluster (one master node replica)
+  master:
+    masterOnly: false
+    replicaCount: 1
+  data:
+    replicaCount: 0
+  coordinating:
+    replicaCount: 0
+  ingest:
+    replicaCount: 0
