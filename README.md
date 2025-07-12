@@ -10,6 +10,7 @@
 4. Система распределённых трассировок Zipkin (zipkin)
 5. Система мониторинга Prometheus (prometheus)
 6. Система визуализации Grafana (grafana)
+7. Компоненты ELK-стека (Elasticsearch, Logstash, Kibana) для сбора и анализа логов микросервисов (logstash, elasticsearch, kibana)
 
 Прикладные микросервисы:
 1. фронта (Front UI) (front-service);
@@ -55,9 +56,9 @@
 
 Общие классы и настройки, используемые в модулях.
 
-- zipkin
+- elasticsearch, grafana, kibana, logstash, prometheus zipkin
 
-Helm-чарт для Zipkin (устанавливается через [Jenkinsfile для Kafka](./jenkins/kafka/Jenkinsfile))
+Helm-чарты и настройки для соответствующих сервисов (устанавливаются через [Jenkinsfile для Kafka](./jenkins/kafka/Jenkinsfile))
 
 - \*-service
 
@@ -194,7 +195,10 @@ helm uninstall ingress-nginx -n ingress-nginx
 
 ```
 127.0.0.1 ibank.latest.local
+127.0.0.1 ibank-grafana.latest.local
 127.0.0.1 ibank-keycloak.latest.local
+127.0.0.1 ibank-kibana.latest.local
+127.0.0.1 ibank-prometheus.latest.local
 127.0.0.1 ibank-zipkin.latest.local
 ```
 
@@ -250,7 +254,10 @@ Jenkins установлен локально, установлены реком
 
 ```
 127.0.0.1 ibank.dev.local
+127.0.0.1 ibank-grafana.dev.local
 127.0.0.1 ibank-keycloak.dev.local
+127.0.0.1 ibank-kibana.dev.local
+127.0.0.1 ibank-prometheus.dev.local
 127.0.0.1 ibank-zipkin.dev.local
 ```
 

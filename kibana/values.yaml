@@ -8,3 +8,13 @@ global:
 
 kibana-deps:
   fullnameOverride: "ibank-kibana"
+
+  elasticsearch:
+    hosts:
+      - ibank-elasticsearch
+    port: 9200
+
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    hostname: "ibank-kibana.{{ .Values.global.domain }}"

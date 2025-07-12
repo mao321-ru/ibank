@@ -27,15 +27,24 @@ dependencies:
   - name: config
     version: "0.1.0"
     repository: "file://../config"
+  - name: elasticsearch
+    version: "0.1.0"
+    repository: "file://../elasticsearch"
   - name: grafana
     version: "0.1.0"
     repository: "file://../grafana"
-  - name: keycloak
-    version: "0.1.0"
-    repository: "file://../keycloak"
   - name: kafka
     version: "0.1.0"
     repository: "file://../kafka"
+  - name: keycloak
+    version: "0.1.0"
+    repository: "file://../keycloak"
+  - name: kibana
+    version: "0.1.0"
+    repository: "file://../kibana"
+  - name: logstash
+    version: "0.1.0"
+    repository: "file://../logstash"
   - name: postgres
     version: "0.1.0"
     repository: "file://../postgres"
