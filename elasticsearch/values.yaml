@@ -5,6 +5,7 @@
 # Для переопределения в chart/values.yaml уровня проекта
 global:
   domain: "latest.local"
+  kibanaEnabled: true
 
 elasticsearch-deps:
   fullnameOverride: "ibank-elasticsearch"
@@ -19,3 +20,19 @@ elasticsearch-deps:
     replicaCount: 0
   ingest:
     replicaCount: 0
+
+  kibana:
+    fullnameOverride: "ibank-kibana"
+
+    elasticsearch:
+      hosts:
+        - ibank-elasticsearch
+      port: 9200
+
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      hostname: "ibank-kibana.{{ .Values.global.domain }}"
+
+    savedObjects:
+      configmap: "ibank-kibana-saved-objects-data"

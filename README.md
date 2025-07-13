@@ -10,7 +10,7 @@
 4. Система распределённых трассировок Zipkin (zipkin)
 5. Система мониторинга Prometheus (prometheus)
 6. Система визуализации Grafana (grafana)
-7. Компоненты ELK-стека (Elasticsearch, Logstash, Kibana) для сбора и анализа логов микросервисов (logstash, elasticsearch, kibana)
+7. Компоненты ELK-стека (Elasticsearch, Logstash, Kibana) для сбора и анализа логов микросервисов (logstash, elasticsearch)
 
 Прикладные микросервисы:
 1. фронта (Front UI) (front-service);
@@ -56,7 +56,7 @@
 
 Общие классы и настройки, используемые в модулях.
 
-- elasticsearch, grafana, kibana, logstash, prometheus zipkin
+- elasticsearch (+kibana), grafana, logstash, prometheus zipkin
 
 Helm-чарты и настройки для соответствующих сервисов (устанавливаются через [Jenkinsfile для Kafka](./jenkins/kafka/Jenkinsfile))
 
@@ -103,6 +103,8 @@ Helm-чарты и настройки для соответствующих се
   docker image ls -q ibank-* | xargs docker image rm
 ```
 
+Замечания:
+- установка в Docker компонентов ELK-стека (Elasticsearch, Logstash, Kibana) не выполняется;
 
 ## Выполнение тестов
 
@@ -267,7 +269,7 @@ Jenkins установлен локально, установлены реком
 
 - После изменения по git-ветке dev пайплайны микросервисов выполняют установку в локальный Kubernetes в дефолтный namespace, хост для запросов снаружи http://ibank.latest.local (либо например http://ibank.latest.local:8180 если ingress-nginx был настроен на порту 8180). Установка выполняется без проверки интеграционных тестов.
 
-- После изменения по git-ветке dev/test/prod пайплайн IBank выполняет установку соответственно в разработческую/тестовую/продукционную среду (в локальный Kubernetes, в namespace по имени git-ветки, хост для запросов снаружи http://ibank.{gitBranch}.local, например http://ibank.dev.local или http://ibank.dev.local:8180 для dev-среды). Установка выполняется только в случае успешного прохождения интеграционных тестов.
+- После изменения по git-ветке dev/test/prod пайплайн IBank выполняет установку соответственно в разработческую/тестовую/продукционную среду (в локальный Kubernetes, в namespace по имени git-ветки, хост для запросов снаружи http://ibank.{gitBranch}.local, например http://ibank.dev.local или http://ibank.dev.local:8180 для dev-среды). Установка выполняется только в случае успешного прохождения интеграционных тестов, которые выполняются около 10 минут.
 
 Отмена установки:
 
